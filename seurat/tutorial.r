@@ -5,9 +5,9 @@ library(patchwork)
 list.files("dataset/3/raw_feature_bc_matrix_gz/")
 
 # Load the PBMC dataset
-pbmc.data <- Read10X(data.dir = "dataset/3/raw_feature_bc_matrix_gz/")
+pbmc.data <- Read10X(data.dir = "dataset/tabulamuris/droplet/Heart_and_Aorta-10X_P7_4")
 # Initialize the Seurat object with the raw (non-normalized data).
-pbmc <- CreateSeuratObject(counts = pbmc.data$'Gene Expression', project = "pbmc3k", min.cells = 3, min.features = 200)
+pbmc <- CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 200)
 
 # The [[ operator can add columns to object metadata. This is a great place to stash QC stats
 pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, pattern = "^MT-")
