@@ -166,7 +166,13 @@ cluster_plot + true_plot
 
 
 
-
-
 # Compare clustering (left) with ground truth
 cluster_plot + true_plot
+
+pbmc@ident = label_df_nna$"true_id"
+
+# pippo <- FindMarkers(pbmc, ident.1 = 5, min.pct = 0.1, test.use="wilcox", group.by=label_df_nna$"true_id")
+pippo <- FindAllMarkers(object = pbmc, thresh.use = 0.25,  min.pct = 0.1,test.use="wilcox")
+# print pippo ordered by the p_val column
+pippo = pippo[order(pippo$p_val),]
+head(pippo)
