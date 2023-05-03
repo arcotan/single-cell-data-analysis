@@ -160,6 +160,7 @@ pbmc <- RunTSNE(pbmc, features = VariableFeatures(object = pbmc))
 cluster_plot = DimPlot(pbmc, reduction = "pca") # predicted
 Idents(pbmc) <- label_df_nna$"true_id"
 
+
 true_plot = DimPlot(pbmc, reduction = "pca")
 
 cluster_plot + true_plot
