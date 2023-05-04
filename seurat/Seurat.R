@@ -44,6 +44,10 @@ write10xCounts(paste(OUT_DATA_DIR, "data_", CHANNEL, sep=""), data_to_write)
 filtered_labels = left_join(data.frame("cell"=colnames(data_to_write)), experiment_data$labels)
 write.csv(filtered_labels, paste(OUT_LABEL_DIR, "labels_", CHANNEL, ".csv", sep=""), row.names = FALSE)
 
+
+# *******  END PREPROCESSING *******
+
+
 pbmc <- NormalizeData(pbmc, normalization.method = "LogNormalize", scale.factor = 10000)
 
 pbmc <- FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 2000)
@@ -69,7 +73,7 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
 DimHeatmap(pbmc, dims = 1, cells = 500, balanced = TRUE)
 
 # Get clustering data
-pbmc <- FindNeighbors(pbmc, dims = 1:10)
+pbmc <- FindNeighbors(pbmc, dims = 1:10) #
 pbmc <- FindClusters(pbmc, resolution = 0.4)
 
 label_df = merge(experiment_data$labels, data.frame(Idents(pbmc)), by.x = "cell", by.y = 0) %>% 

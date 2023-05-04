@@ -1,6 +1,7 @@
 # Dataset folder
 dataset/
 tests/
+filtered_dataset/
 
 # History files
 .Rhistory
