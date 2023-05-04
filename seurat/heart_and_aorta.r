@@ -2,9 +2,11 @@ library(dplyr)
 library(Seurat)
 library(patchwork)
 
-DATA_DIR = "./dataset/Heart_and_Aorta-10X_P7_4"
-LABEL_DIR = "./dataset"
+BASE_DIR = "./seurat"
+DATA_DIR = "./dataset/tabulamuris/Heart_and_Aorta-10X_P7_4"
+LABEL_DIR = "./dataset/tabulamuris"
 CHANNEL = "10X_P7_4"
+
 
 # loads gene expression matrix associated to a channel and gets the cluster label for each cell,
 # if metadata for a cell is not found, its cluster id will be NA
@@ -37,10 +39,14 @@ load_data <- function(data_dir, label_dir, channel) {
 # Loading data
 experiment_data = load_data(DATA_DIR, LABEL_DIR, CHANNEL)
 
+# change directory
+setwd(BASE_DIR)
+
 labels = as.list(experiment_data$labels[['cluster.ids']])
 names(labels) <- experiment_data$labels[['cell']]
 # Load the PBMC dataset
 pbmc.data <- experiment_data$data
+
 
 # Initialize the Seurat object with the raw (non-normalized data).
 pbmc <- CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 200)
@@ -52,8 +58,6 @@ fingerprints <- (pbmc@assays[[1]]@counts@Dimnames[[2]])
 for (f in fingerprints) {
    print(c(labels[[f]], f))
 }
-
-View(labels)
 
 # Visualize QC metrics as a violin plot
 VlnPlot(pbmc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
@@ -87,7 +91,7 @@ pbmc <- RunTSNE(pbmc, features = VariableFeatures(object = pbmc))
 pbmc <- RunUMAP(pbmc, features = VariableFeatures(object = pbmc))
 
 # Examine and visualize PCA results a few different ways
-print(pbmc[["tsne"]], dims = 1:5, nfeatures = 5)
+print(pbmc[["umap"]], dims = 1:5, nfeatures = 5)
 pbmc[["umap"]]
 
 VizDimLoadings(pbmc, dims=1:2, reduction = "umap")
@@ -160,16 +164,15 @@ confusion_matrix
 library(fossil)
 adj.rand.index(label_df_nna$true_id, label_df_nna$computed_id)
 
-plot1 = DimPlot(pbmc, reduction = "umap")
 
 idents <- Idents(pbmc)
 for(i in 1:length(idents)) {
   idents[i][[1]] <- as.numeric(labels[names(idents[i])])
-
 }
 pbmc[['true_labels']] <- idents
-plot2 = DimPlot(pbmc, reduction = "umap", shape.by = "true_labels", pt.size = 3, raster.dpi = c(3440, 1920))
-plot2
+plot1 = DimPlot(pbmc, reduction = "umap", pt.size = 3)
+plot2 = DimPlot(pbmc, reduction = "umap", group.by = "true_labels", pt.size = 3)
+plot2 + plot1
 library(ggplot2)
 ggsave('clusters.png', plot2, dpi=400)
 
@@ -178,12 +181,17 @@ ggsave('clusters.png', plot2, dpi=400)
 library(ggplot2)
 library(gridExtra)
 
-DE = function(sobj, ident, experiment_data) {
-  markers = FindMarkers(sobj, ident.1 = ident, group.by = "true_labels")
-  l = experiment_data$labels
+DE = function(sobj, ident, IDENTS) {
+  print(paste('Class:', ident, sep=' '))
+  markers = FindMarkers(sobj, ident.1 = ident)
+  print(head(markers, 5))
+
+  l = IDENTS
   d = experiment_data$data
 
-  ld = merge(t(data.frame(d)), l, by.x = "row.names", by.y = "cell")
+  ld = merge(t(data.frame(d)), l, by.x = "row.names", by.y = "row.names")
+  colnames(ld)[length(ld)] = 'cluster.ids'
+
   topn = ld[,c(rownames(head(markers,5)), 'cluster.ids')]
 
   # Define a function for creating each ggplot object
@@ -213,8 +221,11 @@ DE = function(sobj, ident, experiment_data) {
   return (list("plots" = plots, "counts" = cnt))
 }
 
-DE_ANALISYS = lapply(0:5, function(ident) {
-  DE(pbmc, ident, experiment_data)
+IDENTS = Idents(pbmc)
+# IDENTS = pbmc@meta.data$true_labels
+
+DE_ANALISYS = lapply(sort(unique(IDENTS)), function(ident) {
+  DE(pbmc, ident, Idents(pbmc))
 })
 
 plts = lapply(DE_ANALISYS, function(x) {
