@@ -74,7 +74,9 @@ DimHeatmap(pbmc, dims = 1, cells = 500, balanced = TRUE)
 
 # Get clustering data
 pbmc <- FindNeighbors(pbmc, dims = 1:10) #
-pbmc <- FindClusters(pbmc, resolution = 0.4)
+pbmc <- FindClusters(pbmc, resolution = 0.1)
+
+DimPlot(pbmc, reduction = "pca")
 
 label_df = merge(experiment_data$labels, data.frame(Idents(pbmc)), by.x = "cell", by.y = 0) %>% 
   rename(
