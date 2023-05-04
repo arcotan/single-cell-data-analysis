@@ -2,6 +2,7 @@ library(dplyr)
 library(Seurat)
 library(patchwork)
 library(DropletUtils)
+library(NMF)
 
 source("utils.R")
 
@@ -73,16 +74,11 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
 DimHeatmap(pbmc, dims = 1, cells = 500, balanced = TRUE)
 
 # Get clustering data
-pbmc <- FindNeighbors(pbmc, dims = 1:10) #
-pbmc <- FindClusters(pbmc, resolution = 0.1)
+pbmc <- FindNeighbors(pbmc, dims = 1:10)
+pbmc <- FindClusters(pbmc, resolution = 0.4)
 
-DimPlot(pbmc, reduction = "pca")
-
-label_df = merge(experiment_data$labels, data.frame(Idents(pbmc)), by.x = "cell", by.y = 0) %>% 
-  rename(
-    true_id = cluster.ids,
-    computed_id = Idents.pbmc.
-  )
+label_df = merge(experiment_data$labels, data.frame(Idents(pbmc)), by.x = "cell", by.y = 0)
+names(label_df)[2:3] <- c("true_id", "computed_id")
 
 label_df$computed_id = as.numeric(label_df$computed_id)
 
@@ -96,6 +92,9 @@ confusion_matrix
 # modifies seurat identities
 # returns clustering plot with pca
 seurat_clustering_plot = function(seurat_obj, cell_col, label_col) {
+  pi = order(label_col)
+  cell_col = cell_col[pi]
+  label_col = label_col[pi]
   seurat_obj <- SetIdent(seurat_obj, cells = cell_col, label_col)
   return (DimPlot(seurat_obj, reduction = "pca"))
 }
@@ -108,3 +107,7 @@ pbmc.markers <- FindAllMarkers(pbmc, min.pct = 0.25, logfc.threshold = 0.25)
 pbmc.markers %>%
   group_by(cluster) %>%
   slice_max(n = 10, order_by = avg_log2FC)
+
+entropy(confusion_matrix)
+purity(confusion_matrix)
+mean(silhouette(label_df$computed_id, dist(Embeddings(pbmc[['pca']])[,1:50]))[,3])
