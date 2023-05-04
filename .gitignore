@@ -2,6 +2,14 @@
 dataset/
 tests/
 
+#enviroments
+# Delete all folders named `.venv`
+**/.venv
+
+
+#vscode conf
+.vscode
+
 # History files
 .Rhistory
 .Rapp.history
