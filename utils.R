@@ -1,6 +1,8 @@
 # TODO import cose
 library(Seurat)
 library(dplyr)
+library(ggplot2)
+library(gridExtra)
 
 # In input: a dataframe with two cluster id columns, named 'true_id' and 'computed_id'
 # labels of these columns will be renamed in order to get the best match between clusters.
@@ -40,7 +42,10 @@ align_clusters = function(label_dataframe) {
   label_dataframe$true_id = permutation_true[label_dataframe$true_id]
   
   # return confusion matrix
-  return (list("confusion_matrix" = confusion_matrix, "label_dataframe" = label_dataframe))
+  return (list("confusion_matrix" = confusion_matrix, 
+               "label_dataframe" = label_dataframe, 
+               "permutation_true" = permutation_true, 
+               "permutation_computed" = permutation_computed))
 }
 
 
@@ -68,3 +73,17 @@ load_data <- function(data_dir, label_dir, channel) {
   
   return (list("data" = data, "labels" = true_labels))
 } 
+
+write_clustering = function(outdir, tag, label_df, cell_col, cluster_col) {
+  to_write = label_df[c(cell_col, cluster_col)]
+  colnames(to_write)[colnames(to_write) == cell_col] = "cell"
+  colnames(to_write)[colnames(to_write) == cluster_col] = "cluster"
+  write.csv(to_write, paste(outdir, "/", "clustering_", tag, ".csv", sep=""), row.names = FALSE)
+}
+
+write_markers = function(outdir, tag, marker_df, gene_col, cluster_col) {
+  to_write = marker_df[c(gene_col, cluster_col)]
+  colnames(to_write)[colnames(to_write) == gene_col] = "gene"
+  colnames(to_write)[colnames(to_write) == cluster_col] = "cluster"
+  write.csv(to_write, paste(outdir, "/", "markers_", tag, ".csv", sep=""), row.names = FALSE)
+}
