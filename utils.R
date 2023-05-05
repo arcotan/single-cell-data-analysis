@@ -1,3 +1,7 @@
+# TODO import cose
+library(Seurat)
+library(dplyr)
+
 # In input: a dataframe with two cluster id columns, named 'true_id' and 'computed_id'
 # labels of these columns will be renamed in order to get the best match between clusters.
 # The confusion matrix of the clustering is also added to the output:
