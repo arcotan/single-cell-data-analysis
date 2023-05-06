@@ -73,15 +73,36 @@ load_data <- function(data_dir, label_dir, channel) {
   return (list("data" = data, "labels" = true_labels))
 } 
 
-write_clustering = function(outdir, tag, label_df, cell_col, cluster_col) {
+
+#TODO verifica nan
+clustering_scores = function(label_df, computed_label, true_label, distance_matrix) {
+  confusion_matrix = table(label_df[[computed_label]], label_df[[true_label]])
+  res_overlap = sum(diag(confusion_matrix)) / sum(confusion_matrix)
+  res_entropy = entropy(confusion_matrix)
+  res_purity = purity(confusion_matrix)
+  res_silhouette = mean(silhouette(label_df[[computed_label]], distance_matrix)[,3])
+  return (data.frame("entropy" = res_entropy, "purity" = res_purity, "silhouette" = res_silhouette, "accuracy" = res_overlap))
+}
+
+write_clustering = function(outdir, tag, label_df, cell_col, cluster_col, true_cluster_col, distance_matrix) {
+  # compute and write scores
+  cscores = clustering_scores(label_df, cluster_col, true_cluster_col, distance_matrix)
+  write.csv(cscores, paste(outdir, "/", "clustering_scores_", tag, ".csv", sep=""), row.names = FALSE)
+  
+  # write labels
   to_write = label_df[c(cell_col, cluster_col)]
   colnames(to_write)[colnames(to_write) == cell_col] = "cell"
   colnames(to_write)[colnames(to_write) == cluster_col] = "cluster"
-  write.csv(to_write, paste(outdir, "/", "clustering_", tag, ".csv", sep=""), row.names = FALSE)
+  write.csv(to_write, paste(outdir, "/", "clustering_labels_", tag, ".csv", sep=""), row.names = FALSE)
 }
 
-write_markers = function(outdir, tag, marker_df, gene_col, cluster_col) {
-  to_write = marker_df[c(gene_col, cluster_col)]
+write_markers = function(outdir, tag, marker_df, gene_col, cluster_col, order_by_col, top_k) {
+  marker_df = marker_df %>%
+    group_by(get(cluster_col)) %>%
+    slice_max(n = top_k, order_by = get(order_by_col)) %>% 
+    mutate(rank = row_number(), ties.method = "first")
+  marker_df = data.frame(marker_df)
+  to_write = marker_df[c(gene_col, cluster_col, "rank")]
   colnames(to_write)[colnames(to_write) == gene_col] = "gene"
   colnames(to_write)[colnames(to_write) == cluster_col] = "cluster"
   write.csv(to_write, paste(outdir, "/", "markers_", tag, ".csv", sep=""), row.names = FALSE)
@@ -145,10 +166,3 @@ plot_de = function(expression_matrix, marker_df, gene_col, marker_df_cluster_col
   ggsave(paste(out_dir, "/", "de_", file_tag, ".png", sep=""), box_plots, dpi=400)
 }
 
-clustering_scores = function(label_df, computed_label, true_label, distance_matrix) {
-  confusion_matrix = table(label_df[[computed_label]], label_df[[true_label]])
-  res_entropy = entropy(confusion_matrix)
-  res_purity = purity(confusion_matrix)
-  res_silhouette = mean(silhouette(label_df[[computed_label]], distance_matrix)[,3])
-  return (list("entropy" = res_entropy, "purity" = res_purity, "silhouette" = res_silhouette))
-}

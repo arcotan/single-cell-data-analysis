@@ -11,7 +11,7 @@ IN_LABEL_DIR = "./dataset/tabulamuris"
 OUT_LABEL_DIR = "./filtered_dataset/tabulamuris/"
 CHANNEL = "10X_P7_4"
 OUT_RES_DIR = "./results"
-
+TOP_MARKER_NUM = 20
 RES_FILE_TAG = paste(CHANNEL, "_seurat", sep="")
 
 # Loading data
@@ -106,15 +106,10 @@ seurat_clustering_plot(pbmc, label_df$cell, label_df$computed_id) + seurat_clust
 
 # find markers for every cluster compared to all remaining cells
 pbmc.markers <- FindAllMarkers(pbmc, min.pct = 0.25, logfc.threshold = 0.25)
-marker_df = pbmc.markers %>%
-  group_by(cluster) %>%
-  slice_max(n = 20, order_by = avg_log2FC)
-marker_df = data.frame(marker_df)
 
-cscores = clustering_scores(label_df, "computed_id", "true_id", dist(Embeddings(pbmc[['pca']])[,1:50]))
+plot_de(data_to_write, pbmc.markers, "gene", "cluster", label_df, "cell", "computed_id", OUT_RES_DIR, RES_FILE_TAG)
 
-plot_de(data_to_write, marker_df, "gene", "cluster", label_df, "cell", "computed_id", OUT_RES_DIR, RES_FILE_TAG)
+write_clustering(OUT_RES_DIR, RES_FILE_TAG, label_df, "cell", "computed_id", "true_id", dist(Embeddings(pbmc[['pca']])[,1:50]))
 
-write_clustering(OUT_RES_DIR, RES_FILE_TAG, label_df, "cell", "computed_id")
+write_markers(OUT_RES_DIR, RES_FILE_TAG, pbmc.markers, "gene", "cluster", "avg_log2FC", TOP_MARKER_NUM)
 
-write_markers(OUT_RES_DIR, RES_FILE_TAG, marker_df, "gene", "cluster")
