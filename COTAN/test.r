@@ -1,6 +1,9 @@
 library(COTAN)
 library(zeallot)
 library(ggplot2)
+library(factoextra)
+library(qpdf)
+
 
 source("utils.R")
 
@@ -19,19 +22,19 @@ obj = initializeMetaDataset(obj,
                             sequencingMethod = "10x",
                             sampleCondition = "Heart_and_Aorta")
 
-ECDPlot(obj, yCut = 700)
-cellSizePlot(obj)
-genesSizePlot(obj)
+ECDPlot(obj, yCut = 700) # a cosa serve
+cellSizePlot(obj) # per ogni cellula la somma dei counts
 
 mit <- mitochondrialPercentagePlot(obj, genePrefix = "^Mt")
 mit[["plot"]]
 
-cells_to_rem <- getCells(obj)[getCellsSize(obj) > 15000]
+cells_to_rem <- getCells(obj)[getCellsSize(obj) > 15000] # la somma dei counts di ciascuna cellula deve essere < 15000 (elimina doublets)
 obj <- dropGenesCells(obj, cells = cells_to_rem)
 
 cellGeneNumber <- sort(colSums(as.data.frame(getRawData(obj) > 0)), decreasing = FALSE)
-cells_to_rem <- names(cellGeneNumber)[cellGeneNumber > 4000]
+cells_to_rem <- names(cellGeneNumber)[cellGeneNumber > 4000] # outliers
 obj <- dropGenesCells(obj, cells = cells_to_rem)
+genesSizePlot(obj) # per ogni cellula il numero di reads > 0
 
 to_rem <- mit[["sizes"]][["mit.percentage"]] > 0.8
 cells_to_rem <- rownames(mit[["sizes"]])[to_rem]
@@ -42,8 +45,10 @@ mit[["plot"]]
 
 obj <- clean(obj)
 c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot) %<-% cleanPlots(obj)
-pcaCellsPlot
+pcaCellsPlot # ?
 genesPlot
+UDEPlot
+nuPlot
 
 ggplot(subset(pcaCellsData[pcaCellsData$PC1 < 0,], groups == "A"),
                        aes(x = PC1, y = PC2, colour = groups)) +
