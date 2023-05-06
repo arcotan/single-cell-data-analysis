@@ -3,6 +3,7 @@ library(Seurat)
 library(dplyr)
 library(ggplot2)
 library(gridExtra)
+library(NMF)
 
 # In input: a dataframe with two cluster id columns, named 'true_id' and 'computed_id'
 # labels of the computed ids column will be renamed in order to get the best match between clusters.
@@ -86,7 +87,7 @@ write_markers = function(outdir, tag, marker_df, gene_col, cluster_col) {
   write.csv(to_write, paste(outdir, "/", "markers_", tag, ".csv", sep=""), row.names = FALSE)
 }
 
-plot_de = function(expression_matrix, marker_df, gene_col, marker_df_cluster_col, cluster_df, cell_col, cluster_df_cluster_col) {
+plot_de = function(expression_matrix, marker_df, gene_col, marker_df_cluster_col, cluster_df, cell_col, cluster_df_cluster_col, out_dir, file_tag) {
   DE = function(expression_matrix, marker_df, gene_col, marker_df_cluster_col, cur_ident, IDENTS, cell_col, cluster_col) {
     print(paste('Class:', cur_ident, sep=' '))
     markers = marker_df[marker_df[[marker_df_cluster_col]] == cur_ident, ]
@@ -97,7 +98,7 @@ plot_de = function(expression_matrix, marker_df, gene_col, marker_df_cluster_col
     
     ld = merge(t(data.frame(d)), l, by.x = "row.names", by.y = cell_col)
     colnames(ld)[length(ld)] = 'cluster.ids'
-    ld
+    
     topn = ld[, c(head(markers,5)[[gene_col]], 'cluster.ids')]
     
     # Define a function for creating each ggplot object
@@ -141,5 +142,13 @@ plot_de = function(expression_matrix, marker_df, gene_col, marker_df_cluster_col
   
   box_plots = grid.arrange(grobs = unlist(plts, recursive=FALSE), ncol=5)
   
-  ggsave('de.png', box_plots, dpi=400)
+  ggsave(paste(out_dir, "/", "de_", file_tag, ".png", sep=""), box_plots, dpi=400)
+}
+
+clustering_scores = function(label_df, computed_label, true_label, distance_matrix) {
+  confusion_matrix = table(label_df[[computed_label]], label_df[[true_label]])
+  res_entropy = entropy(confusion_matrix)
+  res_purity = purity(confusion_matrix)
+  res_silhouette = mean(silhouette(label_df[[computed_label]], distance_matrix)[,3])
+  return (list("entropy" = res_entropy, "purity" = res_purity, "silhouette" = res_silhouette))
 }

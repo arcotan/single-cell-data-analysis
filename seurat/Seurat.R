@@ -2,7 +2,6 @@ library(dplyr)
 library(Seurat)
 library(patchwork)
 library(DropletUtils)
-library(NMF)
 
 source("utils.R")
 
@@ -11,7 +10,9 @@ OUT_DATA_DIR = "./filtered_dataset/tabulamuris/"
 IN_LABEL_DIR = "./dataset/tabulamuris"
 OUT_LABEL_DIR = "./filtered_dataset/tabulamuris/"
 CHANNEL = "10X_P7_4"
+OUT_RES_DIR = "./results"
 
+RES_FILE_TAG = paste(CHANNEL, "_seurat", sep="")
 
 # Loading data
 experiment_data = load_data(IN_DATA_DIR, IN_LABEL_DIR, CHANNEL)
@@ -110,9 +111,10 @@ marker_df = pbmc.markers %>%
   slice_max(n = 20, order_by = avg_log2FC)
 marker_df = data.frame(marker_df)
 
-entropy(confusion_matrix)
-purity(confusion_matrix)
-mean(silhouette(label_df$computed_id, dist(Embeddings(pbmc[['pca']])[,1:50]))[,3])
+cscores = clustering_scores(label_df, "computed_id", "true_id", dist(Embeddings(pbmc[['pca']])[,1:50]))
 
-#TODO salvare dati e plot DE
-plot_de(data_to_write, marker_df, "gene", "cluster", label_df, "cell", "computed_id")
+plot_de(data_to_write, marker_df, "gene", "cluster", label_df, "cell", "computed_id", OUT_RES_DIR, RES_FILE_TAG)
+
+write_clustering(OUT_RES_DIR, RES_FILE_TAG, label_df, "cell", "computed_id")
+
+write_markers(OUT_RES_DIR, RES_FILE_TAG, marker_df, "gene", "cluster")
