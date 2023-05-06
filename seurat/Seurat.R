@@ -20,6 +20,11 @@ experiment_data = load_data(IN_DATA_DIR, IN_LABEL_DIR, CHANNEL)
 # Load the PBMC dataset
 pbmc.data <- experiment_data$data
 
+# plot distribution of amount of cells in which each gene is expressed
+ggplot(data.frame("sum" = rowSums(pbmc.data > 0)), aes(x=sum)) + geom_histogram()
+# plot distribution of sum of counts for each cell
+ggplot(data.frame("sum" = colSums(pbmc.data > 0)), aes(x=sum)) + geom_histogram()
+
 # Initialize the Seurat object with the raw (non-normalized data).
 pbmc <- CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 200)
 
