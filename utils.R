@@ -96,10 +96,11 @@ write_clustering = function(outdir, tag, label_df, cell_col, cluster_col, true_c
   write.csv(to_write, paste(outdir, "/", "clustering_labels_", tag, ".csv", sep=""), row.names = FALSE)
 }
 
-write_markers = function(outdir, tag, marker_df, gene_col, cluster_col, order_by_col, top_k) {
+write_markers = function(outdir, tag, marker_df, gene_col, cluster_col, order_by_col, is_higher_better, top_k) {
+  is_higher_better = is_higher_better*1
   marker_df = marker_df %>%
     group_by(get(cluster_col)) %>%
-    slice_max(n = top_k, order_by = get(order_by_col)) %>% 
+    slice_max(n = top_k, order_by = (is_higher_better*get(order_by_col))) %>% 
     mutate(rank = row_number(), ties.method = "first")
   marker_df = data.frame(marker_df)
   to_write = marker_df[c(gene_col, cluster_col, "rank")]

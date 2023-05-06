@@ -10,9 +10,9 @@ OUT_DATA_DIR = "./filtered_dataset/tabulamuris/"
 IN_LABEL_DIR = "./dataset/tabulamuris"
 OUT_LABEL_DIR = "./filtered_dataset/tabulamuris/"
 CHANNEL = "10X_P7_4"
-OUT_RES_DIR = "./results"
+OUT_RES_DIR = "./results/seurat"
 TOP_MARKER_NUM = 20
-RES_FILE_TAG = paste(CHANNEL, "_seurat", sep="")
+RES_FILE_TAG = CHANNEL
 
 # Loading data
 experiment_data = load_data(IN_DATA_DIR, IN_LABEL_DIR, CHANNEL)
@@ -74,6 +74,9 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
 
 DimHeatmap(pbmc, dims = 1, cells = 500, balanced = TRUE)
 
+ElbowPlot(object = pbmc, 
+          ndims = 50)
+
 # Get clustering data
 pbmc <- FindNeighbors(pbmc, dims = 1:10)
 pbmc <- FindClusters(pbmc, resolution = 0.4)
@@ -111,5 +114,5 @@ plot_de(data_to_write, pbmc.markers, "gene", "cluster", label_df, "cell", "compu
 
 write_clustering(OUT_RES_DIR, RES_FILE_TAG, label_df, "cell", "computed_id", "true_id", dist(Embeddings(pbmc[['pca']])[,1:50]))
 
-write_markers(OUT_RES_DIR, RES_FILE_TAG, pbmc.markers, "gene", "cluster", "avg_log2FC", TOP_MARKER_NUM)
+write_markers(OUT_RES_DIR, RES_FILE_TAG, pbmc.markers, "gene", "cluster", "avg_log2FC", TRUE, TOP_MARKER_NUM)
 
