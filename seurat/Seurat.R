@@ -62,7 +62,7 @@ plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
 plot2
 
 all.genes <- rownames(pbmc)
-pbmc <- ScaleData(pbmc, features = all.genes)
+pbmc <- ScaleData(pbmc, features = all.genes) # unit variance?
 
 pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
 
