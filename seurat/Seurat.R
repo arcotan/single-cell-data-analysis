@@ -2,6 +2,7 @@ library(dplyr)
 library(Seurat)
 library(patchwork)
 library(DropletUtils)
+library(NMF)
 
 source("utils.R")
 
@@ -61,7 +62,7 @@ plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
 plot2
 
 all.genes <- rownames(pbmc)
-pbmc <- ScaleData(pbmc, features = all.genes)
+pbmc <- ScaleData(pbmc, features = all.genes) # unit variance?
 
 pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
 
@@ -73,18 +74,14 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
 DimHeatmap(pbmc, dims = 1, cells = 500, balanced = TRUE)
 
 # Get clustering data
-pbmc <- FindNeighbors(pbmc, dims = 1:10) #
-pbmc <- FindClusters(pbmc, resolution = 0.1)
+pbmc <- FindNeighbors(pbmc, dims = 1:10)
+pbmc <- FindClusters(pbmc, resolution = 0.4)
 
-DimPlot(pbmc, reduction = "pca")
-
-label_df = merge(experiment_data$labels, data.frame(Idents(pbmc)), by.x = "cell", by.y = 0) %>% 
-  rename(
-    true_id = cluster.ids,
-    computed_id = Idents.pbmc.
-  )
+label_df = merge(experiment_data$labels, data.frame(Idents(pbmc)), by.x = "cell", by.y = 0)
+names(label_df)[2:3] <- c("true_id", "computed_id")
 
 label_df$computed_id = as.numeric(label_df$computed_id)
+pbmc <- SetIdent(pbmc, cells = label_df$cell, label_df$computed_id)
 
 # rename cluster labels to get best clustering results
 clustering_info = align_clusters(label_df)
@@ -96,6 +93,9 @@ confusion_matrix
 # modifies seurat identities
 # returns clustering plot with pca
 seurat_clustering_plot = function(seurat_obj, cell_col, label_col) {
+  pi = order(label_col)
+  cell_col = cell_col[pi]
+  label_col = label_col[pi]
   seurat_obj <- SetIdent(seurat_obj, cells = cell_col, label_col)
   return (DimPlot(seurat_obj, reduction = "pca"))
 }
@@ -105,6 +105,14 @@ seurat_clustering_plot(pbmc, label_df$cell, label_df$computed_id) + seurat_clust
 
 # find markers for every cluster compared to all remaining cells
 pbmc.markers <- FindAllMarkers(pbmc, min.pct = 0.25, logfc.threshold = 0.25)
-pbmc.markers %>%
+marker_df = pbmc.markers %>%
   group_by(cluster) %>%
-  slice_max(n = 10, order_by = avg_log2FC)
+  slice_max(n = 20, order_by = avg_log2FC)
+marker_df = data.frame(marker_df)
+
+entropy(confusion_matrix)
+purity(confusion_matrix)
+mean(silhouette(label_df$computed_id, dist(Embeddings(pbmc[['pca']])[,1:50]))[,3])
+
+#TODO salvare dati e plot DE
+plot_de(data_to_write, marker_df, "gene", "cluster", label_df, "cell", "computed_id")

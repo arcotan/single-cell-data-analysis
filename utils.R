@@ -1,5 +1,11 @@
+# TODO import cose
+library(Seurat)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+
 # In input: a dataframe with two cluster id columns, named 'true_id' and 'computed_id'
-# labels of these columns will be renamed in order to get the best match between clusters.
+# labels of the computed ids column will be renamed in order to get the best match between clusters.
 # The confusion matrix of the clustering is also added to the output:
 # rows of the matrix are related to predictions, columns are related to the ground truth
 align_clusters = function(label_dataframe) {
@@ -30,13 +36,14 @@ align_clusters = function(label_dataframe) {
     permutation_true[c(i, col_max)] = permutation_true[c(col_max, i)]
   }
   
-  # apply permutations
-  label_dataframe$computed_id = permutation_computed[label_dataframe$computed_id]
+  # apply permutation to computed ids
+  pi = permutation_true[permutation_computed]
+  label_dataframe$computed_id = pi[label_dataframe$computed_id]
   
-  label_dataframe$true_id = permutation_true[label_dataframe$true_id]
-  
-  # return confusion matrix
-  return (list("confusion_matrix" = confusion_matrix, "label_dataframe" = label_dataframe))
+  # return confusion matrix, TODO più efficiente senza ricalcolare crosstable
+  return (list("confusion_matrix" = table(label_dataframe$computed_id, label_dataframe$true_id), 
+               "label_dataframe" = label_dataframe, 
+               "permutation_computed" = permutation_computed))
 }
 
 
@@ -64,3 +71,75 @@ load_data <- function(data_dir, label_dir, channel) {
   
   return (list("data" = data, "labels" = true_labels))
 } 
+
+write_clustering = function(outdir, tag, label_df, cell_col, cluster_col) {
+  to_write = label_df[c(cell_col, cluster_col)]
+  colnames(to_write)[colnames(to_write) == cell_col] = "cell"
+  colnames(to_write)[colnames(to_write) == cluster_col] = "cluster"
+  write.csv(to_write, paste(outdir, "/", "clustering_", tag, ".csv", sep=""), row.names = FALSE)
+}
+
+write_markers = function(outdir, tag, marker_df, gene_col, cluster_col) {
+  to_write = marker_df[c(gene_col, cluster_col)]
+  colnames(to_write)[colnames(to_write) == gene_col] = "gene"
+  colnames(to_write)[colnames(to_write) == cluster_col] = "cluster"
+  write.csv(to_write, paste(outdir, "/", "markers_", tag, ".csv", sep=""), row.names = FALSE)
+}
+
+plot_de = function(expression_matrix, marker_df, gene_col, marker_df_cluster_col, cluster_df, cell_col, cluster_df_cluster_col) {
+  DE = function(expression_matrix, marker_df, gene_col, marker_df_cluster_col, cur_ident, IDENTS, cell_col, cluster_col) {
+    print(paste('Class:', cur_ident, sep=' '))
+    markers = marker_df[marker_df[[marker_df_cluster_col]] == cur_ident, ]
+    print(head(markers, 5))
+
+    l = IDENTS
+    d = expression_matrix
+    
+    ld = merge(t(data.frame(d)), l, by.x = "row.names", by.y = cell_col)
+    colnames(ld)[length(ld)] = 'cluster.ids'
+    ld
+    topn = ld[, c(head(markers,5)[[gene_col]], 'cluster.ids')]
+    
+    # Define a function for creating each ggplot object
+    create_plot <- function(gene_id, topn) {
+      title = paste('C:', cur_ident, 'Gene:', names(data.frame(topn[,c(gene_id,6)]))[[1]], sep=' ')
+      ggplot(data.frame(topn[,c(gene_id,6)]), aes(y=data.frame(topn[,c(gene_id,6)])[[1]], x=topn$cluster.ids, group=topn$cluster.ids)) +
+        geom_boxplot() +
+        xlab("Group") +
+        ylab("Counts") +
+        ggtitle(title) +
+        theme(plot.title = element_text(size = 10))
+    }
+    
+    # Create the list of ggplots using lapply and the create_plot function
+    plots <- lapply(1:(length(topn)-1), function(gene_id) {
+      create_plot(gene_id, topn)
+    })
+    
+    
+    cnt = data.frame()
+    for(id in sort(unique(topn$cluster.ids))) {
+      a = apply(topn[topn$cluster.ids == id,1:length(topn)-1], 2, sum)
+      cnt = rbind(cnt, a)
+    }
+    colnames(cnt) = colnames(topn)[1:length(topn)-1]
+    
+    return (list("plots" = plots, "counts" = cnt))
+  }
+
+  DE_ANALISYS = lapply(sort(unique(label_df[[cluster_df_cluster_col]])), function(ident) {
+    DE(expression_matrix, marker_df, gene_col, marker_df_cluster_col, ident, label_df, cell_col, cluster_df_cluster_col)
+  })
+  
+  plts = lapply(DE_ANALISYS, function(x) {
+    x$plots
+  })
+  
+  cnts = lapply(DE_ANALISYS, function(x) {
+    x$counts
+  })
+  
+  box_plots = grid.arrange(grobs = unlist(plts, recursive=FALSE), ncol=5)
+  
+  ggsave('de.png', box_plots, dpi=400)
+}

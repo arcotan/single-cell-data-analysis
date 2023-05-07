@@ -31,3 +31,21 @@ res = align_clusters(label_df)
 res$confusion_matrix
 
 label_df <- res$label_dataframe
+
+marker_test_res <- top_markers(cds,
+                               group_cells_by="cluster",
+                               reduction_method = "PCA",
+                               cores=8)
+
+marker_test_res$cell_group <- res$permutation_computed[as.numeric(marker_test_res$cell_group)]
+
+top_specific_markers <- marker_test_res %>%
+  filter(fraction_expressing >= 0.10) %>%
+  group_by(cell_group) %>%
+  top_n(20, pseudo_R2)
+
+#TODO plot markers
+
+write_clustering(LABEL_DIR, paste(CHANNEL, "_Monocle", sep=""), label_df, "cell", "computed_id")
+write_markers(LABEL_DIR, paste(CHANNEL, "_Monocle", sep=""), top_specific_markers, "gene_id", "cell_group")
+
