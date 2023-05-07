@@ -1,9 +1,10 @@
-# cose da fare oggi
+# cose da fare
 
-- salvataggio dei data con scvi
-- applicare ad altri dataset
 - cercare algoritmi specifici per ogni tool
-- analisi dei nan ottenuti nel clustering
 - classificazione
 - come organizzare il report?
 - enrichment analysis?
+
+# future
+
+- applicare ad altri dataset
