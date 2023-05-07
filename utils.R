@@ -5,13 +5,13 @@ library(ggplot2)
 library(gridExtra)
 library(NMF)
 
-# In input: a dataframe with two cluster id columns, named 'true_id' and 'computed_id'
+# In input: a dataframe with two cluster id columns
 # labels of the computed ids column will be renamed in order to get the best match between clusters.
 # The confusion matrix of the clustering is also added to the output:
 # rows of the matrix are related to predictions, columns are related to the ground truth
-align_clusters = function(label_dataframe) {
-  label_dataframe_nna = label_dataframe[!is.na(label_dataframe$true_id) & !is.na(label_dataframe$computed_id), ]
-  confusion_matrix = table(label_dataframe_nna$computed_id, label_dataframe_nna$true_id) # row predictions, col ground truth
+align_clusters = function(label_dataframe, true_id_col, computed_id_col) {
+  label_dataframe_nna = label_dataframe[!is.na(label_dataframe[[true_id_col]]) & !is.na(label_dataframe[[computed_id_col]]), ]
+  confusion_matrix = table(label_dataframe_nna[[computed_id_col]], label_dataframe_nna[[true_id_col]]) # row predictions, col ground truth
   permutation_computed = c(1:nrow(confusion_matrix))
   permutation_true = c(1:ncol(confusion_matrix))
   it_num = min(nrow(confusion_matrix), ncol(confusion_matrix))
@@ -39,10 +39,10 @@ align_clusters = function(label_dataframe) {
   
   # apply permutation to computed ids
   pi = permutation_true[permutation_computed]
-  label_dataframe$computed_id = pi[label_dataframe$computed_id]
+  label_dataframe[[computed_id_col]] = pi[label_dataframe[[computed_id_col]]]
   
   # return confusion matrix, TODO più efficiente senza ricalcolare crosstable
-  return (list("confusion_matrix" = table(label_dataframe$computed_id, label_dataframe$true_id), 
+  return (list("confusion_matrix" = table(label_dataframe[[computed_id_col]], label_dataframe[[true_id_col]]), 
                "label_dataframe" = label_dataframe, 
                "permutation_computed" = permutation_computed))
 }
@@ -81,15 +81,28 @@ load_data <- function(data_dir, label_dir, channel) {
   return (list("data" = data, "labels" = true_labels))
 } 
 
+# returns clustering plot with pca
+seurat_clustering_plot = function(seurat_obj, cell_col, label_col) {
+  pi = order(label_col)
+  cell_col = cell_col[pi]
+  label_col = label_col[pi]
+  seurat_obj <- SetIdent(seurat_obj, cells = cell_col, label_col)
+  return (DimPlot(seurat_obj, reduction = "pca"))
+}
 
-#TODO verifica nan
-clustering_scores = function(label_df, computed_label, true_label, distance_matrix) {
+clustering_simple_scores = function(label_df, computed_label, true_label) {
   confusion_matrix = table(label_df[[computed_label]], label_df[[true_label]])
   res_overlap = sum(diag(confusion_matrix)) / sum(confusion_matrix)
   res_entropy = entropy(confusion_matrix)
   res_purity = purity(confusion_matrix)
-  res_silhouette = mean(silhouette(label_df[[computed_label]], distance_matrix)[,3])
-  return (data.frame("entropy" = res_entropy, "purity" = res_purity, "silhouette" = res_silhouette, "accuracy" = res_overlap))
+  return (data.frame("entropy" = res_entropy, "purity" = res_purity, "accuracy" = res_overlap))
+}
+
+#TODO verifica nan
+clustering_scores = function(label_df, computed_label, true_label, distance_matrix) {
+  simple_scores = clustering_simple_scores(label_df, computed_label, true_label)
+  simple_scores$silhouette = mean(silhouette(label_df[[computed_label]], distance_matrix)[,3])
+  return (simple_scores)
 }
 
 write_clustering = function(outdir, tag, label_df, cell_col, cluster_col, true_cluster_col, distance_matrix) {

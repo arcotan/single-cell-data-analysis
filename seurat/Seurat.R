@@ -97,21 +97,11 @@ label_df$computed_id = as.numeric(label_df$computed_id)
 pbmc <- SetIdent(pbmc, cells = label_df$cell, label_df$computed_id)
 
 # rename cluster labels to get best clustering results
-clustering_info = align_clusters(label_df)
+clustering_info = align_clusters(label_df, "true_id", "computed_id")
 confusion_matrix = clustering_info$confusion_matrix
 label_df = clustering_info$label_dataframe
 # display confusion matrix
 confusion_matrix
-
-# modifies seurat identities
-# returns clustering plot with pca
-seurat_clustering_plot = function(seurat_obj, cell_col, label_col) {
-  pi = order(label_col)
-  cell_col = cell_col[pi]
-  label_col = label_col[pi]
-  seurat_obj <- SetIdent(seurat_obj, cells = cell_col, label_col)
-  return (DimPlot(seurat_obj, reduction = "pca"))
-}
 
 # Compare clustering (left) with ground truth
 seurat_clustering_plot(pbmc, label_df$cell, label_df$computed_id) + seurat_clustering_plot(pbmc, label_df$cell, label_df$true_id)

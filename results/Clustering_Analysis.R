@@ -1,11 +1,13 @@
 
 library(dplyr)
+library(ggplot2)
 
 source("utils.R")
 
 TOOL_TAGS = c("seurat")
 DATASET_TAGS = c("10X_P7_4")
 LABEL_TAG_TO_DIR = list("10X_P7_4" = "./dataset/tabulamuris/")
+LABEL_TAG_TO_FILTERED_DIR = list("10X_P7_4" = "./filtered_dataset/tabulamuris/data_10X_P7_4")
 
 
 read_single_data = function(tool_tag, dataset_tag) {
@@ -25,6 +27,9 @@ read_single_data = function(tool_tag, dataset_tag) {
 
 read_dataset_data = function(tool_tag_list, dataset_tag) {
   to_init = TRUE
+  label_data = NULL
+  score_data = NULL
+  marker_data = NULL
   for (tool in tool_tag_list) {
     # read data of current tool
     cur_tool_data = read_single_data(tool, dataset_tag)
@@ -61,6 +66,22 @@ read_dataset_data = function(tool_tag_list, dataset_tag) {
   colnames(true_ids)[colnames(true_ids) == "cluster.ids"] <- "true_labels"
   label_data = left_join(label_data, true_ids)
   
+  if (!to_init) {
+    # align each clustering with true labels
+    for (label in colnames(label_data[2:(length(colnames(label_data))-1)])) {
+      alignment = align_clusters(label_data, "true_labels", label)
+      label_data[[label]] <- alignment$label_dataframe[[label]]
+    }
+    # compute missing clustering scores (for scanpy and scvi only silhouette should not have NA at this point)
+    for (i in 1:nrow(score_data)) {
+      cur_info = score_data[i, ]
+      scores_to_add = clustering_simple_scores(label_data, paste(tool, "_label", sep=""), "true_labels")
+      score_data[i, "accuracy"] <- scores_to_add$accuracy
+      score_data[i, "entropy"] <- scores_to_add$entropy
+      score_data[i, "purity"] <- scores_to_add$purity
+    }
+  }
+  
   return (list("labels" = label_data, "scores" = score_data, "markers" = marker_data))
 }
 
@@ -78,15 +99,35 @@ collect_data = function(dataset_tag_list, tool_tag_list, write_aggregate = TRUE)
   return (datasets_aggregate_data_list)
 }
 
-
+# TODO $ non funziona se il tag inizia con un numero
 global_data = collect_data(DATASET_TAGS, TOOL_TAGS)
 
+# print NA count
+print("NA count")
+for (dataset in DATASET_TAGS) {
+  print(paste("Dataset: ", dataset))
+  print(colSums(is.na(global_data[[dataset]]$labels[,2:ncol(global_data[[dataset]]$labels)])))
+}
 
-# TODO align clusters
-# TODO recompute scores
-# TODO plot clustering and save results to png
+# plot clustering and save results to eps
+for (dataset in DATASET_TAGS) {
+  print("--------------------------------------")
+  print(paste("Clustering results for dataset ", dataset, sep=""))
+  pbmc.data <- Read10X(LABEL_TAG_TO_FILTERED_DIR[[dataset]], strip.suffix = TRUE)
+  pbmc <- CreateSeuratObject(counts = pbmc.data)
+  pbmc <- NormalizeData(pbmc, normalization.method = "LogNormalize", scale.factor = 10000)
+  pbmc <- FindVariableFeatures(pbmc, selection.method = "vst")
+  pbmc <- ScaleData(pbmc, features = rownames(pbmc))
+  pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
+  for (label in colnames(global_data[[dataset]]$labels)[-1]) {
+    print(label)
+    print(dataset)
+    cur_plot <- seurat_clustering_plot(pbmc, global_data[[dataset]]$labels$cell, global_data[[dataset]]$labels[[label]])
+    ggsave(filename = paste("./results/aggregate/", dataset, "_", label, ".eps", sep=""), cur_plot)
+  }
+  print("--------------------------------------")
+}
 
-# TODO print NA count
 
 # TODO print marker intersection between tools
 # library(ggvenn)
