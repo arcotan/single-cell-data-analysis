@@ -48,6 +48,18 @@ align_clusters = function(label_dataframe) {
 }
 
 
+load_dataset_labels <- function(label_dir, channel) {
+  # Load cell metadata
+  metadata = read.csv(file = paste(label_dir, "annotations_droplet.csv", sep = "/"))
+  
+  # Filter data to use only data for current dataset
+  metadata = metadata[metadata$channel == channel,]
+  metadata$cell = substr(metadata$cell, 10, 25)
+  metadata = metadata[c("cell", "cluster.ids")]
+  metadata$cluster.ids <- metadata$cluster.ids + 1
+  
+  return (metadata)
+}
 
 # loads gene expression matrix associated to a channel and gets the cluster label for each cell,
 # if metadata for a cell is not found, its cluster id will be NA
@@ -56,16 +68,12 @@ load_data <- function(data_dir, label_dir, channel) {
   data = Read10X(data.dir = IN_DATA_DIR, strip.suffix = TRUE)
   
   # Load cell metadata
-  metadata = read.csv(file = paste(IN_LABEL_DIR, "annotations_droplet.csv", sep = "/"))
-  
-  # Filter data to use only data for current dataset
-  metadata = metadata[metadata$channel == channel,]
-  metadata$cell = substr(metadata$cell, 10, 25)
+  metadata = load_dataset_labels(label_dir, channel)
   
   # Get cluster labels
   cells = colnames(data)
-  true_labels = left_join(data.frame("cell"=cells), metadata)[c("cell", "cluster.ids")]
-  true_labels$cluster.ids <- true_labels$cluster.ids + 1
+  true_labels = left_join(data.frame("cell"=cells), metadata)
+  
   
   # Print number of cells not mapped to a cluster id
   print(paste("Cells mapped to a cluster: ", sum(!is.na(true_labels$cluster.ids)), "/", nrow(true_labels), sep = ""))

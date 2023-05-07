@@ -47,7 +47,11 @@ pbmc <- subset(pbmc, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent
 # Write pre-processed data
 data_to_write = GetAssayData(object = pbmc, assay = "RNA", slot = "data")
 write.csv(data_to_write, paste(OUT_DATA_DIR, "data_", CHANNEL, ".csv", sep=""))
-write10xCounts(paste(OUT_DATA_DIR, "data_", CHANNEL, sep=""), data_to_write)
+Dir10X = paste(OUT_DATA_DIR, "data_", CHANNEL, sep="")
+if (!dir.exists(Dir10X)) {
+  write10xCounts(Dir10X, data_to_write)
+}
+
 filtered_labels = left_join(data.frame("cell"=colnames(data_to_write)), experiment_data$labels)
 write.csv(filtered_labels, paste(OUT_LABEL_DIR, "labels_", CHANNEL, ".csv", sep=""), row.names = FALSE)
 
@@ -87,7 +91,7 @@ pbmc <- FindNeighbors(pbmc, dims = 1:10)
 pbmc <- FindClusters(pbmc, resolution = 0.4)
 
 label_df = merge(experiment_data$labels, data.frame(Idents(pbmc)), by.x = "cell", by.y = 0)
-names(label_df)[2:3] <- c("true_id", "computed_id")
+names(label_df)[2:3] <- c("true_id", "computed_id") #TODO non usare 2 e 3
 
 label_df$computed_id = as.numeric(label_df$computed_id)
 pbmc <- SetIdent(pbmc, cells = label_df$cell, label_df$computed_id)
