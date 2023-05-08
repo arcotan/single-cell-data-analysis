@@ -4,7 +4,7 @@ library(ggplot2)
 
 source("utils.R")
 
-TOOL_TAGS = c("seurat")
+TOOL_TAGS = c("seurat", "scvi", "scanpy")
 DATASET_TAGS = c("10X_P7_4")
 LABEL_TAG_TO_DIR = list("10X_P7_4" = "./dataset/tabulamuris/")
 LABEL_TAG_TO_FILTERED_DIR = list("10X_P7_4" = "./filtered_dataset/tabulamuris/data_10X_P7_4")
@@ -51,11 +51,11 @@ read_dataset_data = function(tool_tag_list, dataset_tag) {
         # merge clustering scores
         scores_to_add = cur_tool_data$scores
         scores_to_add$tool = tool
-        full_join(score_data, scores_to_add)# TODO only works due to empty intersections
+        score_data = full_join(score_data, scores_to_add)# TODO only works due to empty intersections
         # merge markers
         markers_to_add = cur_tool_data$markers
         markers_to_add$tool = tool
-        full_join(marker_data, markers_to_add)# TODO only works due to empty intersections
+        marker_data = full_join(marker_data, markers_to_add)# TODO only works due to empty intersections
       }
     }
   }
@@ -75,7 +75,7 @@ read_dataset_data = function(tool_tag_list, dataset_tag) {
     # compute missing clustering scores (for scanpy and scvi only silhouette should not have NA at this point)
     for (i in 1:nrow(score_data)) {
       cur_info = score_data[i, ]
-      scores_to_add = clustering_simple_scores(label_data, paste(tool, "_label", sep=""), "true_labels")
+      scores_to_add = clustering_simple_scores(label_data, paste(cur_info$tool, "_label", sep=""), "true_labels")
       score_data[i, "accuracy"] <- scores_to_add$accuracy
       score_data[i, "entropy"] <- scores_to_add$entropy
       score_data[i, "purity"] <- scores_to_add$purity
@@ -101,6 +101,8 @@ collect_data = function(dataset_tag_list, tool_tag_list, write_aggregate = TRUE)
 
 # TODO $ non funziona se il tag inizia con un numero
 global_data = collect_data(DATASET_TAGS, TOOL_TAGS)
+# table(global_data[[DATASET_TAGS[1]]]$labels$scanpy_label, global_data[[DATASET_TAGS[1]]]$labels$scvi_label)
+# View(global_data[[DATASET_TAGS[1]]]$scores)
 
 # print NA count
 print("NA count")
@@ -123,7 +125,7 @@ for (dataset in DATASET_TAGS) {
     print(label)
     print(dataset)
     cur_plot <- seurat_clustering_plot(pbmc, global_data[[dataset]]$labels$cell, global_data[[dataset]]$labels[[label]])
-    ggsave(filename = paste("./results/aggregate/", dataset, "_", label, ".eps", sep=""), cur_plot)
+    ggsave(filename = paste("./results/aggregate/", dataset, "_", label, ".png", sep=""), cur_plot)
   }
   print("--------------------------------------")
 }
