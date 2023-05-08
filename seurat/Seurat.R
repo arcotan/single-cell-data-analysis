@@ -88,7 +88,7 @@ ElbowPlot(object = pbmc,
 
 # Get clustering data
 pbmc <- FindNeighbors(pbmc, dims = 1:10)
-pbmc <- FindClusters(pbmc, resolution = 0.4)
+pbmc <- FindClusters(pbmc, resolution = 0.3)
 
 label_df = merge(experiment_data$labels, data.frame(Idents(pbmc)), by.x = "cell", by.y = 0)
 names(label_df)[2:3] <- c("true_id", "computed_id") #TODO non usare 2 e 3

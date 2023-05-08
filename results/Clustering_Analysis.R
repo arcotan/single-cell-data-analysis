@@ -4,7 +4,7 @@ library(ggplot2)
 
 source("utils.R")
 
-TOOL_TAGS = c("seurat", "scvi", "scanpy")
+TOOL_TAGS = c("seurat")
 DATASET_TAGS = c("10X_P7_4")
 LABEL_TAG_TO_DIR = list("10X_P7_4" = "./dataset/tabulamuris/")
 LABEL_TAG_TO_FILTERED_DIR = list("10X_P7_4" = "./filtered_dataset/tabulamuris/data_10X_P7_4")
@@ -68,9 +68,12 @@ read_dataset_data = function(tool_tag_list, dataset_tag) {
   
   if (!to_init) {
     # align each clustering with true labels
-    for (label in colnames(label_data[2:(length(colnames(label_data))-1)])) {
+    for (tool in TOOL_TAGS) {
+      label <- paste(tool, "_label", sep="")
       alignment = align_clusters(label_data, "true_labels", label)
       label_data[[label]] <- alignment$label_dataframe[[label]]
+      View(marker_data)
+      marker_data[marker_data$tool == tool,]$cluster <- alignment$permutation_computed[marker_data[marker_data$tool == tool,]$cluster]
     }
     # compute missing clustering scores (for scanpy and scvi only silhouette should not have NA at this point)
     for (i in 1:nrow(score_data)) {

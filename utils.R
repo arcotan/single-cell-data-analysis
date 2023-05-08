@@ -55,8 +55,16 @@ load_dataset_labels <- function(label_dir, channel) {
   # Filter data to use only data for current dataset
   metadata = metadata[metadata$channel == channel,]
   metadata$cell = substr(metadata$cell, 10, 25)
+  metadata$cluster.ids = metadata$cell_ontology_class
   metadata = metadata[c("cell", "cluster.ids")]
-  metadata$cluster.ids <- metadata$cluster.ids + 1
+  metadata[metadata$cluster.ids == "",]$cluster.ids <- "unknown cluster"
+  labels <- unique(metadata$cluster.ids)
+  label_order <- order(unique(metadata$cluster.ids))
+  label_map = list()
+  for (i in 1:length(labels)) {
+    label_map[[labels[i]]] <- label_order[i]
+  }
+  metadata$cluster.ids <- as.numeric(label_map[metadata$cluster.ids])
   
   return (metadata)
 }
