@@ -4,7 +4,7 @@ library(ggplot2)
 
 source("utils.R")
 
-TOOL_TAGS = c("seurat")
+TOOL_TAGS = c("seurat", "scvi")
 DATASET_TAGS = c("10X_P7_4")
 LABEL_TAG_TO_DIR = list("10X_P7_4" = "./dataset/tabulamuris/")
 LABEL_TAG_TO_FILTERED_DIR = list("10X_P7_4" = "./filtered_dataset/tabulamuris/data_10X_P7_4")
@@ -75,7 +75,7 @@ read_dataset_data = function(tool_tag_list, dataset_tag) {
     # compute missing clustering scores (for scanpy and scvi only silhouette should not have NA at this point)
     for (i in 1:nrow(score_data)) {
       cur_info = score_data[i, ]
-      scores_to_add = clustering_simple_scores(label_data, paste(tool, "_label", sep=""), "true_labels")
+      scores_to_add = clustering_simple_scores(label_data, paste(cur_info$tool, "_label", sep=""), "true_labels")
       score_data[i, "accuracy"] <- scores_to_add$accuracy
       score_data[i, "entropy"] <- scores_to_add$entropy
       score_data[i, "purity"] <- scores_to_add$purity
