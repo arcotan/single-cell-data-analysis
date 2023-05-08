@@ -51,11 +51,11 @@ read_dataset_data = function(tool_tag_list, dataset_tag) {
         # merge clustering scores
         scores_to_add = cur_tool_data$scores
         scores_to_add$tool = tool
-        full_join(score_data, scores_to_add)# TODO only works due to empty intersections
+        score_data = full_join(score_data, scores_to_add)# TODO only works due to empty intersections
         # merge markers
         markers_to_add = cur_tool_data$markers
         markers_to_add$tool = tool
-        full_join(marker_data, markers_to_add)# TODO only works due to empty intersections
+        marker_data = full_join(marker_data, markers_to_add)# TODO only works due to empty intersections
       }
     }
   }
