@@ -59,3 +59,11 @@ intersection = set(top_genes).intersection(set(top_sorted_list))
 # top
 # {'precision': 0.9700833699346517, 'recall': 0.9693593314763231, 'f1-score': 0.9693161075050654, 'support': 359}
 print('fine')
+
+#        rank di randomforst                  rank del tool  
+# gene1         100 *                         * 1 - (0-20)
+# gene2         1 *                            
+# gene3         1 *                            
+# gene4         0 *                            
+
+# 
