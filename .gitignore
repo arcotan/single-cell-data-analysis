@@ -62,4 +62,7 @@ po/*~
 rsconnect/
 
 # SCVI TEMP DATA
-.scviTools/data/
+.scviTools/data
+
+# eps data
+/results/aggregate/*.eps
