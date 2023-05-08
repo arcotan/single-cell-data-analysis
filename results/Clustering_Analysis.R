@@ -4,7 +4,7 @@ library(ggplot2)
 
 source("utils.R")
 
-TOOL_TAGS = c("seurat", "scvi")
+TOOL_TAGS = c("seurat", "scvi", "scanpy")
 DATASET_TAGS = c("10X_P7_4")
 LABEL_TAG_TO_DIR = list("10X_P7_4" = "./dataset/tabulamuris/")
 LABEL_TAG_TO_FILTERED_DIR = list("10X_P7_4" = "./filtered_dataset/tabulamuris/data_10X_P7_4")
@@ -101,6 +101,8 @@ collect_data = function(dataset_tag_list, tool_tag_list, write_aggregate = TRUE)
 
 # TODO $ non funziona se il tag inizia con un numero
 global_data = collect_data(DATASET_TAGS, TOOL_TAGS)
+# table(global_data[[DATASET_TAGS[1]]]$labels$scanpy_label, global_data[[DATASET_TAGS[1]]]$labels$scvi_label)
+# View(global_data[[DATASET_TAGS[1]]]$scores)
 
 # print NA count
 print("NA count")
@@ -123,7 +125,7 @@ for (dataset in DATASET_TAGS) {
     print(label)
     print(dataset)
     cur_plot <- seurat_clustering_plot(pbmc, global_data[[dataset]]$labels$cell, global_data[[dataset]]$labels[[label]])
-    ggsave(filename = paste("./results/aggregate/", dataset, "_", label, ".eps", sep=""), cur_plot)
+    ggsave(filename = paste("./results/aggregate/", dataset, "_", label, ".png", sep=""), cur_plot)
   }
   print("--------------------------------------")
 }
