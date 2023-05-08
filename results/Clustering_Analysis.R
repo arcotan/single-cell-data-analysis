@@ -6,8 +6,8 @@ source("utils.R")
 
 TOOL_TAGS = c("seurat")
 DATASET_TAGS = c("10X_P7_4")
-LABEL_TAG_TO_DIR = list("10X_P7_4" = "./dataset/tabulamuris/")
-LABEL_TAG_TO_FILTERED_DIR = list("10X_P7_4" = "./filtered_dataset/tabulamuris/data_10X_P7_4")
+LABEL_TAG_TO_LABEL_DIR = list("10X_P7_4" = "./dataset/tabulamuris/")
+LABEL_TAG_TO_FILTERED_GE_DIR = list("10X_P7_4" = "./filtered_dataset/tabulamuris/data_10X_P7_4")
 
 
 read_single_data = function(tool_tag, dataset_tag) {
@@ -62,7 +62,8 @@ read_dataset_data = function(tool_tag_list, dataset_tag) {
   
   # read cluster ids of cells of the dataset and merge 
   # drops cells not used in any clustering
-  true_ids = load_dataset_labels(LABEL_TAG_TO_DIR[[dataset_tag]], dataset_tag)
+  metadata = load_dataset_labels(LABEL_TAG_TO_LABEL_DIR[[dataset_tag]], dataset_tag)
+  true_ids = metadata$metadata
   colnames(true_ids)[colnames(true_ids) == "cluster.ids"] <- "true_labels"
   label_data = left_join(label_data, true_ids)
   
@@ -72,7 +73,6 @@ read_dataset_data = function(tool_tag_list, dataset_tag) {
       label <- paste(tool, "_label", sep="")
       alignment = align_clusters(label_data, "true_labels", label)
       label_data[[label]] <- alignment$label_dataframe[[label]]
-      View(marker_data)
       marker_data[marker_data$tool == tool,]$cluster <- alignment$permutation_computed[marker_data[marker_data$tool == tool,]$cluster]
     }
     # compute missing clustering scores (for scanpy and scvi only silhouette should not have NA at this point)
@@ -85,7 +85,7 @@ read_dataset_data = function(tool_tag_list, dataset_tag) {
     }
   }
   
-  return (list("labels" = label_data, "scores" = score_data, "markers" = marker_data))
+  return (list("labels" = label_data, "scores" = score_data, "markers" = marker_data, "mapping" = metadata$mapping))
 }
 
 collect_data = function(dataset_tag_list, tool_tag_list, write_aggregate = TRUE) {
@@ -118,7 +118,7 @@ for (dataset in DATASET_TAGS) {
 for (dataset in DATASET_TAGS) {
   print("--------------------------------------")
   print(paste("Clustering results for dataset ", dataset, sep=""))
-  pbmc.data <- Read10X(LABEL_TAG_TO_FILTERED_DIR[[dataset]], strip.suffix = TRUE)
+  pbmc.data <- Read10X(LABEL_TAG_TO_FILTERED_GE_DIR[[dataset]], strip.suffix = TRUE)
   pbmc <- CreateSeuratObject(counts = pbmc.data)
   pbmc <- NormalizeData(pbmc, normalization.method = "LogNormalize", scale.factor = 10000)
   pbmc <- FindVariableFeatures(pbmc, selection.method = "vst")

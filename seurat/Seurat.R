@@ -55,6 +55,7 @@ if (!dir.exists(Dir10X)) {
 filtered_labels = left_join(data.frame("cell"=colnames(data_to_write)), experiment_data$labels)
 write.csv(filtered_labels, paste(OUT_LABEL_DIR, "labels_", CHANNEL, ".csv", sep=""), row.names = FALSE)
 
+write.csv(experiment_data$mapping, paste(OUT_LABEL_DIR, "mapping_", CHANNEL, ".csv", sep=""), row.names = FALSE)
 
 # *******  END PREPROCESSING *******
 
