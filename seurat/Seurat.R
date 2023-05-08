@@ -2,7 +2,6 @@ library(dplyr)
 library(Seurat)
 library(patchwork)
 library(DropletUtils)
-library(NMF)
 
 source("utils.R")
 
@@ -11,13 +10,20 @@ OUT_DATA_DIR = "./filtered_dataset/tabulamuris/"
 IN_LABEL_DIR = "./dataset/tabulamuris"
 OUT_LABEL_DIR = "./filtered_dataset/tabulamuris/"
 CHANNEL = "10X_P7_4"
-
+OUT_RES_DIR = "./results/seurat"
+TOP_MARKER_NUM = 20
+RES_FILE_TAG = CHANNEL
 
 # Loading data
 experiment_data = load_data(IN_DATA_DIR, IN_LABEL_DIR, CHANNEL)
 
 # Load the PBMC dataset
 pbmc.data <- experiment_data$data
+
+# plot distribution of amount of cells in which each gene is expressed
+ggplot(data.frame("sum" = rowSums(pbmc.data > 0)), aes(x=sum)) + geom_histogram()
+# plot distribution of sum of counts for each cell
+ggplot(data.frame("sum" = colSums(pbmc.data > 0)), aes(x=sum)) + geom_histogram()
 
 # Initialize the Seurat object with the raw (non-normalized data).
 pbmc <- CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 200)
@@ -41,7 +47,11 @@ pbmc <- subset(pbmc, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent
 # Write pre-processed data
 data_to_write = GetAssayData(object = pbmc, assay = "RNA", slot = "data")
 write.csv(data_to_write, paste(OUT_DATA_DIR, "data_", CHANNEL, ".csv", sep=""))
-write10xCounts(paste(OUT_DATA_DIR, "data_", CHANNEL, sep=""), data_to_write)
+Dir10X = paste(OUT_DATA_DIR, "data_", CHANNEL, sep="")
+if (!dir.exists(Dir10X)) {
+  write10xCounts(Dir10X, data_to_write)
+}
+
 filtered_labels = left_join(data.frame("cell"=colnames(data_to_write)), experiment_data$labels)
 write.csv(filtered_labels, paste(OUT_LABEL_DIR, "labels_", CHANNEL, ".csv", sep=""), row.names = FALSE)
 
@@ -73,46 +83,35 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
 
 DimHeatmap(pbmc, dims = 1, cells = 500, balanced = TRUE)
 
+ElbowPlot(object = pbmc, 
+          ndims = 50)
+
 # Get clustering data
 pbmc <- FindNeighbors(pbmc, dims = 1:10)
 pbmc <- FindClusters(pbmc, resolution = 0.4)
 
 label_df = merge(experiment_data$labels, data.frame(Idents(pbmc)), by.x = "cell", by.y = 0)
-names(label_df)[2:3] <- c("true_id", "computed_id")
+names(label_df)[2:3] <- c("true_id", "computed_id") #TODO non usare 2 e 3
 
 label_df$computed_id = as.numeric(label_df$computed_id)
 pbmc <- SetIdent(pbmc, cells = label_df$cell, label_df$computed_id)
 
 # rename cluster labels to get best clustering results
-clustering_info = align_clusters(label_df)
+clustering_info = align_clusters(label_df, "true_id", "computed_id")
 confusion_matrix = clustering_info$confusion_matrix
 label_df = clustering_info$label_dataframe
 # display confusion matrix
 confusion_matrix
-
-# modifies seurat identities
-# returns clustering plot with pca
-seurat_clustering_plot = function(seurat_obj, cell_col, label_col) {
-  pi = order(label_col)
-  cell_col = cell_col[pi]
-  label_col = label_col[pi]
-  seurat_obj <- SetIdent(seurat_obj, cells = cell_col, label_col)
-  return (DimPlot(seurat_obj, reduction = "pca"))
-}
 
 # Compare clustering (left) with ground truth
 seurat_clustering_plot(pbmc, label_df$cell, label_df$computed_id) + seurat_clustering_plot(pbmc, label_df$cell, label_df$true_id)
 
 # find markers for every cluster compared to all remaining cells
 pbmc.markers <- FindAllMarkers(pbmc, min.pct = 0.25, logfc.threshold = 0.25)
-marker_df = pbmc.markers %>%
-  group_by(cluster) %>%
-  slice_max(n = 20, order_by = avg_log2FC)
-marker_df = data.frame(marker_df)
 
-entropy(confusion_matrix)
-purity(confusion_matrix)
-mean(silhouette(label_df$computed_id, dist(Embeddings(pbmc[['pca']])[,1:50]))[,3])
+plot_de(data_to_write, pbmc.markers, "gene", "cluster", label_df, "cell", "computed_id", OUT_RES_DIR, RES_FILE_TAG)
 
-#TODO salvare dati e plot DE
-plot_de(data_to_write, marker_df, "gene", "cluster", label_df, "cell", "computed_id")
+write_clustering(OUT_RES_DIR, RES_FILE_TAG, label_df, "cell", "computed_id", "true_id", dist(Embeddings(pbmc[['pca']])[,1:50]))
+
+write_markers(OUT_RES_DIR, RES_FILE_TAG, pbmc.markers, "gene", "cluster", "avg_log2FC", TRUE, TOP_MARKER_NUM)
+

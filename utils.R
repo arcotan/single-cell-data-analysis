@@ -3,14 +3,15 @@ library(Seurat)
 library(dplyr)
 library(ggplot2)
 library(gridExtra)
+library(NMF)
 
-# In input: a dataframe with two cluster id columns, named 'true_id' and 'computed_id'
+# In input: a dataframe with two cluster id columns
 # labels of the computed ids column will be renamed in order to get the best match between clusters.
 # The confusion matrix of the clustering is also added to the output:
 # rows of the matrix are related to predictions, columns are related to the ground truth
-align_clusters = function(label_dataframe) {
-  label_dataframe_nna = label_dataframe[!is.na(label_dataframe$true_id) & !is.na(label_dataframe$computed_id), ]
-  confusion_matrix = table(label_dataframe_nna$computed_id, label_dataframe_nna$true_id) # row predictions, col ground truth
+align_clusters = function(label_dataframe, true_id_col, computed_id_col) {
+  label_dataframe_nna = label_dataframe[!is.na(label_dataframe[[true_id_col]]) & !is.na(label_dataframe[[computed_id_col]]), ]
+  confusion_matrix = table(label_dataframe_nna[[computed_id_col]], label_dataframe_nna[[true_id_col]]) # row predictions, col ground truth
   permutation_computed = c(1:nrow(confusion_matrix))
   permutation_true = c(1:ncol(confusion_matrix))
   it_num = min(nrow(confusion_matrix), ncol(confusion_matrix))
@@ -38,15 +39,27 @@ align_clusters = function(label_dataframe) {
   
   # apply permutation to computed ids
   pi = permutation_true[permutation_computed]
-  label_dataframe$computed_id = pi[label_dataframe$computed_id]
+  label_dataframe[[computed_id_col]] = pi[label_dataframe[[computed_id_col]]]
   
   # return confusion matrix, TODO più efficiente senza ricalcolare crosstable
-  return (list("confusion_matrix" = table(label_dataframe$computed_id, label_dataframe$true_id), 
+  return (list("confusion_matrix" = table(label_dataframe[[computed_id_col]], label_dataframe[[true_id_col]]), 
                "label_dataframe" = label_dataframe, 
                "permutation_computed" = permutation_computed))
 }
 
 
+load_dataset_labels <- function(label_dir, channel) {
+  # Load cell metadata
+  metadata = read.csv(file = paste(label_dir, "annotations_droplet.csv", sep = "/"))
+  
+  # Filter data to use only data for current dataset
+  metadata = metadata[metadata$channel == channel,]
+  metadata$cell = substr(metadata$cell, 10, 25)
+  metadata = metadata[c("cell", "cluster.ids")]
+  metadata$cluster.ids <- metadata$cluster.ids + 1
+  
+  return (metadata)
+}
 
 # loads gene expression matrix associated to a channel and gets the cluster label for each cell,
 # if metadata for a cell is not found, its cluster id will be NA
@@ -55,16 +68,12 @@ load_data <- function(data_dir, label_dir, channel) {
   data = Read10X(data.dir = IN_DATA_DIR, strip.suffix = TRUE)
   
   # Load cell metadata
-  metadata = read.csv(file = paste(IN_LABEL_DIR, "annotations_droplet.csv", sep = "/"))
-  
-  # Filter data to use only data for current dataset
-  metadata = metadata[metadata$channel == channel,]
-  metadata$cell = substr(metadata$cell, 10, 25)
+  metadata = load_dataset_labels(label_dir, channel)
   
   # Get cluster labels
   cells = colnames(data)
-  true_labels = left_join(data.frame("cell"=cells), metadata)[c("cell", "cluster.ids")]
-  true_labels$cluster.ids <- true_labels$cluster.ids + 1
+  true_labels = left_join(data.frame("cell"=cells), metadata)
+  
   
   # Print number of cells not mapped to a cluster id
   print(paste("Cells mapped to a cluster: ", sum(!is.na(true_labels$cluster.ids)), "/", nrow(true_labels), sep = ""))
@@ -72,21 +81,56 @@ load_data <- function(data_dir, label_dir, channel) {
   return (list("data" = data, "labels" = true_labels))
 } 
 
-write_clustering = function(outdir, tag, label_df, cell_col, cluster_col) {
+# returns clustering plot with pca
+seurat_clustering_plot = function(seurat_obj, cell_col, label_col) {
+  pi = order(label_col)
+  cell_col = cell_col[pi]
+  label_col = label_col[pi]
+  seurat_obj <- SetIdent(seurat_obj, cells = cell_col, label_col)
+  return (DimPlot(seurat_obj, reduction = "pca"))
+}
+
+clustering_simple_scores = function(label_df, computed_label, true_label) {
+  confusion_matrix = table(label_df[[computed_label]], label_df[[true_label]])
+  res_overlap = sum(diag(confusion_matrix)) / sum(confusion_matrix)
+  res_entropy = entropy(confusion_matrix)
+  res_purity = purity(confusion_matrix)
+  return (data.frame("entropy" = res_entropy, "purity" = res_purity, "accuracy" = res_overlap))
+}
+
+#TODO verifica nan
+clustering_scores = function(label_df, computed_label, true_label, distance_matrix) {
+  simple_scores = clustering_simple_scores(label_df, computed_label, true_label)
+  simple_scores$silhouette = mean(silhouette(label_df[[computed_label]], distance_matrix)[,3])
+  return (simple_scores)
+}
+
+write_clustering = function(outdir, tag, label_df, cell_col, cluster_col, true_cluster_col, distance_matrix) {
+  # compute and write scores
+  cscores = clustering_scores(label_df, cluster_col, true_cluster_col, distance_matrix)
+  write.csv(cscores, paste(outdir, "/", "clustering_scores_", tag, ".csv", sep=""), row.names = FALSE)
+  
+  # write labels
   to_write = label_df[c(cell_col, cluster_col)]
   colnames(to_write)[colnames(to_write) == cell_col] = "cell"
   colnames(to_write)[colnames(to_write) == cluster_col] = "cluster"
-  write.csv(to_write, paste(outdir, "/", "clustering_", tag, ".csv", sep=""), row.names = FALSE)
+  write.csv(to_write, paste(outdir, "/", "clustering_labels_", tag, ".csv", sep=""), row.names = FALSE)
 }
 
-write_markers = function(outdir, tag, marker_df, gene_col, cluster_col) {
-  to_write = marker_df[c(gene_col, cluster_col)]
+write_markers = function(outdir, tag, marker_df, gene_col, cluster_col, order_by_col, is_higher_better, top_k) {
+  is_higher_better = is_higher_better*1
+  marker_df = marker_df %>%
+    group_by(get(cluster_col)) %>%
+    slice_max(n = top_k, order_by = (is_higher_better*get(order_by_col))) %>% 
+    mutate(rank = row_number(), ties.method = "first")
+  marker_df = data.frame(marker_df)
+  to_write = marker_df[c(gene_col, cluster_col, "rank")]
   colnames(to_write)[colnames(to_write) == gene_col] = "gene"
   colnames(to_write)[colnames(to_write) == cluster_col] = "cluster"
   write.csv(to_write, paste(outdir, "/", "markers_", tag, ".csv", sep=""), row.names = FALSE)
 }
 
-plot_de = function(expression_matrix, marker_df, gene_col, marker_df_cluster_col, cluster_df, cell_col, cluster_df_cluster_col) {
+plot_de = function(expression_matrix, marker_df, gene_col, marker_df_cluster_col, cluster_df, cell_col, cluster_df_cluster_col, out_dir, file_tag) {
   DE = function(expression_matrix, marker_df, gene_col, marker_df_cluster_col, cur_ident, IDENTS, cell_col, cluster_col) {
     print(paste('Class:', cur_ident, sep=' '))
     markers = marker_df[marker_df[[marker_df_cluster_col]] == cur_ident, ]
@@ -97,7 +141,7 @@ plot_de = function(expression_matrix, marker_df, gene_col, marker_df_cluster_col
     
     ld = merge(t(data.frame(d)), l, by.x = "row.names", by.y = cell_col)
     colnames(ld)[length(ld)] = 'cluster.ids'
-    ld
+    
     topn = ld[, c(head(markers,5)[[gene_col]], 'cluster.ids')]
     
     # Define a function for creating each ggplot object
@@ -141,5 +185,6 @@ plot_de = function(expression_matrix, marker_df, gene_col, marker_df_cluster_col
   
   box_plots = grid.arrange(grobs = unlist(plts, recursive=FALSE), ncol=5)
   
-  ggsave('de.png', box_plots, dpi=400)
+  ggsave(paste(out_dir, "/", "de_", file_tag, ".png", sep=""), box_plots, dpi=400)
 }
+
