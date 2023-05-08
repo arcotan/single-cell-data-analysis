@@ -4,10 +4,17 @@ library(patchwork)
 
 list.files("dataset/3/raw_feature_bc_matrix_gz/")
 
+# Read annotations
+# droplet_annotations = read.csv('dataset/annotations_droplet.csv')
+# droplet_annotations = droplet_annotations[startsWith(droplet_annotations$cell, "10X_P7_4"),] # or 'channel' column
+# droplet_annotations$cell = substr(droplet_annotations$cell, 10, 25)
+
 # Load the PBMC dataset
+
 pbmc.data <- Read10X(data.dir = "dataset/tabulamuris/droplet/Heart_and_Aorta-10X_P7_4")
 # Initialize the Seurat object with the raw (non-normalized data).
 pbmc <- CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 200)
+
 
 # The [[ operator can add columns to object metadata. This is a great place to stash QC stats
 pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, pattern = "^MT-")
@@ -55,3 +62,11 @@ DimPlot(pbmc, reduction = "pca")
 
 
 DimHeatmap(pbmc, dims = 1, cells = 500, balanced = TRUE)
+
+ElbowPlot(pbmc)
+
+pbmc <- FindNeighbors(pbmc, dims = 1:7, reduction="pca")
+pbmc <- FindClusters(pbmc, resolution = 0.5)
+
+pbmc <- RunUMAP(pbmc, dims = 1:10)
+DimPlot(pbmc, reduction="pca")

@@ -3,6 +3,14 @@ dataset/
 tests/
 filtered_dataset/
 
+#enviroments
+# Delete all folders named `.venv`
+**/.venv
+
+
+#vscode conf
+.vscode
+
 # History files
 .Rhistory
 .Rapp.history
@@ -52,3 +60,6 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# SCVI TEMP DATA
+.scviTools/data/
