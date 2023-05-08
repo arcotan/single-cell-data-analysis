@@ -6,6 +6,7 @@ filtered_dataset/
 #enviroments
 # Delete all folders named `.venv`
 **/.venv
+**/.env
 
 
 #vscode conf
