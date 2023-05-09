@@ -38,13 +38,13 @@ align_clusters = function(label_dataframe, true_id_col, computed_id_col) {
   }
   
   # apply permutation to computed ids
-  pi = permutation_true[permutation_computed]
+  pi = permutation_true[order(permutation_computed)]
   label_dataframe[[computed_id_col]] = pi[label_dataframe[[computed_id_col]]]
-  
+
   # return confusion matrix, TODO più efficiente senza ricalcolare crosstable
   return (list("confusion_matrix" = table(label_dataframe[[computed_id_col]], label_dataframe[[true_id_col]]), 
                "label_dataframe" = label_dataframe, 
-               "permutation_computed" = permutation_computed))
+               "permutation_computed" = pi))
 }
 
 
@@ -55,10 +55,17 @@ load_dataset_labels <- function(label_dir, channel) {
   # Filter data to use only data for current dataset
   metadata = metadata[metadata$channel == channel,]
   metadata$cell = substr(metadata$cell, 10, 25)
+  metadata$cluster.ids = metadata$cell_ontology_class
   metadata = metadata[c("cell", "cluster.ids")]
-  metadata$cluster.ids <- metadata$cluster.ids + 1
+  metadata[metadata$cluster.ids == "",]$cluster.ids <- "unknown cluster"
+  labels <- sort(unique(metadata$cluster.ids))
+  label_map = list()
+  for (i in 1:length(labels)) {
+    label_map[[labels[i]]] <- i
+  }
+  metadata$cluster.ids <- as.numeric(label_map[metadata$cluster.ids])
   
-  return (metadata)
+  return (list("metadata" = metadata, "mapping" = data.frame("go" = labels, "id" = c(1:length(labels)))))
 }
 
 # loads gene expression matrix associated to a channel and gets the cluster label for each cell,
@@ -68,7 +75,8 @@ load_data <- function(data_dir, label_dir, channel) {
   data = Read10X(data.dir = IN_DATA_DIR, strip.suffix = TRUE)
   
   # Load cell metadata
-  metadata = load_dataset_labels(label_dir, channel)
+  metadata_list = load_dataset_labels(label_dir, channel)
+  metadata = metadata_list$metadata
   
   # Get cluster labels
   cells = colnames(data)
@@ -78,7 +86,7 @@ load_data <- function(data_dir, label_dir, channel) {
   # Print number of cells not mapped to a cluster id
   print(paste("Cells mapped to a cluster: ", sum(!is.na(true_labels$cluster.ids)), "/", nrow(true_labels), sep = ""))
   
-  return (list("data" = data, "labels" = true_labels))
+  return (list("data" = data, "labels" = true_labels, "mapping" = metadata_list$mapping))
 } 
 
 # returns clustering plot with pca

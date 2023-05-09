@@ -4,10 +4,11 @@ library(ggplot2)
 
 source("utils.R")
 
-TOOL_TAGS = c("seurat", "scvi", "scanpy")
+TOOL_TAGS = c("seurat", 'scvi', 'scanpy', 'monocle')
 DATASET_TAGS = c("10X_P7_4")
-LABEL_TAG_TO_DIR = list("10X_P7_4" = "./dataset/tabulamuris/")
-LABEL_TAG_TO_FILTERED_DIR = list("10X_P7_4" = "./filtered_dataset/tabulamuris/data_10X_P7_4")
+LABEL_TAG_TO_LABEL_DIR = list("10X_P7_4" = "./dataset/tabulamuris/")
+LABEL_TAG_TO_FILTERED_LABEL_DIR = list("10X_P7_4" = "./filtered_dataset/tabulamuris/")
+LABEL_TAG_TO_FILTERED_GE_DIR = list("10X_P7_4" = "./filtered_dataset/tabulamuris/data_10X_P7_4")
 
 
 read_single_data = function(tool_tag, dataset_tag) {
@@ -62,15 +63,18 @@ read_dataset_data = function(tool_tag_list, dataset_tag) {
   
   # read cluster ids of cells of the dataset and merge 
   # drops cells not used in any clustering
-  true_ids = load_dataset_labels(LABEL_TAG_TO_DIR[[dataset_tag]], dataset_tag)
+  metadata = load_dataset_labels(LABEL_TAG_TO_LABEL_DIR[[dataset_tag]], dataset_tag)
+  true_ids = metadata$metadata
   colnames(true_ids)[colnames(true_ids) == "cluster.ids"] <- "true_labels"
   label_data = left_join(label_data, true_ids)
   
   if (!to_init) {
     # align each clustering with true labels
-    for (label in colnames(label_data[2:(length(colnames(label_data))-1)])) {
+    for (label in colnames(global_data[[dataset]]$labels)[-1]) {
+      tool = substr(label, 1, nchar(label)-6)
       alignment = align_clusters(label_data, "true_labels", label)
       label_data[[label]] <- alignment$label_dataframe[[label]]
+      marker_data[marker_data$tool == tool,]$cluster <- alignment$permutation_computed[marker_data[marker_data$tool == tool,]$cluster]
     }
     # compute missing clustering scores (for scanpy and scvi only silhouette should not have NA at this point)
     for (i in 1:nrow(score_data)) {
@@ -82,7 +86,7 @@ read_dataset_data = function(tool_tag_list, dataset_tag) {
     }
   }
   
-  return (list("labels" = label_data, "scores" = score_data, "markers" = marker_data))
+  return (list("labels" = label_data, "scores" = score_data, "markers" = marker_data, "mapping" = metadata$mapping))
 }
 
 collect_data = function(dataset_tag_list, tool_tag_list, write_aggregate = TRUE) {
@@ -99,9 +103,11 @@ collect_data = function(dataset_tag_list, tool_tag_list, write_aggregate = TRUE)
   return (datasets_aggregate_data_list)
 }
 
-# TODO $ non funziona se il tag inizia con un numero
 global_data = collect_data(DATASET_TAGS, TOOL_TAGS)
-# table(global_data[[DATASET_TAGS[1]]]$labels$scanpy_label, global_data[[DATASET_TAGS[1]]]$labels$scvi_label)
+# table(global_data[[DATASET_TAGS[1]]]$labels$true_label, global_data[[DATASET_TAGS[1]]]$labels$scvi_label)
+# table(global_data[[DATASET_TAGS[1]]]$labels$seurat_label, global_data[[DATASET_TAGS[1]]]$labels$true_label)
+# table(global_data[[DATASET_TAGS[1]]]$labels$true_label, global_data[[DATASET_TAGS[1]]]$labels$scanpy_label)
+# table(global_data[[DATASET_TAGS[1]]]$labels$true_label, global_data[[DATASET_TAGS[1]]]$labels$monocle_label)
 # View(global_data[[DATASET_TAGS[1]]]$scores)
 
 # print NA count
@@ -113,23 +119,26 @@ for (dataset in DATASET_TAGS) {
 
 # plot clustering and save results to eps
 for (dataset in DATASET_TAGS) {
+  # load GO mapping
+  go_mapping = read.csv(paste(LABEL_TAG_TO_FILTERED_LABEL_DIR[[dataset]], "mapping_", dataset, ".csv", sep=""))
+  go_mapping = go_mapping[order(go_mapping$id),]
+  pi = go_mapping$go
+
   print("--------------------------------------")
   print(paste("Clustering results for dataset ", dataset, sep=""))
-  pbmc.data <- Read10X(LABEL_TAG_TO_FILTERED_DIR[[dataset]], strip.suffix = TRUE)
+  pbmc.data <- Read10X(LABEL_TAG_TO_FILTERED_GE_DIR[[dataset]], strip.suffix = TRUE)
   pbmc <- CreateSeuratObject(counts = pbmc.data)
   pbmc <- NormalizeData(pbmc, normalization.method = "LogNormalize", scale.factor = 10000)
   pbmc <- FindVariableFeatures(pbmc, selection.method = "vst")
   pbmc <- ScaleData(pbmc, features = rownames(pbmc))
   pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
   for (label in colnames(global_data[[dataset]]$labels)[-1]) {
-    print(label)
-    print(dataset)
-    cur_plot <- seurat_clustering_plot(pbmc, global_data[[dataset]]$labels$cell, global_data[[dataset]]$labels[[label]])
+    tool = substr(label, 1, nchar(label)-6)
+    cur_plot <- seurat_clustering_plot(pbmc, global_data[[dataset]]$labels$cell, pi[global_data[[dataset]]$labels[[label]]])
     ggsave(filename = paste("./results/aggregate/", dataset, "_", label, ".png", sep=""), cur_plot)
   }
   print("--------------------------------------")
 }
-
 
 # TODO print marker intersection between tools
 # library(ggvenn)

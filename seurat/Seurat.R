@@ -55,6 +55,7 @@ if (!dir.exists(Dir10X)) {
 filtered_labels = left_join(data.frame("cell"=colnames(data_to_write)), experiment_data$labels)
 write.csv(filtered_labels, paste(OUT_LABEL_DIR, "labels_", CHANNEL, ".csv", sep=""), row.names = FALSE)
 
+write.csv(experiment_data$mapping, paste(OUT_LABEL_DIR, "mapping_", CHANNEL, ".csv", sep=""), row.names = FALSE)
 
 # *******  END PREPROCESSING *******
 
@@ -88,7 +89,7 @@ ElbowPlot(object = pbmc,
 
 # Get clustering data
 pbmc <- FindNeighbors(pbmc, dims = 1:10)
-pbmc <- FindClusters(pbmc, resolution = 0.4)
+pbmc <- FindClusters(pbmc, resolution = 0.3)
 
 label_df = merge(experiment_data$labels, data.frame(Idents(pbmc)), by.x = "cell", by.y = 0)
 names(label_df)[2:3] <- c("true_id", "computed_id") #TODO non usare 2 e 3
@@ -109,7 +110,7 @@ seurat_clustering_plot(pbmc, label_df$cell, label_df$computed_id) + seurat_clust
 # find markers for every cluster compared to all remaining cells
 pbmc.markers <- FindAllMarkers(pbmc, min.pct = 0.25, logfc.threshold = 0.25)
 
-plot_de(data_to_write, pbmc.markers, "gene", "cluster", label_df, "cell", "computed_id", OUT_RES_DIR, RES_FILE_TAG)
+plot_de(GetAssayData(object = pbmc, assay = "RNA", slot = "data"), pbmc.markers, "gene", "cluster", label_df, "cell", "computed_id", OUT_RES_DIR, RES_FILE_TAG)
 
 write_clustering(OUT_RES_DIR, RES_FILE_TAG, label_df, "cell", "computed_id", "true_id", dist(Embeddings(pbmc[['pca']])[,1:50]))
 
