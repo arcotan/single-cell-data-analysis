@@ -4,7 +4,7 @@ library(ggplot2)
 
 source("utils.R")
 
-TOOL_TAGS = c("seurat")
+TOOL_TAGS = c("seurat", 'scvi', 'scanpy', 'monocle')
 DATASET_TAGS = c("10X_P7_4")
 LABEL_TAG_TO_LABEL_DIR = list("10X_P7_4" = "./dataset/tabulamuris/")
 LABEL_TAG_TO_FILTERED_GE_DIR = list("10X_P7_4" = "./filtered_dataset/tabulamuris/data_10X_P7_4")
@@ -104,7 +104,10 @@ collect_data = function(dataset_tag_list, tool_tag_list, write_aggregate = TRUE)
 
 # TODO $ non funziona se il tag inizia con un numero
 global_data = collect_data(DATASET_TAGS, TOOL_TAGS)
-# table(global_data[[DATASET_TAGS[1]]]$labels$scanpy_label, global_data[[DATASET_TAGS[1]]]$labels$scvi_label)
+table(global_data[[DATASET_TAGS[1]]]$labels$true_label, global_data[[DATASET_TAGS[1]]]$labels$scvi_label)
+# table(global_data[[DATASET_TAGS[1]]]$labels$seurat_label, global_data[[DATASET_TAGS[1]]]$labels$scvi_label)
+table(global_data[[DATASET_TAGS[1]]]$labels$true_label, global_data[[DATASET_TAGS[1]]]$labels$scanpy_label)
+# table(global_data[[DATASET_TAGS[1]]]$labels$true_label, global_data[[DATASET_TAGS[1]]]$labels$monocle_label)
 # View(global_data[[DATASET_TAGS[1]]]$scores)
 
 # print NA count
