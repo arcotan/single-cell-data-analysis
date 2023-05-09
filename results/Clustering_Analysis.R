@@ -105,9 +105,9 @@ collect_data = function(dataset_tag_list, tool_tag_list, write_aggregate = TRUE)
 # TODO $ non funziona se il tag inizia con un numero
 global_data = collect_data(DATASET_TAGS, TOOL_TAGS)
 table(global_data[[DATASET_TAGS[1]]]$labels$true_label, global_data[[DATASET_TAGS[1]]]$labels$scvi_label)
-# table(global_data[[DATASET_TAGS[1]]]$labels$seurat_label, global_data[[DATASET_TAGS[1]]]$labels$scvi_label)
+table(global_data[[DATASET_TAGS[1]]]$labels$seurat_label, global_data[[DATASET_TAGS[1]]]$labels$true_label)
 table(global_data[[DATASET_TAGS[1]]]$labels$true_label, global_data[[DATASET_TAGS[1]]]$labels$scanpy_label)
-# table(global_data[[DATASET_TAGS[1]]]$labels$true_label, global_data[[DATASET_TAGS[1]]]$labels$monocle_label)
+table(global_data[[DATASET_TAGS[1]]]$labels$true_label, global_data[[DATASET_TAGS[1]]]$labels$monocle_label)
 # View(global_data[[DATASET_TAGS[1]]]$scores)
 
 # print NA count

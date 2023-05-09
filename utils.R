@@ -38,13 +38,13 @@ align_clusters = function(label_dataframe, true_id_col, computed_id_col) {
   }
   
   # apply permutation to computed ids
-  pi = permutation_true[permutation_computed]
+  pi = permutation_true[order(permutation_computed)]
   label_dataframe[[computed_id_col]] = pi[label_dataframe[[computed_id_col]]]
-  
+
   # return confusion matrix, TODO più efficiente senza ricalcolare crosstable
   return (list("confusion_matrix" = table(label_dataframe[[computed_id_col]], label_dataframe[[true_id_col]]), 
                "label_dataframe" = label_dataframe, 
-               "permutation_computed" = permutation_computed))
+               "permutation_computed" = pi))
 }
 
 
