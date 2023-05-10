@@ -6,12 +6,12 @@ library(DropletUtils)
 
 source("utils.R")
 
-IN_DATA_DIR = "./dataset/peripheal-blood"
-OUT_DATA_DIR = "./dataset/peripheal-blood-filtered/"
-IN_LABEL_DIR = "./dataset/peripheal-blood/"
-OUT_LABEL_DIR = "./dataset/peripheal-blood-filtered/"
-CHANNEL = "peripheal-blood"
-OUT_RES_DIR = "./results/peripheal-blood/seurat"
+IN_DATA_DIR = "./dataset/tabula-muris-marrow_P7_2/"
+OUT_DATA_DIR = "./dataset/tabula-muris-marrow_P7_2-filtered/"
+IN_LABEL_DIR = "./dataset/tabula-muris-marrow_P7_2/"
+OUT_LABEL_DIR = "./dataset/tabula-muris-marrow_P7_2-filtered/"
+CHANNEL = "10X_P7_2"
+OUT_RES_DIR = "./results/tabula-muris-marrow_P7_2/seurat"
 TOP_MARKER_NUM = 20
 RES_FILE_TAG = CHANNEL
 
@@ -116,4 +116,34 @@ plot_de(GetAssayData(object = pbmc, assay = "RNA", slot = "data"), pbmc.markers,
 write_clustering(OUT_RES_DIR, RES_FILE_TAG, label_df, "cell", "computed_id", "true_id", dist(Embeddings(pbmc[['pca']])[,1:50]))
 
 write_markers(OUT_RES_DIR, RES_FILE_TAG, pbmc.markers, "gene", "cluster", "avg_log2FC", TRUE, TOP_MARKER_NUM)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
