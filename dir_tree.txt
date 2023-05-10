@@ -1,24 +1,24 @@
 single-cell-data-analysis
 |-- dataset
-|   |-- tabula-muris-heart
-|   |   |-- metadata_droplet.csv
+|	|-- tabula-muris-heart-aorta
+|	|	|-- metadata_droplet.csv
 |	|	|-- annotations_droplet.csv
 |	|	|-- genes.tsv
 |	|	|-- matrix.mtx
 |	|	|-- barcodes.tsv
-|   |-- tabula-muris-marrow_P7_2
-|   |   |-- metadata_droplet.csv
+|	|-- tabula-muris-marrow_P7_2
+|	|	|-- metadata_droplet.csv
 |	|	|-- annotations_droplet.csv
 |	|	|-- genes.tsv
 |	|	|-- matrix.mtx
 |	|	|-- barcodes.tsv
-|   |-- tabula-muris-marrow_P7_3
-|   |   |-- metadata_droplet.csv
+|	|-- tabula-muris-marrow_P7_3
+|	|	|-- metadata_droplet.csv
 |	|	|-- annotations_droplet.csv
 |	|	|-- genes.tsv
 |	|	|-- matrix.mtx
 |	|	|-- barcodes.tsv
-|	|-- tabula-muris-heart-filtered
+|	|-- tabula-muris-heart-aorta-filtered
 |	|	|-- matrix.csv
 |	|	|-- true_labels.csv
 |	|	|-- mapping.csv
@@ -30,7 +30,7 @@ single-cell-data-analysis
 |	|	|-- matrix.csv
 |	|	|-- true_labels.csv
 |	|	|-- mapping.csv
-|   |-- peripheal-blood
+|	|-- peripheal-blood
 |	|	|-- features.tsv
 |	|	|-- matrix.mtx
 |	|	|-- barcodes.tsv
@@ -38,66 +38,82 @@ single-cell-data-analysis
 |	|	|-- matrix.csv
 |	|	|-- true_labels.csv
 |	|	|-- mapping.csv
-|	|-- kumar-4-hard-filtered
+|	|-- kumar-4-hard
+|	|	|-- data.rds
+|	|-- kumar-4-hard-filtered # ?
 |	|	|-- matrix.csv
 |	|	|-- true_labels.csv
 |	|	|-- mapping.csv
-|	|-- kumar-8-hard-filtered
+|	|-- kumar-8-hard
+|	|	|-- data.rds
+|	|-- kumar-8-hard-filtered # ?
+|	|	|-- data.rds
 |	|	|-- matrix.csv
 |	|	|-- true_labels.csv
 |	|	|-- mapping.csv
 |-- monocle
 |	|-- monocle.R 
-|	|-- monocle.Rmd
-|	|-- monocle.html
 |-- seurat
 |	|-- seurat.R 
-|	|-- seurat.Rmd
-|	|-- seurat.html
 |-- COTAN
 |	|-- COTAN.R 
-|	|-- COTAN.Rmd
-|	|-- COTAN.html
 |-- scanpy
 |	|-- scanpy.py 
-|	|-- scanpy.ipynb
 |-- scvitools
 |	|-- scvitools.py 
-|	|-- scvitools.ipynb
 |-- results
-|	|-- tabula-muris-heart
+|	|-- tabula-muris-heart-aorta
 |	|	|-- monocle
 |	|	|-- seurat
 |	|	|-- scanpy
 |	|	|-- scvitools
 |	|	|-- COTAN
+|	|	|-- labels.csv
+|	|	|-- markers.csv
+|	|	|-- scores.csv
 |	|-- tabula-muris-marrow
 |	|	|-- monocle
 |	|	|-- seurat
 |	|	|-- scanpy
 |	|	|-- scvitools
 |	|	|-- COTAN
+|	|	|-- labels.csv
+|	|	|-- markers.csv
+|	|	|-- scores.csv
 |	|-- peripheal-blood
 |	|	|-- monocle
 |	|	|-- seurat
 |	|	|-- scanpy
 |	|	|-- scvitools
 |	|	|-- COTAN
+|	|	|-- labels.csv
+|	|	|-- markers.csv
+|	|	|-- scores.csv
 |	|-- kumar-4-hard
 |	|	|-- monocle
 |	|	|-- seurat
 |	|	|-- scanpy
 |	|	|-- scvitools
 |	|	|-- COTAN
+|	|	|-- labels.csv
+|	|	|-- markers.csv
+|	|	|-- scores.csv
 |	|-- kumar-8-hard
 |	|	|-- monocle
 |	|	|-- seurat
 |	|	|-- scanpy
 |	|	|-- scvitools
 |	|	|-- COTAN
-|-- filtering.R
+|	|	|-- labels.csv
+|	|	|-- markers.csv
+|	|	|-- scores.csv
+|-- tabula_muris_heart_aorta_filtering.Rmd
+|-- tabula_muris_marrow_filtering.Rmd # P7_x 
+|-- peripheal_blood_filtering.Rmd
+|-- kumar_4_hard_filtering.Rmd
+|-- kumar_8_hard_filtering.Rmd
 |-- utils.R
-|-- clustering_analysis.R # ??
+|-- clustering_analysis.R # ?
+|-- venn.R # ?
 |-- markers_validation.py
-|-- markers_validation.sh
-
+|-- markers_validation.sh # ?
