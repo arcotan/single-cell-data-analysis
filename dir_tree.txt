@@ -107,11 +107,12 @@ single-cell-data-analysis
 |	|	|-- labels.csv
 |	|	|-- markers.csv
 |	|	|-- scores.csv
-|-- tabula_muris_heart_aorta_filtering.Rmd
-|-- tabula_muris_marrow_filtering.Rmd # P7_x 
-|-- peripheal_blood_filtering.Rmd
-|-- kumar_4_hard_filtering.Rmd
-|-- kumar_8_hard_filtering.Rmd
+|   |-- filtering
+|   |   |-- tabula_muris_heart_aorta_filtering.Rmd
+|   |   |-- tabula_muris_marrow_filtering.Rmd # P7_x 
+|   |   |-- peripheal_blood_filtering.Rmd
+|   |   |-- kumar_4_hard_filtering.Rmd
+|   |   |-- kumar_8_hard_filtering.Rmd
 |-- utils.R
 |-- clustering_analysis.R # ?
 |-- venn.R # ?
