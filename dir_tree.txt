@@ -1,0 +1,81 @@
+single-cell-data-analysis
+|-- dataset
+|	|-- tabula-muris
+|	|	|-- heart-aorta
+|	|	|	|-- genes.tsv
+|	|	|	|-- matrix.mtx
+|	|	|	|-- barcodes.tsv
+|	|	|	|-- matrix.csv
+|	|-- tabula-muris-filtered
+|	|	|-- heart-aorta
+|	|	|	|-- 10x
+|	|	|	|	|-- genes.tsv
+|	|	|	|	|-- matrix.mtx
+|	|	|	|	|-- barcodes.tsv
+|	|	|	|-- matrix.csv
+|	|	|	|-- true_labels.csv
+|	|	|	|-- mapping.csv
+|	|	|-- marrow
+|	|	|	|-- genes.tsv
+|	|	|	|-- matrix.mtx
+|	|	|	|-- barcodes.tsv
+|	|	|-- metadata_droplet.csv
+|	|	|-- annotations_droplet.csv
+|	|-- peripheal-blood
+|	|-- kumar-4-hard
+|	|-- kumar-8-hard
+|-- monocle
+|	|-- monocle.R 
+|	|-- monocle.Rmd
+|	|-- monocle.html
+|-- seurat
+|	|-- seurat.R 
+|	|-- seurat.Rmd
+|	|-- seurat.html
+|-- COTAN
+|	|-- COTAN.R 
+|	|-- COTAN.Rmd
+|	|-- COTAN.html
+|-- scanpy
+|	|-- scanpy.py 
+|	|-- scanpy.ipynb
+|-- scivitool
+|	|-- scivitool.py 
+|	|-- scivitool.ipynb
+|-- resuts
+|	|-- tabula-muris-heart-aorta
+|	|	|-- monocle
+|	|	|-- seurat
+|	|	|-- scanpy
+|	|	|-- scivitool
+|	|	|-- COTAN
+|	|-- tabula-muris-heart-marrow
+|	|	|-- monocle
+|	|	|-- seurat
+|	|	|-- scanpy
+|	|	|-- scivitool
+|	|	|-- COTAN
+|	|-- peripheal-blood
+|	|	|-- monocle
+|	|	|-- seurat
+|	|	|-- scanpy
+|	|	|-- scivitool
+|	|	|-- COTAN
+|	|-- kumar-4-hard
+|	|	|-- monocle
+|	|	|-- seurat
+|	|	|-- scanpy
+|	|	|-- scivitool
+|	|	|-- COTAN
+|	|-- kumar-8-hard
+|	|	|-- monocle
+|	|	|-- seurat
+|	|	|-- scanpy
+|	|	|-- scivitool
+|	|	|-- COTAN
+|-- filtering.R
+|-- utils.R
+|-- clustering_analysis.R # ??
+|-- markers_validation.py
+|-- markers_validation.sh
+
