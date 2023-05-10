@@ -1,0 +1,11 @@
+# COTAN analysis
+
+```{r eval=TRUE, include=TRUE}
+
+library(COTAN)
+source("utils.R")
+
+x <- rnorm(500)
+y <- x + rnorm(500)
+plot(x, y)
+```

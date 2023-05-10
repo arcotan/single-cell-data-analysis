@@ -1,29 +1,49 @@
 single-cell-data-analysis
 |-- dataset
-|	|-- tabula-muris
-|	|	|-- heart-aorta
-|	|	|	|-- genes.tsv
-|	|	|	|-- matrix.mtx
-|	|	|	|-- barcodes.tsv
-|	|	|	|-- matrix.csv
-|	|-- tabula-muris-filtered
-|	|	|-- heart-aorta
-|	|	|	|-- 10x
-|	|	|	|	|-- genes.tsv
-|	|	|	|	|-- matrix.mtx
-|	|	|	|	|-- barcodes.tsv
-|	|	|	|-- matrix.csv
-|	|	|	|-- true_labels.csv
-|	|	|	|-- mapping.csv
-|	|	|-- marrow
-|	|	|	|-- genes.tsv
-|	|	|	|-- matrix.mtx
-|	|	|	|-- barcodes.tsv
-|	|	|-- metadata_droplet.csv
+|   |-- tabula-muris-heart
+|   |   |-- metadata_droplet.csv
 |	|	|-- annotations_droplet.csv
-|	|-- peripheal-blood
-|	|-- kumar-4-hard
-|	|-- kumar-8-hard
+|	|	|-- genes.tsv
+|	|	|-- matrix.mtx
+|	|	|-- barcodes.tsv
+|   |-- tabula-muris-marrow_P7_2
+|   |   |-- metadata_droplet.csv
+|	|	|-- annotations_droplet.csv
+|	|	|-- genes.tsv
+|	|	|-- matrix.mtx
+|	|	|-- barcodes.tsv
+|   |-- tabula-muris-marrow_P7_3
+|   |   |-- metadata_droplet.csv
+|	|	|-- annotations_droplet.csv
+|	|	|-- genes.tsv
+|	|	|-- matrix.mtx
+|	|	|-- barcodes.tsv
+|	|-- tabula-muris-heart-filtered
+|	|	|-- matrix.csv
+|	|	|-- true_labels.csv
+|	|	|-- mapping.csv
+|	|-- tabula-muris-marrow_P7_2-filtered
+|	|	|-- matrix.csv
+|	|	|-- true_labels.csv
+|	|	|-- mapping.csv
+|	|-- tabula-muris-marrow_P7_3-filtered
+|	|	|-- matrix.csv
+|	|	|-- true_labels.csv
+|	|	|-- mapping.csv
+|   |-- peripheal-blood
+|   |   |-- TODO
+|	|-- peripheal-blood-filtered
+|	|	|-- matrix.csv
+|	|	|-- true_labels.csv
+|	|	|-- mapping.csv
+|	|-- kumar-4-hard-filtered
+|	|	|-- matrix.csv
+|	|	|-- true_labels.csv
+|	|	|-- mapping.csv
+|	|-- kumar-8-hard-filtered
+|	|	|-- matrix.csv
+|	|	|-- true_labels.csv
+|	|	|-- mapping.csv
 |-- monocle
 |	|-- monocle.R 
 |	|-- monocle.Rmd
@@ -39,39 +59,39 @@ single-cell-data-analysis
 |-- scanpy
 |	|-- scanpy.py 
 |	|-- scanpy.ipynb
-|-- scivitool
-|	|-- scivitool.py 
-|	|-- scivitool.ipynb
-|-- resuts
-|	|-- tabula-muris-heart-aorta
+|-- scvitools
+|	|-- scvitools.py 
+|	|-- scvitools.ipynb
+|-- results
+|	|-- tabula-muris-heart
 |	|	|-- monocle
 |	|	|-- seurat
 |	|	|-- scanpy
-|	|	|-- scivitool
+|	|	|-- scvitools
 |	|	|-- COTAN
-|	|-- tabula-muris-heart-marrow
+|	|-- tabula-muris-marrow
 |	|	|-- monocle
 |	|	|-- seurat
 |	|	|-- scanpy
-|	|	|-- scivitool
+|	|	|-- scvitools
 |	|	|-- COTAN
 |	|-- peripheal-blood
 |	|	|-- monocle
 |	|	|-- seurat
 |	|	|-- scanpy
-|	|	|-- scivitool
+|	|	|-- scvitools
 |	|	|-- COTAN
 |	|-- kumar-4-hard
 |	|	|-- monocle
 |	|	|-- seurat
 |	|	|-- scanpy
-|	|	|-- scivitool
+|	|	|-- scvitools
 |	|	|-- COTAN
 |	|-- kumar-8-hard
 |	|	|-- monocle
 |	|	|-- seurat
 |	|	|-- scanpy
-|	|	|-- scivitool
+|	|	|-- scvitools
 |	|	|-- COTAN
 |-- filtering.R
 |-- utils.R
