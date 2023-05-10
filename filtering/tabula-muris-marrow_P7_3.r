@@ -57,7 +57,7 @@ metadata$cell = substr(metadata$cell, 10, 25)
 labels = sort(unique(metadata$cell_ontology_class))
 metadata$cluster.ids = match(metadata$cell_ontology_class, labels)
 
-filtered_labels = left_join(data.frame("cell"=colnames(data_to_write)), metadata)
+filtered_labels = merge(data.frame("cell"=colnames(data_to_write)), metadata)
 write.csv(filtered_labels[,c('cell', 'cluster.ids')], paste(outDataDir, "labels.csv", sep=""), row.names = FALSE)
 
 

@@ -58,7 +58,7 @@ clusters$cell = lapply(clusters$cell, function(x) substr(x, 1, 16))
 # convert list to character vector
 clusters$cell = unlist(clusters$cell)
 
-filtered_labels = left_join(data.frame("cell"=colnames(data_to_write)), clusters)
+filtered_labels = merge(data.frame("cell"=colnames(data_to_write)), clusters)
 write.csv(filtered_labels, paste(outDataDir, "labels.csv", sep=""), row.names = FALSE)
 
 # Create false GO mapping to ensure compatibility with other datasets
