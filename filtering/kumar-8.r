@@ -5,18 +5,18 @@ library(DropletUtils)
 source("utils.R")
 
 DATASETS_FOLDER = './dataset/'
-NAME = 'tabula-muris-marrow_P7_2'
-CHANNEL = '10X_P7_2'
+NAME = 'kumar-8-hard'
+RDS = 'sce_full_SimKumar8hard.rds'
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
-outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='') 
+outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='')
+
 
 # Loading data
-data = Read10X(data.dir = inDataDir)
-colnames(data) = substr(colnames(data), 1, 16)
-
+data = readRDS(paste(inDataDir, RDS, sep="/"))
+counts = assays(data)$counts
 # Load the PBMC dataset
-pbmc.data <- data
+pbmc.data <- counts
 
 # plot distribution of amount of cells in which each gene is expressed
 ggplot(data.frame("sum" = rowSums(pbmc.data > 0)), aes(x=sum)) + geom_histogram()
@@ -41,7 +41,7 @@ plot1 + plot2
 
 
 # Set very loose limits for COTAN
-pbmc <- subset(pbmc, subset = nFeature_RNA > 0 & nFeature_RNA < 6000 & percent.mt < 5)
+pbmc <- subset(pbmc, subset = nFeature_RNA > 0 & nFeature_RNA < 32000 & percent.mt < 5)
 
 # Write pre-processed data
 data_to_write = GetAssayData(object = pbmc, assay = "RNA", slot = "data")
@@ -51,11 +51,10 @@ if (!dir.exists(Dir10X)) {
   write10xCounts(Dir10X, data_to_write)
 }
 
-metadata = read.csv(paste(inDataDir, "/annotations_droplet.csv", sep=""))
-metadata = metadata[metadata$channel == CHANNEL, c("cell", "cell_ontology_class", "cluster.ids")]
-metadata$cell = substr(metadata$cell, 10, 25)
-labels = sort(unique(metadata$cell_ontology_class))
-metadata$cluster.ids = match(metadata$cell_ontology_class, labels)
+phenoid = data@colData@listData$phenoid
+cells = data@colData@rownames
+labels = sort(unique(phenoid))
+metadata = data.frame("cell"=cells, "cluster.ids"=match(phenoid, labels), "cell_ontology_class"=phenoid)
 
 filtered_labels = merge(data.frame("cell"=colnames(data_to_write)), metadata)
 write.csv(filtered_labels[,c('cell', 'cluster.ids')], paste(outDataDir, "labels.csv", sep=""), row.names = FALSE)
