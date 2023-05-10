@@ -31,7 +31,9 @@ single-cell-data-analysis
 |	|	|-- true_labels.csv
 |	|	|-- mapping.csv
 |   |-- peripheal-blood
-|   |   |-- TODO
+|	|	|-- features.tsv
+|	|	|-- matrix.mtx
+|	|	|-- barcodes.tsv
 |	|-- peripheal-blood-filtered
 |	|	|-- matrix.csv
 |	|	|-- true_labels.csv
