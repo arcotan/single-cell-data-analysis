@@ -66,11 +66,11 @@ read_dataset_data = function(tool_tag_list, dataset_tag) {
   metadata = load_dataset_labels(LABEL_TAG_TO_LABEL_DIR[[dataset_tag]], dataset_tag)
   true_ids = metadata$metadata
   colnames(true_ids)[colnames(true_ids) == "cluster.ids"] <- "true_labels"
-  label_data = left_join(label_data, true_ids)
+  label_data = merge(label_data, true_ids)
   
   if (!to_init) {
     # align each clustering with true labels
-    for (label in colnames(global_data[[dataset]]$labels)[-1]) {
+    for (label in colnames(label_data)[-1]) {
       tool = substr(label, 1, nchar(label)-6)
       alignment = align_clusters(label_data, "true_labels", label)
       label_data[[label]] <- alignment$label_dataframe[[label]]
