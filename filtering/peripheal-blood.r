@@ -10,8 +10,6 @@ NAME = 'peripheal-blood'
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='') 
 
-print(inDataDir)
-
 # Loading data
 data = Read10X(data.dir = inDataDir, strip.suffix = TRUE)[[1]]
 
