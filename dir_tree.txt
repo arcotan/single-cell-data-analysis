@@ -1,0 +1,101 @@
+single-cell-data-analysis
+|-- dataset
+|   |-- tabula-muris-heart
+|   |   |-- metadata_droplet.csv
+|	|	|-- annotations_droplet.csv
+|	|	|-- genes.tsv
+|	|	|-- matrix.mtx
+|	|	|-- barcodes.tsv
+|   |-- tabula-muris-marrow_P7_2
+|   |   |-- metadata_droplet.csv
+|	|	|-- annotations_droplet.csv
+|	|	|-- genes.tsv
+|	|	|-- matrix.mtx
+|	|	|-- barcodes.tsv
+|   |-- tabula-muris-marrow_P7_3
+|   |   |-- metadata_droplet.csv
+|	|	|-- annotations_droplet.csv
+|	|	|-- genes.tsv
+|	|	|-- matrix.mtx
+|	|	|-- barcodes.tsv
+|	|-- tabula-muris-heart-filtered
+|	|	|-- matrix.csv
+|	|	|-- true_labels.csv
+|	|	|-- mapping.csv
+|	|-- tabula-muris-marrow_P7_2-filtered
+|	|	|-- matrix.csv
+|	|	|-- true_labels.csv
+|	|	|-- mapping.csv
+|	|-- tabula-muris-marrow_P7_3-filtered
+|	|	|-- matrix.csv
+|	|	|-- true_labels.csv
+|	|	|-- mapping.csv
+|   |-- peripheal-blood
+|   |   |-- TODO
+|	|-- peripheal-blood-filtered
+|	|	|-- matrix.csv
+|	|	|-- true_labels.csv
+|	|	|-- mapping.csv
+|	|-- kumar-4-hard-filtered
+|	|	|-- matrix.csv
+|	|	|-- true_labels.csv
+|	|	|-- mapping.csv
+|	|-- kumar-8-hard-filtered
+|	|	|-- matrix.csv
+|	|	|-- true_labels.csv
+|	|	|-- mapping.csv
+|-- monocle
+|	|-- monocle.R 
+|	|-- monocle.Rmd
+|	|-- monocle.html
+|-- seurat
+|	|-- seurat.R 
+|	|-- seurat.Rmd
+|	|-- seurat.html
+|-- COTAN
+|	|-- COTAN.R 
+|	|-- COTAN.Rmd
+|	|-- COTAN.html
+|-- scanpy
+|	|-- scanpy.py 
+|	|-- scanpy.ipynb
+|-- scvitools
+|	|-- scvitools.py 
+|	|-- scvitools.ipynb
+|-- results
+|	|-- tabula-muris-heart
+|	|	|-- monocle
+|	|	|-- seurat
+|	|	|-- scanpy
+|	|	|-- scvitools
+|	|	|-- COTAN
+|	|-- tabula-muris-marrow
+|	|	|-- monocle
+|	|	|-- seurat
+|	|	|-- scanpy
+|	|	|-- scvitools
+|	|	|-- COTAN
+|	|-- peripheal-blood
+|	|	|-- monocle
+|	|	|-- seurat
+|	|	|-- scanpy
+|	|	|-- scvitools
+|	|	|-- COTAN
+|	|-- kumar-4-hard
+|	|	|-- monocle
+|	|	|-- seurat
+|	|	|-- scanpy
+|	|	|-- scvitools
+|	|	|-- COTAN
+|	|-- kumar-8-hard
+|	|	|-- monocle
+|	|	|-- seurat
+|	|	|-- scanpy
+|	|	|-- scvitools
+|	|	|-- COTAN
+|-- filtering.R
+|-- utils.R
+|-- clustering_analysis.R # ??
+|-- markers_validation.py
+|-- markers_validation.sh
+

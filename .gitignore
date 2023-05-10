@@ -2,6 +2,8 @@
 dataset/
 tests/
 filtered_dataset/
+old_dataset/
+datasets.tar.gz
 
 #enviroments
 # Delete all folders named `.venv`

@@ -20,9 +20,11 @@ cds <- preprocess_cds(cds, num_dim = 100)
 
 cds <- reduce_dimension(cds, reduction_method = "PCA")
 
-cds <- cluster_cells(cds, resolution=0.08, reduction_method = "PCA")
+cds <- cluster_cells(cds, resolution=0.06, reduction_method = "PCA")
 
-plot_cells(cds, reduction_method = "PCA")
+plot_cells(cds, reduction_method = "PCA", show_trajectory_graph = FALSE, color_cells_by = "cluster", cell_size = 1)
+print(paste("Clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
+
 
 label_df = merge(true_labels, data.frame(clusters(cds, reduction_method = "PCA")), by.x = "cell", by.y = 0)
 names(label_df)[2:3] <- c("true_id", "computed_id")
@@ -45,6 +47,6 @@ marker_test_res$cell_group <- res$permutation_computed[as.numeric(marker_test_re
 plot_de(exprs(cds), marker_test_res, "gene_id", "cell_group", label_df, "cell", "computed_id", OUT_RES_DIR, RES_FILE_TAG)
 
 # TODO usare matrice di distanza su PCA
+
 write_clustering(OUT_RES_DIR, RES_FILE_TAG, label_df, "cell", "computed_id", "true_id", dist(t(exprs(cds))))
 write_markers(OUT_RES_DIR, RES_FILE_TAG, marker_test_res, "gene_id", "cell_group", "marker_score", TRUE, TOP_MARKER_NUM)
-
