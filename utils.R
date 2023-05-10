@@ -72,7 +72,7 @@ load_dataset_labels <- function(label_dir, channel) {
 # if metadata for a cell is not found, its cluster id will be NA
 load_data <- function(data_dir, label_dir, channel) {
   # Load gene expression matrix
-  data = Read10X(data.dir = IN_DATA_DIR, strip.suffix = TRUE)
+  data = Read10X(data.dir = data_dir, strip.suffix = TRUE)
   
   # Load cell metadata
   metadata_list = load_dataset_labels(label_dir, channel)
