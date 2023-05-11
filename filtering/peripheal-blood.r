@@ -11,7 +11,35 @@ inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='') 
 
 # Loading data
-data = Read10X(data.dir = inDataDir, strip.suffix = TRUE)[[1]]
+allData = Read10X(data.dir = inDataDir, strip.suffix = TRUE)
+
+data = allData[[1]]
+
+antibodyData = data.frame(allData[[2]])
+
+
+# remove `_TotalSeqB` from column names
+rownames(antibodyData) = gsub("_TotalSeqB", "", rownames(antibodyData))
+
+labels = data.frame("cell" = colnames(antibodyData))
+labels$go = ''
+# labels = vector('list', length = ncol(antibodyData))
+# names(labels) = colnames(antibodyData)
+
+for(i in 1:ncol(antibodyData)) {
+  cell = colnames(antibodyData)[i]
+  cellCounts = antibodyData[[cell]]
+  names(cellCounts) <- rownames(antibodyData)
+  cellCounts = cellCounts / max(cellCounts)
+  cellCounts = sort(cellCounts, decreasing=TRUE)
+  for(j in 2:length(cellCounts)) {
+    if(cellCounts[j] < 0.95) {
+      break
+    }
+  }
+  # labels$go[i] = paste(names(cellCounts)[1:i-1], collapse = '~')
+  labels$go[i] = paste(names(cellCounts)[1:j-1], collapse = '~')
+}
 
 # Load the PBMC dataset
 pbmc.data <- data
@@ -49,18 +77,14 @@ if (!dir.exists(Dir10X)) {
   write10xCounts(Dir10X, data_to_write)
 }
 
-# Read clusters from 10Xgenomics analysis
-clusters = read.csv(paste(inDataDir, "/clusters.csv", sep=""))
-names(clusters) = c("cell", "cluster.ids")
-clusters$cell = lapply(clusters$cell, function(x) substr(x, 1, 16))
-# convert list to character vector
-clusters$cell = unlist(clusters$cell)
+filtered_labels = merge(data.frame("cell"=colnames(data_to_write)), labels)
+filtered_labels$cluster.ids = as.numeric(as.factor(filtered_labels$go))
 
-filtered_labels = merge(data.frame("cell"=colnames(data_to_write)), clusters)
-write.csv(filtered_labels, paste(outDataDir, "labels.csv", sep=""), row.names = FALSE)
+write.csv(filtered_labels[,c('cell', 'cluster.ids')], paste(outDataDir, "labels.csv", sep=""), row.names = FALSE)
+
+mapping = data.frame("go"=unique(filtered_labels$go), "id"=unique(filtered_labels$cluster.ids))
+# sort mapping by id
+mapping = mapping[order(mapping$id),]
 
 # Create false GO mapping to ensure compatibility with other datasets
-ids = sort(unique(clusters$cluster.ids))
-mapping = data.frame("go"=sapply(ids, function(x) paste("cluster-", x, sep="")), "id"=ids)
-mapping
 write.csv(mapping, paste(outDataDir, "mapping.csv", sep=""), row.names = FALSE)
