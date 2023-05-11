@@ -109,7 +109,7 @@ pd.DataFrame(
 # TODO:
 # - valutare intersezione
 # - valutare bontà del ranking allenando con markers più in basso nella classifica?
-
+# - selezionare il numero di marcatori in base alle prestazioni del classificatore
 """
 # select top features with recursive feature elimination and random forest
 from sklearn.feature_selection import RFE

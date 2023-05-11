@@ -40,7 +40,7 @@ label_df <- res$label_dataframe
 marker_test_res <- top_markers(cds,
                                group_cells_by="cluster",
                                reduction_method = "PCA",
-                               cores=8)
+                               cores=8) # genes_to_test_per_group da selezionare in base ai pval degli altri tools
 
 marker_test_res$cell_group <- res$permutation_computed[as.numeric(marker_test_res$cell_group)]
 

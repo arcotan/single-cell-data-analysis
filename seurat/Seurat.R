@@ -109,7 +109,7 @@ confusion_matrix
 seurat_clustering_plot(pbmc, label_df$cell, label_df$computed_id) + seurat_clustering_plot(pbmc, label_df$cell, label_df$true_id)
 
 # find markers for every cluster compared to all remaining cells
-pbmc.markers <- FindAllMarkers(pbmc, min.pct = 0.25, logfc.threshold = 0.25)
+pbmc.markers <- FindAllMarkers(pbmc, min.pct = 0.1, logfc.threshold = 0.15) # suggested by Silvia
 
 plot_de(GetAssayData(object = pbmc, assay = "RNA", slot = "data"), pbmc.markers, "gene", "cluster", label_df, "cell", "computed_id", OUT_RES_DIR, RES_FILE_TAG)
 
