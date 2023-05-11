@@ -3,7 +3,10 @@
 - capire se in peripheal blood le 19 labels individuate hanno senso (il processo che abbiamo usato è okay)
 - classificazione (implementare misura del ranking, calcolo del numero di marcatori da usare)
 - come organizzare il report?
+- ERCC
+- perchè genes.tsv ci sono due nomi
 - enrichment analysis
+- capire se scalare su scanpy e scivitools (meglio con)
 - valutare la presenza dei marcatori che hanno usato in tabula muris per etichettare cellule nel ranking prodotto dalla DE
 - fare plot De per tool in python
 - rimuovere il filtering dallo script di seurat 

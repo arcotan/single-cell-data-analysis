@@ -26,8 +26,10 @@ ggplot(data.frame("sum" = colSums(pbmc.data > 0)), aes(x=sum)) + geom_histogram(
 # Initialize the Seurat object with the raw (non-normalized data).
 pbmc <- CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 200)
 
+# find the name of the cell with less than 200 genes expressed
+
 # The [[ operator can add columns to object metadata. This is a great place to stash QC stats
-pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, pattern = "^MT-")
+pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, pattern = "^Mt")
 
 # Visualize QC metrics as a violin plot
 VlnPlot(pbmc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)

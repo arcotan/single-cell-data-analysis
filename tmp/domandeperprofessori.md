@@ -1,5 +1,9 @@
 # tante belle domande su cotan e molto altro
 
+- Tabula muris ha geni mitocondriali? Cercando "Mthfd1l" su ontology appare qualcosa di simile ma
+qui dicono che non sono stati sequenziali https://github.com/czbiohub/tabula-muris/issues/221
+- 
+
 # COSE
 
 - monocle può usare leiden (con risoluzione, usat anche da altri tool) o louvian (senza risoluzione)

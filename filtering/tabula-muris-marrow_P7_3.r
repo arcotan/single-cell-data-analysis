@@ -27,7 +27,7 @@ ggplot(data.frame("sum" = colSums(pbmc.data > 0)), aes(x=sum)) + geom_histogram(
 pbmc <- CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 200)
 
 # The [[ operator can add columns to object metadata. This is a great place to stash QC stats
-pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, pattern = "^MT-")
+pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, pattern = "^Mt")
 
 # Visualize QC metrics as a violin plot
 VlnPlot(pbmc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
@@ -43,8 +43,11 @@ plot1 + plot2
 # Set very loose limits for COTAN
 pbmc <- subset(pbmc, subset = nFeature_RNA > 0 & nFeature_RNA < 6000 & percent.mt < 5)
 
+
+
 # Write pre-processed data
 data_to_write = GetAssayData(object = pbmc, assay = "RNA", slot = "data")
+
 write.csv(data_to_write, paste(outDataDir, "data.csv", sep=""))
 Dir10X = paste(outDataDir, "10X", sep="")
 if (!dir.exists(Dir10X)) {
