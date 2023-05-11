@@ -2,6 +2,7 @@
 
 # COSE
 
+- monocle può usare leiden (con risoluzione, usat anche da altri tool) o louvian (senza risoluzione)
 - parametri usati dagli autori di tabula muris per analisi https://github.com/czbiohub/tabula-muris/tree/master/00_data_ingest/02_tissue_analysis_rmd
 - seurat usa AUROC: https://satijalab.org/seurat/reference/findmarkers
 - Invece di enrichment a mano monocle offre Garnett: https://cole-trapnell-lab.github.io/monocle3/docs/clustering/ e Seurat https://www.singlecellcourse.org/single-cell-rna-seq-analysis-using-seurat.html#cell-type-annotation-using-singler, possiamo valutare # cellule correttamente identificate su tabula muris

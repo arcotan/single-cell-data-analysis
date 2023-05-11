@@ -1,9 +1,9 @@
 # cose da fare
 
-- cercare algoritmi specifici per ogni tool (resta da vedere monocle)
-- classificazione (implementare misura del ranking)
+- capire se in peripheal blood le 19 labels individuate hanno senso (il processo che abbiamo usato è okay)
+- classificazione (implementare misura del ranking, calcolo del numero di marcatori da usare)
 - come organizzare il report?
-- enrichment analysis e venn diagrams
+- enrichment analysis
 - valutare la presenza dei marcatori che hanno usato in tabula muris per etichettare cellule nel ranking prodotto dalla DE
 - fare plot De per tool in python
 - rimuovere il filtering dallo script di seurat 
@@ -12,4 +12,4 @@
 - seurat usa PCA con 10 variables features, gli altri?
 
 
-- uniformare letture dataset in modo che tutti gli script leggano unica matrice di espressione, lo script che crea questa matrice deve essere specifico per ogni dataset. Eventualmente (ma forse non è una buona idea) inclucere nella nuova matrice di espressione anche degli step che adesso si fanno separatamente come ad esempio la normalizzazione ed il logaritmo.
+- Eventualmente (ma forse non è una buona idea) inclucere nella nuova matrice di espressione anche degli step che adesso si fanno separatamente come ad esempio la normalizzazione ed il logaritmo.
