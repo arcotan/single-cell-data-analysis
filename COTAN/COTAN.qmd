@@ -20,7 +20,7 @@ IN_LABEL_DIR = "./dataset/tabula-muris-marrow_P7_3-filtered/"
 CHANNEL = "10X_P7_4"
 ```
 
-```{f{r}
+```{r}
 data <- Read10X(paste(IN_DATA_DIR, '10X', sep=''))
 ```
 
