@@ -12,6 +12,7 @@ source("./utils.R")
 
 ```{r}
 outDir <- tempdir()
+dataset_name = 'tabula-muris-heart-filtered'
 
 IN_DATA_DIR = "./dataset/tabula-muris-heart-filtered/"
 IN_LABEL_DIR = "./dataset/tabula-muris-heart-filtered/"
@@ -19,9 +20,6 @@ CHANNEL = "10X_P7_4"
 ```
 
 ```{r}
-# experiment_data = load_data(paste(IN_DATA_DIR, '10X', sep='/'), IN_LABEL_DIR, CHANNEL)
-# data <- experiment_data$data
-
 data <- Read10X(paste(IN_DATA_DIR, '10X', sep=''))
 ```
 
@@ -32,42 +30,22 @@ obj = initializeMetaDataset(obj,
                             sequencingMethod = "10x",
                             sampleCondition = "Heart_and_Aorta")
 
-ECDPlot(obj, yCut = 700) # a cosa serve
-cellSizePlot(obj) # per ogni cellula la somma dei counts
 ```
 
 ```{r}
-mit <- mitochondrialPercentagePlot(obj, genePrefix = "^Mt")
-mit[["plot"]]
+ECDPlot(obj, yCut = 700)
+
 ```
 
 ```{r}
-cells_to_rem <- getCells(obj)[getCellsSize(obj) > 15000] # la somma dei counts di ciascuna cellula deve essere < 15000 (elimina doublets)
-obj <- dropGenesCells(obj, cells = cells_to_rem)
+cellSizePlot(obj)
 ```
 
 ```{r}
-cellGeneNumber <- sort(colSums(as.data.frame(getRawData(obj) > 0)), decreasing = FALSE)
-cells_to_rem <- names(cellGeneNumber)[cellGeneNumber > 4000] # outliers
-obj <- dropGenesCells(obj, cells = cells_to_rem)
-genesSizePlot(obj) # per ogni cellula il numero di reads > 0
-```
-
-```{r}
-to_rem <- mit[["sizes"]][["mit.percentage"]] > 0.8
-cells_to_rem <- rownames(mit[["sizes"]])[to_rem]
-obj <- dropGenesCells(obj, cells = cells_to_rem)
-```
-
-```{r}
-mit <- mitochondrialPercentagePlot(obj, genePrefix = "^Mt")
-mit[["plot"]]
-```
-
-```{r}
-obj <- clean(obj)
+# Perchè con soglia 0 continua a droppare ?
+obj <- clean(obj, genesCutoff=0.0)
 c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot) %<-% cleanPlots(obj)
-pcaCellsPlot # ?
+pcaCellsPlot 
 ```
 
 ```{r}
@@ -79,71 +57,57 @@ UDEPlot
 ```
 
 ```{r}
-nuPlot
-```
-
-```{r}
-ggplot(subset(pcaCellsData[pcaCellsData$PC1 < 0,], groups == "A"),
-                       aes(x = PC1, y = PC2, colour = groups)) +
-  geom_point(alpha = 0.5, size = 3L) +
-  geom_point(data = subset(pcaCellsData[pcaCellsData$PC1 < 0,], groups != "A"),
-             aes(x = PC1, y = PC2, colour = groups),
-             alpha = 0.8, size = 3L) +
-  scale_color_manual(groups, values = c("A" = "#8491B4B2",
-                                        "B" = "#E64B35FF")) +
-  plotTheme(
-    "pca")
-```
-
-```{r}
-obj <- clean(obj)
-cells_to_rem <- rownames(pcaCellsData)[pcaCellsData[["groups"]] == "B"]
-obj <- dropGenesCells(obj, cells = cells_to_rem)
-```
-
-```{r}
-UDEPlot
-nuPlot
-```
-
-```{r}
-nuDf = data.frame("nu" = sort(getNu(obj)), "n" = seq_along(getNu(obj)))
-yset = 0.20 # the threshold to remove low UDE cells
-plot.ude <- ggplot(nuDf, aes(x = nuDf$n, y = nuDf$nu)) +
-  geom_point(colour = "#8491B4B2", size = 1) +
-  xlim(0, 400) +
-  ylim(0,   1) +
-  geom_hline(yintercept = yset, linetype = "dashed",
-             color = "darkred") +
-  annotate(geom = "text", x = 200, y = 0.25, 
-           label = paste0("to remove cells with nu < ", yset), 
-           color = "darkred", size = 4.5)
-```
-
-```{r}
-plot.ude
-```
-
-```{r}
-obj <- addElementToMetaDataset(obj, "Threshold low UDE cells:", yset) 
-```
-
-```{r}
-cells_to_rem = rownames(nuDf)[nuDf[["nu"]] < yset]
-obj <- dropGenesCells(obj, cells = cells_to_rem)
-```
-
-```{r}
-obj <- clean(obj)
-c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot) %<-% cleanPlots(obj)
-```
-
-```{r}
-pcaCellsPlot
-```
-
-```{r}
+#  Threshold and MaxIteration ?
 obj = estimateDispersionBisection(obj, cores = 10)
-obj <- calculateCoex(obj)
-saveRDS(obj, file = file.path("./dataset/tabulamuris/", paste0("Heart_and_Aorta", ".cotan.RDS")))
+
+```
+
+```{r}
+if file.exists(paste('./', dataset_name, 'Heart_and_Aorta.cotan.RDS', sep = "", collapse = NULL)){
+    obj <- readRDS(file.path(paste('./', dataset_name, '/Heart_and_Aorta.cotan.RDS', sep = "", collapse = NULL)))
+}else{
+    # ActOnCells True ?
+    obj <- calculateCoex(obj, actOnCells = TRUE)
+    saveRDS(obj, file = file.path(paste("./", dataset_name, "Heart_and_Aorta.cotan.RDS")))
+}
+```
+
+## Clustering
+
+It is possible to obtain a cell clusterization based on the concept of uniformity of expression of the genes across the cells. That is the cluster satisfies the null hypothesis of the `COTAN` model: the genes expression is not dependent on the cell in consideration.
+
+```{r}
+outDir = "./COTAN/tabula-muris-heart-filtered/"
+```
+
+```{r eval=FALSE, include=TRUE}
+# Nel calcolo la funzione dice : "Genes/cells selection done: dropped [2697] genes and [0] cells"
+# Perchè?
+# Distance default o distance='euclidean' ?
+fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.4, cores = 10,
+                                       saveObj = TRUE, outDir = outDir)
+```
+
+```{r}
+obj <- addClusterization(obj, clName = "FineClusters", clusters = fineClusters)
+```
+
+```{r eval=FALSE, include=TRUE}
+c(coexDF, pValueDF) %<-% DEAOnClusters(obj, clusters = fineClusters)
+obj <- addClusterizationCoex(obj, clName = "FineClusters",
+                             coexDF = coexDF)
+```
+
+```{r eval=FALSE, include=TRUE}
+c(mergedClusters, coexDF, pValueDF) %<-%
+  mergeUniformCellsClusters(obj, GDIThreshold = 1.4, cores = 10,
+                            saveObj = TRUE, outDir = outDir)
+obj <- addClusterization(obj, clName = "MergedClusters",
+                         clusters = mergedClusters, coexDF = coexDF)
+```
+
+```{r eval=FALSE, include=TRUE}
+mergedUMAPPlot <- UMAPPlot(coexDF, elements = layersGenes,
+                           title = "Fine Cluster UMAP Plot")
+plot(mergedUMAPPlot)
 ```

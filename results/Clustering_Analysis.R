@@ -4,17 +4,26 @@ library(ggplot2)
 
 source("utils.R")
 
-TOOL_TAGS = c("seurat", 'scvi', 'scanpy', 'monocle')
-DATASET_TAGS = c("10X_P7_4")
-LABEL_TAG_TO_LABEL_DIR = list("10X_P7_4" = "./dataset/tabulamuris/")
-LABEL_TAG_TO_FILTERED_LABEL_DIR = list("10X_P7_4" = "./filtered_dataset/tabulamuris/")
-LABEL_TAG_TO_FILTERED_GE_DIR = list("10X_P7_4" = "./filtered_dataset/tabulamuris/data_10X_P7_4")
+TOOL_TAGS = c('scvi', 'scanpy')
+# DATASET_TAGS = c("tabula-muris-heart", "tabula-muris-marrow_P7_3", "peripheal-blood", "kumar-4-hard", "kumar-8-hard")
+DATASET_TAGS= c('tabula-muris-heart')
+LABEL_TAG_TO_LABEL_DIR = list()
+LABEL_TAG_TO_FILTERED_LABEL_DIR = list()
+LABEL_TAG_TO_FILTERED_GE_DIR = list()
+for (tag in DATASET_TAGS) {
+  LABEL_TAG_TO_LABEL_DIR[[tag]] = paste("./dataset/", tag, sep="")
+  LABEL_TAG_TO_FILTERED_LABEL_DIR[[tag]] = paste("./dataset/", tag, "-filtered", sep="")
+  LABEL_TAG_TO_FILTERED_GE_DIR[[tag]] = paste("./dataset/", tag, "-filtered/10X", sep="")
+}
+# LABEL_TAG_TO_LABEL_DIR = list("tabula_muris_heart" = "./dataset/tabula_muris_heart/")
+# LABEL_TAG_TO_FILTERED_LABEL_DIR = list("tabula_muris_heart" = "./dataset/tabula_muris_heart-filtered/")
+# LABEL_TAG_TO_FILTERED_GE_DIR = list("10X_P7_4" = "./filtered_dataset/tabulamuris/10")
 
 
 read_single_data = function(tool_tag, dataset_tag) {
-  label_file = paste("./results/", tool_tag, "/clustering_labels_", dataset_tag, ".csv", sep="")
-  score_file = paste("./results/", tool_tag, "/clustering_scores_", dataset_tag, ".csv", sep="")
-  marker_file = paste("./results/", tool_tag, "/markers_", dataset_tag, ".csv", sep="")
+  label_file = paste("./results/", dataset_tag, "/", tool_tag, "/clustering_labels", ".csv", sep="")
+  score_file = paste("./results/", dataset_tag, "/", tool_tag, "/clustering_scores", ".csv", sep="")
+  marker_file = paste("./results/", dataset_tag, "/", tool_tag, "/markers", ".csv", sep="")
   if (file.exists(label_file) && file.exists(score_file) && file.exists(marker_file)) {
     label_data = read.csv(label_file)
     score_data = read.csv(score_file)
@@ -89,14 +98,19 @@ read_dataset_data = function(tool_tag_list, dataset_tag) {
   return (list("labels" = label_data, "scores" = score_data, "markers" = marker_data, "mapping" = metadata$mapping))
 }
 
+
+
 collect_data = function(dataset_tag_list, tool_tag_list, write_aggregate = TRUE) {
   datasets_aggregate_data_list = list()
   for (tag in dataset_tag_list) {
     dataset_data = read_dataset_data(tool_tag_list, tag)
+    print(dataset_data)
+    # for (tool in tool_tag_list){
     if (write_aggregate) {
-      write.csv(dataset_data$labels, paste("./results/aggregate/", tag, "_labels.csv"), row.names = FALSE)
-      write.csv(dataset_data$scores, paste("./results/aggregate/", tag, "_scores.csv"), row.names = FALSE)
-      write.csv(dataset_data$markers, paste("./results/aggregate/", tag, "_markers.csv"), row.names = FALSE)
+      write.csv(dataset_data$labels, paste("./results/aggregate/", tag, "/labels.csv"), row.names = FALSE)
+      write.csv(dataset_data$scores, paste("./results/aggregate/", tag, "/scores.csv"), row.names = FALSE)
+      write.csv(dataset_data$markers, paste("./results/aggregate/", tag, "/markers.csv"), row.names = FALSE)
+      # }
     }
     datasets_aggregate_data_list[[tag]] = dataset_data
   }
@@ -120,7 +134,7 @@ for (dataset in DATASET_TAGS) {
 # plot clustering and save results to eps
 for (dataset in DATASET_TAGS) {
   # load GO mapping
-  go_mapping = read.csv(paste(LABEL_TAG_TO_FILTERED_LABEL_DIR[[dataset]], "mapping_", dataset, ".csv", sep=""))
+  go_mapping = read.csv(paste(LABEL_TAG_TO_FILTERED_LABEL_DIR[[dataset]], "mapping.csv", sep=""))
   go_mapping = go_mapping[order(go_mapping$id),]
   pi = go_mapping$go
 
@@ -135,7 +149,7 @@ for (dataset in DATASET_TAGS) {
   for (label in colnames(global_data[[dataset]]$labels)[-1]) {
     tool = substr(label, 1, nchar(label)-6)
     cur_plot <- seurat_clustering_plot(pbmc, global_data[[dataset]]$labels$cell, pi[global_data[[dataset]]$labels[[label]]])
-    ggsave(filename = paste("./results/aggregate/", dataset, "_", label, ".png", sep=""), cur_plot)
+    ggsave(filename = paste("./results/aggregate/", dataset, "/", label, ".png", sep=""), cur_plot)
   }
   print("--------------------------------------")
 }
