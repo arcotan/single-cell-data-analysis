@@ -29,7 +29,7 @@ plot(log(sort(apply(pbmc.data,1,var), decreasing=TRUE)))
 
 ```{r}
 pbmc <- NormalizeData(pbmc, normalization.method = "LogNormalize", scale.factor = 10000)
-pbmc <- FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 2000)
+pbmc <- FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 3000)
 ```
 
 ```{r}
@@ -51,11 +51,11 @@ ElbowPlot(object = pbmc,
 ```
 
 ```{r}
-pbmc <- FindNeighbors(pbmc, dims = 1:20)
+pbmc <- FindNeighbors(pbmc, dims = 1:10)
 ```
 
 ```{r}
-pbmc <- FindClusters(pbmc, resolution = 0.1)
+pbmc <- FindClusters(pbmc, resolution = 1)
 ```
 
 ```{r}
@@ -72,7 +72,7 @@ pbmc.markers$cluster <- as.numeric(pbmc.markers$cluster)
 
 plot_de(GetAssayData(object = pbmc, assay = "RNA", slot = "data"), pbmc.markers, "gene", "cluster", label_df, "cell", "computed_id", OUT_RES_DIR)
 
-write_clustering(OUT_RES_DIR, label_df, "cell", "computed_id", dist(Embeddings(pbmc[['pca']])[,1:20])) # TODO: capire se è okay calcolarla su PCA
+write_clustering(OUT_RES_DIR, label_df, "cell", "computed_id", dist(Embeddings(pbmc[['pca']])[,1:10])) # TODO: capire se è okay calcolarla su PCA
 
 # TODO scegliere lo score
 write_markers(OUT_RES_DIR, pbmc.markers, "gene", "cluster", "avg_log2FC", TRUE, TOP_MARKER_NUM)

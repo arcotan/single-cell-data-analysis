@@ -43,7 +43,6 @@ cellSizePlot(obj)
 ```
 
 ```{r}
-# Perchè con soglia 0 continua a droppare ?
 obj <- clean(obj, genesCutoff=0, cellsCutoff=0)
 c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot) %<-% cleanPlots(obj)
 pcaCellsPlot 
@@ -86,12 +85,14 @@ outDir = paste('./COTAN/', dataset_name, sep="")
 ```
 
 ```{r eval=FALSE, include=TRUE}
-# Nel calcolo la funzione dice : "Genes/cells selection done: dropped [2697] genes and [0] cells"
-# Perchè?
+# TODO crash numero di dimensioni
+# TODO ppure da l'errore:
+# Error: 'VST.default' is not implemented yet
 # Distance default o distance='euclidean' ?
 fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.4, cores = 10,
                                        saveObj = TRUE, outDir = outDir)
 ```
+
 
 ```{r}
 obj <- addClusterization(obj, clName = "FineClusters", clusters = fineClusters)
