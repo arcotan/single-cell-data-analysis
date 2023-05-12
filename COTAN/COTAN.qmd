@@ -12,14 +12,15 @@ source("./utils.R")
 
 ```{r}
 outDir <- tempdir()
-dataset_name = 'tabula-muris-heart-filtered'
+dataset_name = 'tabula-muris-marrow_P7_3-filtered'
+file_name = 'marrow'
 
-IN_DATA_DIR = "./dataset/tabula-muris-heart-filtered/"
-IN_LABEL_DIR = "./dataset/tabula-muris-heart-filtered/"
+IN_DATA_DIR = "./dataset/tabula-muris-marrow_P7_3-filtered/"
+IN_LABEL_DIR = "./dataset/tabula-muris-marrow_P7_3-filtered/"
 CHANNEL = "10X_P7_4"
 ```
 
-```{r}
+```{f{r}
 data <- Read10X(paste(IN_DATA_DIR, '10X', sep=''))
 ```
 
@@ -28,7 +29,7 @@ obj = COTAN(raw = data)
 obj = initializeMetaDataset(obj,
                             GEO = "-",
                             sequencingMethod = "10x",
-                            sampleCondition = "Heart_and_Aorta")
+                            sampleCondition = file_name)
 
 ```
 
@@ -43,7 +44,7 @@ cellSizePlot(obj)
 
 ```{r}
 # Perchè con soglia 0 continua a droppare ?
-obj <- clean(obj, genesCutoff=0.0)
+obj <- clean(obj, genesCutoff=0, cellsCutoff=0)
 c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot) %<-% cleanPlots(obj)
 pcaCellsPlot 
 ```
@@ -63,12 +64,16 @@ obj = estimateDispersionBisection(obj, cores = 10)
 ```
 
 ```{r}
-if file.exists(paste('./', dataset_name, 'Heart_and_Aorta.cotan.RDS', sep = "", collapse = NULL)){
-    obj <- readRDS(file.path(paste('./', dataset_name, '/Heart_and_Aorta.cotan.RDS', sep = "", collapse = NULL)))
-}else{
+file_pos = paste('./COTAN/', dataset_name, '/', file_name, '.cotan.RDS', sep = "")
+```
+
+```{r}
+if (file.exists(file_pos)){
+    obj <- readRDS(file.path(file_pos))
+} else {
     # ActOnCells True ?
     obj <- calculateCoex(obj, actOnCells = TRUE)
-    saveRDS(obj, file = file.path(paste("./", dataset_name, "Heart_and_Aorta.cotan.RDS")))
+    saveRDS(obj, file = file.path(file_pos))
 }
 ```
 
@@ -77,7 +82,7 @@ if file.exists(paste('./', dataset_name, 'Heart_and_Aorta.cotan.RDS', sep = "", 
 It is possible to obtain a cell clusterization based on the concept of uniformity of expression of the genes across the cells. That is the cluster satisfies the null hypothesis of the `COTAN` model: the genes expression is not dependent on the cell in consideration.
 
 ```{r}
-outDir = "./COTAN/tabula-muris-heart-filtered/"
+outDir = paste('./COTAN/', dataset_name, sep="")
 ```
 
 ```{r eval=FALSE, include=TRUE}
