@@ -69,6 +69,7 @@ label_df$computed_id <- as.numeric(label_df$computed_id)
 ```{r}
 pbmc.markers <- FindAllMarkers(pbmc, min.pct = 0.1, logfc.threshold = 0.15)
 pbmc.markers$cluster <- as.numeric(pbmc.markers$cluster)
+print(paste("Numero totale geni: ", nrow(pbmc.markers), sep=""))
 
 plot_de(GetAssayData(object = pbmc, assay = "RNA", slot = "data"), pbmc.markers, "gene", "cluster", label_df, "cell", "computed_id", OUT_RES_DIR)
 
