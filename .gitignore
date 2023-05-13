@@ -69,3 +69,6 @@ rsconnect/
 
 # eps data
 /results/aggregate/*.eps
+
+# VSCode data
+.vscode/
