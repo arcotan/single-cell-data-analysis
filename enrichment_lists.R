@@ -1,14 +1,12 @@
 # takes the path to the csv with aggregated markers and the cluster id
-get_common_markers = function(markers_path, cluster_id) {
-  markers = read.csv(markers_path)
+get_common_markers = function(markers, cluster_id) {
   cluster_markers = markers[markers$cluster == cluster_id,]
   common_markers = Reduce(intersect,split(cluster_markers$gene, cluster_markers$tool))
   return (common_markers)
 }
 
 # takes the path to the csv with aggregated markers and the cluster id
-get_specific_markers = function(markers_path, cluster_id) {
-  markers = read.csv(markers_path)
+get_specific_markers = function(markers, cluster_id) {
   cluster_markers = markers[markers$cluster == cluster_id,]
   tools = unique(cluster_markers$tool)
   tools_markers = split(cluster_markers$gene, cluster_markers$tool)
@@ -28,22 +26,21 @@ get_specific_markers = function(markers_path, cluster_id) {
 }
 
 # takes the path to the csv with aggregated markers
-write_markers_to_enrich = function(markers_path) {
-  markers = read.csv(markers_path)
+write_markers_to_enrich = function(markers, out_dir) {
   cluster_ids = unique(markers$cluster)
   for (cid in cluster_ids) {
-    common_markers = get_common_markers(markers_path, cid)
+    common_markers = get_common_markers(markers, cid)
     write.table(
       common_markers,
-      paste("cluster",cid,"_intersection_to_enrich.txt",sep=""),
+      paste(out_dir,"cluster",cid,"_intersection_to_enrich.txt",sep=""),
       row.names=FALSE,
       quote=FALSE,
       col.names=FALSE)
-    specific_markers = get_specific_markers(markers_path, cid)
+    specific_markers = get_specific_markers(markers, cid)
     for (tool in names(specific_markers)) {
       write.table(
         specific_markers[[tool]],
-        paste("cluster",cid,"_",tool,"_to_enrich.txt",sep=""),
+        paste(out_dir,"cluster",cid,"_",tool,"_to_enrich.txt",sep=""),
         row.names=FALSE,
         quote=FALSE,
         col.names=FALSE)

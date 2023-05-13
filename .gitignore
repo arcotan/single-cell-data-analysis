@@ -68,7 +68,10 @@ rsconnect/
 .scviTools/data
 
 # eps data
-/results/aggregate/*.eps
+/results/**/*.eps
+
+# txt data
+/results/**/*.txt
 
 # VSCode data
 .vscode/
