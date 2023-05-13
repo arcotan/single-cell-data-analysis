@@ -6,6 +6,7 @@ qui dicono che non sono stati sequenziali https://github.com/czbiohub/tabula-mur
 
 # COSE
 
+- quale database usare per i geni di peripheral blood
 - monocle può usare leiden (con risoluzione, usat anche da altri tool) o louvian (senza risoluzione)
 - parametri usati dagli autori di tabula muris per analisi https://github.com/czbiohub/tabula-muris/tree/master/00_data_ingest/02_tissue_analysis_rmd
 - seurat usa AUROC: https://satijalab.org/seurat/reference/findmarkers

@@ -1,6 +1,7 @@
 
 library(dplyr)
 library(ggplot2)
+library(enrichR)
 
 source("utils.R")
 source("venn.R")
@@ -22,6 +23,10 @@ for (tag in DATASET_TAGS) {
 }
 
 DATASET_TAG_TO_TRUE_LABEL_DIR = DATASET_TAG_TO_MAPPING_DIR
+
+DATASET_TAG_TO_ENRICHR_DB = list("tabula-muris-heart" = "Tabula_Muris",
+                                 "tabula-muris-marrow_P7_3" = "Tabula_Muris",
+                                 "peripheal-blood" = "???") # TODO: add the correct database
 
 
 read_single_data = function(tool_tag, dataset_tag) {
@@ -217,5 +222,9 @@ for (dataset in dataset_found) {
 # write marker lists
 for (dataset in dataset_found) {
   write_markers_to_enrich(global_data[[dataset]]$markers, paste(AGGREGATE_RESULT_DIR, dataset, "/", sep=""))
-}
+  cur_enrichr_db <- DATASET_TAG_TO_ENRICHR_DB[[dataset]]
 
+  if (!is.null(cur_enrichr_db)) {
+    write_enrichment_result(global_data[[dataset]]$markers, paste(AGGREGATE_RESULT_DIR, dataset, "/", sep=""), cur_enrichr_db)
+  }
+}

@@ -47,3 +47,36 @@ write_markers_to_enrich = function(markers, out_dir) {
     }
   }
 }
+
+get_enriched_cell_type = function(gene_list, enrichr_database, enrichr_site = "Enrichr") {
+  websiteLive <- getOption("enrichR.live")
+  if (websiteLive) {
+      setEnrichrSite(enrichr_site)  
+  }
+  dbs <- c(enrichr_database)
+  if (websiteLive) {
+      enriched <- enrichr(gene_list, dbs)
+  }
+
+  return (enriched[[enrichr_database]][c("Term","Adjusted.P.value", "Overlap")])
+}
+
+write_enrichment_result = function(markers, out_dir, enrichr_database) {
+  cluster_ids = unique(markers$cluster)
+  for (cid in cluster_ids) {
+    common_markers = get_common_markers(markers, cid)
+    enriched <- get_enriched_cell_type(common_markers, enrichr_database)
+    write.csv(
+      enriched,
+      paste(out_dir,"cluster",cid,"_enriched_intersection.csv",sep=""),
+      row.names=FALSE)
+    specific_markers = get_specific_markers(markers, cid)
+    for (tool in names(specific_markers)) {
+      enriched <- get_enriched_cell_type(specific_markers[[tool]], enrichr_database)
+      write.csv(
+        enriched,
+        paste(out_dir,"cluster",cid,"_",tool,"_enriched.csv",sep=""),
+        row.names=FALSE)
+    }
+  }
+}
