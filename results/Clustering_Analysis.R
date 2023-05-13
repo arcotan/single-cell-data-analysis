@@ -4,7 +4,7 @@ library(ggplot2)
 
 source("utils.R")
 
-TOOL_TAGS = c('scvi', 'scanpy', 'seurat', 'scvitools', 'COTAN')
+TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvitools', 'COTAN')
 DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'kumar-4-hard', 'kumar-8-hard')
 
 RESULT_DIR = "./results/"
@@ -164,7 +164,7 @@ global_data = collect_data(DATASET_TAGS, TOOL_TAGS, filtered_datasets_dir_map = 
 # print NA count
 print("NA count")
 for (dataset in DATASET_TAGS) {
-  if (!is.null(global_data[[dataset]])) {
+  if !(is.null(global_data[[dataset]])) {
     print(paste("Dataset: ", dataset))
     print(colSums(is.na(global_data[[dataset]]$labels[,2:ncol(global_data[[dataset]]$labels)])))
   }
@@ -172,7 +172,7 @@ for (dataset in DATASET_TAGS) {
 
 # plot clustering and de and save results in eps format
 for (dataset in DATASET_TAGS) {
-  if (!is.null(global_data[[dataset]])) {
+  if !(is.null(global_data[[dataset]])) {
     # load GO mapping
     go_mapping = read.csv(paste(DATASET_TAG_TO_MAPPING_DIR[[dataset]], "mapping.csv", sep=""))
     go_mapping = go_mapping[order(go_mapping$id),]
@@ -195,6 +195,7 @@ for (dataset in DATASET_TAGS) {
       # plot clustering
       cur_plot <- seurat_clustering_plot(pbmc, global_data[[dataset]]$labels$cell, pi[global_data[[dataset]]$labels[[label]]])
       ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", label, ".png", sep=""), cur_plot)
+      ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", label, ".eps", sep=""), cur_plot)
 
       # plot de 
       plot_de(pbmc.data, global_data[[dataset]]$markers[global_data[[dataset]]$markers$tool == tool,], "gene", "cluster", global_data[[dataset]]$labels, "cell", label, paste(RESULT_DIR, dataset, "/", tool, "/", sep=""))
