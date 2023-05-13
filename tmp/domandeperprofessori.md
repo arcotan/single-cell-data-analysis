@@ -1,12 +1,14 @@
 # tante belle domande su cotan e molto altro
 
+- DE: meglio valutare solo togliendo intersezione tra tutti?
+- quale database usare per i geni di peripheral blood
+- peripheral blood generazione ground truth corretta?
 - Tabula muris ha geni mitocondriali? Cercando "Mthfd1l" su ontology appare qualcosa di simile ma
 qui dicono che non sono stati sequenziali https://github.com/czbiohub/tabula-muris/issues/221
 - 
 
 # COSE
 
-- quale database usare per i geni di peripheral blood
 - monocle può usare leiden (con risoluzione, usat anche da altri tool) o louvian (senza risoluzione)
 - parametri usati dagli autori di tabula muris per analisi https://github.com/czbiohub/tabula-muris/tree/master/00_data_ingest/02_tissue_analysis_rmd
 - seurat usa AUROC: https://satijalab.org/seurat/reference/findmarkers

@@ -28,6 +28,12 @@ DATASET_TAG_TO_ENRICHR_DB = list("tabula-muris-heart" = "Tabula_Muris",
                                  "tabula-muris-marrow_P7_3" = "Tabula_Muris",
                                  "peripheal-blood" = "???") # TODO: add the correct database
 
+DATASET_TAG_TO_GENES_TO_ENRICH_DIR = list()
+DATASET_TAG_TO_ENRICHER_DIR = list()
+for (tag in DATASET_TAGS) {
+  DATASET_TAG_TO_GENES_TO_ENRICH_DIR[[tag]] = paste(AGGREGATE_RESULT_DIR, "/", tag, "/genes_to_enrich/", sep="")
+  DATASET_TAG_TO_ENRICHER_DIR[[tag]] = paste(AGGREGATE_RESULT_DIR, "/", tag, "/enrichr_data/", sep="")
+}
 
 read_single_data = function(tool_tag, dataset_tag) {
   label_file = paste(RESULT_DIR, dataset_tag, "/", tool_tag, "/clustering_labels", ".csv", sep="")
@@ -221,10 +227,16 @@ for (dataset in dataset_found) {
 
 # write marker lists
 for (dataset in dataset_found) {
-  write_markers_to_enrich(global_data[[dataset]]$markers, paste(AGGREGATE_RESULT_DIR, dataset, "/", sep=""))
+  if (!dir.exists(DATASET_TAG_TO_GENES_TO_ENRICH_DIR[[dataset]])) {
+    dir.create(DATASET_TAG_TO_GENES_TO_ENRICH_DIR[[dataset]])
+  }
+  write_markers_to_enrich(global_data[[dataset]]$markers, DATASET_TAG_TO_GENES_TO_ENRICH_DIR[[dataset]])
   cur_enrichr_db <- DATASET_TAG_TO_ENRICHR_DB[[dataset]]
 
   if (!is.null(cur_enrichr_db)) {
-    write_enrichment_result(global_data[[dataset]]$markers, paste(AGGREGATE_RESULT_DIR, dataset, "/", sep=""), cur_enrichr_db)
+    if (!dir.exists(DATASET_TAG_TO_ENRICHER_DIR[[dataset]])) {
+      dir.create(DATASET_TAG_TO_ENRICHER_DIR[[dataset]])
+    }
+    write_enrichment_result(global_data[[dataset]]$markers, DATASET_TAG_TO_ENRICHER_DIR[[dataset]], cur_enrichr_db)
   }
 }

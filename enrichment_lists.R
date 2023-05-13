@@ -1,3 +1,5 @@
+
+
 # takes the path to the csv with aggregated markers and the cluster id
 get_common_markers = function(markers, cluster_id) {
   cluster_markers = markers[markers$cluster == cluster_id,]
@@ -14,7 +16,7 @@ get_specific_markers = function(markers, cluster_id) {
   for (t1 in tools) {
     t1_markers = tools_markers[[t1]]
     for (t2 in tools) {
-      if (t1 != t2) {
+      if (t1 != t2) { # TODO meglio solo escludere l'intersezione tra tutti?
         t1_markers = setdiff(t1_markers, intersect(t1_markers, tools_markers[[t2]]))
       }
     }
