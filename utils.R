@@ -106,13 +106,6 @@ clustering_simple_scores = function(label_df, computed_label, true_label) {
   return (data.frame("entropy" = res_entropy, "purity" = res_purity, "accuracy" = res_overlap))
 }
 
-#TODO verifica nan
-#clustering_scores = function(label_df, computed_label, true_label, distance_matrix) {
-#  simple_scores = clustering_simple_scores(label_df, computed_label, true_label)
-#  simple_scores$silhouette = mean(silhouette(label_df[[computed_label]], distance_matrix)[,3])
-#  return (simple_scores)
-#}
-
 clustering_complex_scores = function(label_df, computed_label, distance_matrix) {
   return (data.frame("silhouette" = mean(silhouette(label_df[[computed_label]], distance_matrix)[,3])))
 }
@@ -183,8 +176,8 @@ plot_de = function(expression_matrix, marker_df, gene_col, marker_df_cluster_col
     return (list("plots" = plots, "counts" = cnt))
   }
 
-  DE_ANALISYS = lapply(sort(unique(label_df[[cluster_df_cluster_col]])), function(ident) {
-    DE(expression_matrix, marker_df, gene_col, marker_df_cluster_col, ident, label_df, cell_col, cluster_df_cluster_col)
+  DE_ANALISYS = lapply(sort(unique(cluster_df[[cluster_df_cluster_col]])), function(ident) {
+    DE(expression_matrix, marker_df, gene_col, marker_df_cluster_col, ident, cluster_df, cell_col, cluster_df_cluster_col)
   })
   
   plts = lapply(DE_ANALISYS, function(x) {
