@@ -225,7 +225,7 @@ for (dataset in dataset_found) {
   plot_venn(global_data[[dataset]]$markers, paste(AGGREGATE_RESULT_DIR, dataset, "/", sep=""))
 }
 
-# write marker lists
+# write enrichment results
 for (dataset in dataset_found) {
   if (!dir.exists(DATASET_TAG_TO_GENES_TO_ENRICH_DIR[[dataset]])) {
     dir.create(DATASET_TAG_TO_GENES_TO_ENRICH_DIR[[dataset]])

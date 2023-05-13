@@ -1,4 +1,4 @@
-
+library(enrichR)
 
 # takes the path to the csv with aggregated markers and the cluster id
 get_common_markers = function(markers, cluster_id) {
@@ -72,6 +72,10 @@ write_enrichment_result = function(markers, out_dir, enrichr_database) {
       enriched,
       paste(out_dir,"cluster",cid,"_enriched_intersection.csv",sep=""),
       row.names=FALSE)
+    setEPS()
+    postscript(paste(out_dir,"cluster",cid,"_enriched_intersection_plot.png",sep=""))
+    dev.off()
+
     specific_markers = get_specific_markers(markers, cid)
     for (tool in names(specific_markers)) {
       enriched <- get_enriched_cell_type(specific_markers[[tool]], enrichr_database)
@@ -79,6 +83,9 @@ write_enrichment_result = function(markers, out_dir, enrichr_database) {
         enriched,
         paste(out_dir,"cluster",cid,"_",tool,"_enriched.csv",sep=""),
         row.names=FALSE)
+      setEPS()
+      postscript(paste(out_dir,"cluster",cid,"_",tool,"_enriched_plot.png",sep=""))
+      dev.off()
     }
   }
 }
