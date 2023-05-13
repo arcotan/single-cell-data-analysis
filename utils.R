@@ -117,10 +117,10 @@ clustering_complex_scores = function(label_df, computed_label, distance_matrix) 
   return (data.frame("silhouette" = mean(silhouette(label_df[[computed_label]], distance_matrix)[,3])))
 }
 
-write_clustering = function(outdir, label_df, cell_col, cluster_col, distance_matrix) {
+write_clustering = function(outdir, label_df, cell_col, cluster_col) {
   # compute and write scores
-  cscores = clustering_complex_scores(label_df, cluster_col, distance_matrix)
-  write.csv(cscores, paste(outdir, "/clustering_scores.csv", sep=""), row.names = FALSE)
+  # cscores = clustering_complex_scores(label_df, cluster_col, distance_matrix)
+  # write.csv(cscores, paste(outdir, "/clustering_scores.csv", sep=""), row.names = FALSE)
   
   # write labels
   to_write = label_df[c(cell_col, cluster_col)]
