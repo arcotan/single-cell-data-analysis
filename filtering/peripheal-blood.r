@@ -17,6 +17,16 @@ data = allData[[1]]
 
 antibodyData = data.frame(allData[[2]])
 
+library(factoextra)
+library(Rtsne)
+antibodyData[1:10]
+boxplot(t(antibodyData)[,1:16])
+boxplot(t(antibodyData)[,17:32])
+fviz_nbclust(t(antibodyData),kmeans,"wss",k.max=30)
+km=kmeans(t(antibodyData),centers=10)
+tsne=Rtsne(t(antibodyData),perplexity=30)
+plot(tsne$Y,pch='.',col=km$cluster)
+
 
 # remove `_TotalSeqB` from column names
 rownames(antibodyData) = gsub("_TotalSeqB", "", rownames(antibodyData))
