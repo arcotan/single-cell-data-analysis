@@ -60,7 +60,7 @@ get_enriched_cell_type = function(gene_list, enrichr_database, enrichr_site = "E
       enriched <- enrichr(gene_list, dbs)
   }
 
-  return (enriched[[enrichr_database]][c("Term","Adjusted.P.value", "Overlap")])
+  return (enriched[[enrichr_database]])
 }
 
 write_enrichment_result = function(markers, out_dir, enrichr_database) {
@@ -72,9 +72,8 @@ write_enrichment_result = function(markers, out_dir, enrichr_database) {
       enriched,
       paste(out_dir,"cluster",cid,"_enriched_intersection.csv",sep=""),
       row.names=FALSE)
-    setEPS()
-    postscript(paste(out_dir,"cluster",cid,"_enriched_intersection_plot.png",sep=""))
-    dev.off()
+    plotEnrich(enriched, showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
+    ggsave(paste(out_dir,"cluster",cid,"_enriched_intersection_plot.png",sep=""))
 
     specific_markers = get_specific_markers(markers, cid)
     for (tool in names(specific_markers)) {
@@ -83,9 +82,9 @@ write_enrichment_result = function(markers, out_dir, enrichr_database) {
         enriched,
         paste(out_dir,"cluster",cid,"_",tool,"_enriched.csv",sep=""),
         row.names=FALSE)
-      setEPS()
-      postscript(paste(out_dir,"cluster",cid,"_",tool,"_enriched_plot.png",sep=""))
-      dev.off()
+      print(plotEnrich(enriched, showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value"))
+      plotEnrich(enriched, showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
+      ggsave(paste(out_dir,"cluster",cid,"_",tool,"_enriched_plot.png",sep=""))
     }
   }
 }

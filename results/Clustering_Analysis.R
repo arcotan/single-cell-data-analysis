@@ -1,7 +1,7 @@
 
 library(dplyr)
-library(ggplot2)
 library(enrichR)
+library(ggplot2)
 
 source("utils.R")
 source("venn.R")
@@ -240,3 +240,4 @@ for (dataset in dataset_found) {
     write_enrichment_result(global_data[[dataset]]$markers, DATASET_TAG_TO_ENRICHER_DIR[[dataset]], cur_enrichr_db)
   }
 }
+
