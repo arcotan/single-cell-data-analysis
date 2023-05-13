@@ -3,7 +3,7 @@ library(monocle3)
 
 source("utils.R")
 
-dataset_name = 'kumar-4-hard'
+dataset_name = 'peripheal-blood'
 
 DATASET_PATH = "./dataset/"
 
@@ -26,7 +26,7 @@ plot_pc_variance_explained(cds)
 ```
 
 ```{r}
-cds <- cluster_cells(cds, resolution=0.05, reduction_method = "PCA")
+cds <- cluster_cells(cds, resolution=0.22, reduction_method = "PCA")
 print(paste("Clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
 ```
 

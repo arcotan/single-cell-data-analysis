@@ -3,7 +3,7 @@ library(monocle3)
 
 source("utils.R")
 
-dataset_name = 'kumar-4-hard'
+dataset_name = 'kumar-8-hard'
 
 DATASET_PATH = "./dataset/"
 

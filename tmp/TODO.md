@@ -1,5 +1,7 @@
 # cose da fare
 
+- Peripheal blood 500 cellule sono poche ? (droppando Mt)
+- Peripheal blood kmeans soglia 95%
 - capire se in peripheal blood le 19 labels individuate hanno senso (il processo che abbiamo usato è okay)
 - classificazione (implementare misura del ranking, calcolo del numero di marcatori da usare)
 - come organizzare il report?

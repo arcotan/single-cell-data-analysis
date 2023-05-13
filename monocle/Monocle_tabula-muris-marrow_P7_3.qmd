@@ -3,7 +3,7 @@ library(monocle3)
 
 source("utils.R")
 
-dataset_name = 'kumar-4-hard'
+dataset_name = 'tabula-muris-marrow_P7_3'
 
 DATASET_PATH = "./dataset/"
 
@@ -21,12 +21,12 @@ cds <- load_mm_data(
 )
 ```
 ```{r}
-cds <- preprocess_cds(cds, num_dim = 10, method = "PCA")
+cds <- preprocess_cds(cds, num_dim = 20, method = "PCA")
 plot_pc_variance_explained(cds)
 ```
 
 ```{r}
-cds <- cluster_cells(cds, resolution=0.05, reduction_method = "PCA")
+cds <- cluster_cells(cds, resolution=0.011, reduction_method = "PCA")
 print(paste("Clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
 ```
 
