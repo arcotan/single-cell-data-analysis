@@ -115,7 +115,7 @@ write_clustering = function(outdir, label_df, cell_col, cluster_col, distance_ma
     cscores = clustering_complex_scores(label_df, cluster_col, distance_matrix)
     write.csv(cscores, paste(outdir, "/clustering_scores.csv", sep=""), row.names = FALSE)
   }
-
+  
   # write labels
   if (write_labels) {
     to_write = label_df[c(cell_col, cluster_col)]
