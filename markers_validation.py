@@ -44,28 +44,20 @@ parser.add_argument(
     default=False,
     help="Wheter the dataset is simulated."
 )
-parser.add_argument(
-    '--tool',
-    action='store',
-    type=str,
-    required=True,
-    help="The name of the tool."
-)
 args = parser.parse_args()
 data_path = args.data_path
 markers_path = args.markers_path
 labels_path = args.labels_path
 out_path = args.out_path
 simulated = args.simulated
-tool = args.tool
 """
 
 # -------- To test it without cmd line args --------
-markers_path = "./results/markers_10X_P7_4_seurat.csv"
+# TODO: change paths
+markers_path = "./results/seurat/markers_10X_P7_4_seurat.csv"
 data_path = "./filtered_dataset/tabulamuris/data_10X_P7_4/"
 labels_path = "./filtered_dataset/tabulamuris/labels_10X_P7_4.csv"
-out_path = "./results/"
-tool = "seurat"
+out_path = "./"
 simulated = False
 # --------------------------------------------------
 
@@ -104,19 +96,27 @@ X_top = adata[:, markers].X.toarray()[nan_mask, :]
 report_all, feature_importance = apply_classifier(X_all, y)
 report_top, _ = apply_classifier(X_top, y)
 
-pd.DataFrame(report_all).transpose().to_csv(out_path+tool+"_clf_score_all.csv")
-pd.DataFrame(report_top).transpose().to_csv(out_path+tool+"_clf_score_top.csv")
+pd.DataFrame(report_all).transpose().to_csv(out_path+"clf_score_all.csv")
+pd.DataFrame(report_top).transpose().to_csv(out_path+"clf_score_top.csv")
 
 sorted_idx = (-feature_importance).argsort()
 features_sorted = adata.var_names[sorted_idx]
 importaces_sorted = feature_importance[sorted_idx]
 pd.DataFrame(
     {'genes' : features_sorted, 'importaces' : importaces_sorted}
-    ).to_csv(out_path+tool+"_importances.csv")
+    ).to_csv(out_path+"importances.csv")
 
 # TODO:
 # - valutare intersezione
 # - valutare bontà del ranking allenando con markers più in basso nella classifica?
+# - selezionare il numero di marcatori in base alle prestazioni del classificatore
+"""
+# select top features with recursive feature elimination and random forest
+from sklearn.feature_selection import RFE
+selector = RFE(RandomForestClassifier(), n_features_to_select=120, step=0.5)
+selector.fit(X_all, y)
+important_features = adata.var_names[selector.support_] # to test!
+"""
 
 important_features = features_sorted[0:120]
 # important_features = [f for f, i in zip(features_sorted, importaces_sorted) if i >= importaces_sorted[119]]

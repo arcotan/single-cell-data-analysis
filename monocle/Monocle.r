@@ -6,7 +6,7 @@ DATA_DIR = "./filtered_dataset/tabulamuris/data_10X_P7_4"
 LABEL_DIR = "filtered_dataset/tabulamuris/"
 CHANNEL = "10X_P7_4"
 OUT_RES_DIR = "./results/monocle"
-TOP_MARKER_NUM = 20
+TOP_MARKER_NUM = 50
 RES_FILE_TAG = CHANNEL
 
 cds <- load_mm_data(
@@ -40,7 +40,7 @@ label_df <- res$label_dataframe
 marker_test_res <- top_markers(cds,
                                group_cells_by="cluster",
                                reduction_method = "PCA",
-                               cores=8)
+                               cores=8) # TODO genes_to_test_per_group da selezionare in base ai pval degli altri tools
 
 marker_test_res$cell_group <- res$permutation_computed[as.numeric(marker_test_res$cell_group)]
 
