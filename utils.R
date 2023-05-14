@@ -1,4 +1,3 @@
-# TODO import cose
 library(Seurat)
 library(dplyr)
 library(ggplot2)
@@ -106,27 +105,24 @@ clustering_simple_scores = function(label_df, computed_label, true_label) {
   return (data.frame("entropy" = res_entropy, "purity" = res_purity, "accuracy" = res_overlap))
 }
 
-#TODO verifica nan
-#clustering_scores = function(label_df, computed_label, true_label, distance_matrix) {
-#  simple_scores = clustering_simple_scores(label_df, computed_label, true_label)
-#  simple_scores$silhouette = mean(silhouette(label_df[[computed_label]], distance_matrix)[,3])
-#  return (simple_scores)
-#}
-
 clustering_complex_scores = function(label_df, computed_label, distance_matrix) {
   return (data.frame("silhouette" = mean(silhouette(label_df[[computed_label]], distance_matrix)[,3])))
 }
 
-write_clustering = function(outdir, label_df, cell_col, cluster_col, distance_matrix) {
+write_clustering = function(outdir, label_df, cell_col, cluster_col, distance_matrix = NULL, write_complex_scores = FALSE, write_labels = TRUE) {
   # compute and write scores
-  cscores = clustering_complex_scores(label_df, cluster_col, distance_matrix)
-  write.csv(cscores, paste(outdir, "/clustering_scores.csv", sep=""), row.names = FALSE)
+  if (write_complex_scores) {
+    cscores = clustering_complex_scores(label_df, cluster_col, distance_matrix)
+    write.csv(cscores, paste(outdir, "/clustering_scores.csv", sep=""), row.names = FALSE)
+  }
   
   # write labels
-  to_write = label_df[c(cell_col, cluster_col)]
-  colnames(to_write)[colnames(to_write) == cell_col] = "cell"
-  colnames(to_write)[colnames(to_write) == cluster_col] = "cluster"
-  write.csv(to_write, paste(outdir, "/clustering_labels.csv", sep=""), row.names = FALSE)
+  if (write_labels) {
+    to_write = label_df[c(cell_col, cluster_col)]
+    colnames(to_write)[colnames(to_write) == cell_col] = "cell"
+    colnames(to_write)[colnames(to_write) == cluster_col] = "cluster"
+    write.csv(to_write, paste(outdir, "/clustering_labels.csv", sep=""), row.names = FALSE)
+  }
 }
 
 write_markers = function(outdir, marker_df, gene_col, cluster_col, order_by_col, is_higher_better, top_k) {
@@ -183,8 +179,8 @@ plot_de = function(expression_matrix, marker_df, gene_col, marker_df_cluster_col
     return (list("plots" = plots, "counts" = cnt))
   }
 
-  DE_ANALISYS = lapply(sort(unique(label_df[[cluster_df_cluster_col]])), function(ident) {
-    DE(expression_matrix, marker_df, gene_col, marker_df_cluster_col, ident, label_df, cell_col, cluster_df_cluster_col)
+  DE_ANALISYS = lapply(sort(unique(cluster_df[[cluster_df_cluster_col]])), function(ident) {
+    DE(expression_matrix, marker_df, gene_col, marker_df_cluster_col, ident, cluster_df, cell_col, cluster_df_cluster_col)
   })
   
   plts = lapply(DE_ANALISYS, function(x) {
