@@ -15,8 +15,14 @@ outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='')
 
 ```{r}
 # Loading data
+metadata = read.csv(paste(inDataDir, "/annotations_droplet.csv", sep=""))
+metadata = metadata[metadata$channel == CHANNEL, c("cell", "cell_ontology_class", "cluster.ids")]
+metadata$cell = substr(metadata$cell, 10, 25)
+
 data = Read10X(data.dir = inDataDir)
 colnames(data) = substr(colnames(data), 1, 16)
+data = data[,metadata$cell]
+
 ```
 
 ```{r}
@@ -67,9 +73,7 @@ if (!dir.exists(Dir10X)) {
   write10xCounts(Dir10X, data_to_write)
 }
 
-metadata = read.csv(paste(inDataDir, "/annotations_droplet.csv", sep=""))
-metadata = metadata[metadata$channel == CHANNEL, c("cell", "cell_ontology_class", "cluster.ids")]
-metadata$cell = substr(metadata$cell, 10, 25)
+
 labels = sort(unique(metadata$cell_ontology_class))
 metadata$cluster.ids = match(metadata$cell_ontology_class, labels)
 labels[labels == ''] = 'unknown cluster'
