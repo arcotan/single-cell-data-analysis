@@ -31,6 +31,7 @@ get_specific_markers = function(markers, cluster_id) {
 write_markers_to_enrich = function(markers, out_dir) {
   cluster_ids = unique(markers$cluster)
   for (cid in cluster_ids) {
+    # Print Cluster Id 
     common_markers = get_common_markers(markers, cid)
     write.table(
       common_markers,
@@ -67,24 +68,34 @@ write_enrichment_result = function(markers, out_dir, enrichr_database) {
   cluster_ids = unique(markers$cluster)
   for (cid in cluster_ids) {
     common_markers = get_common_markers(markers, cid)
-    enriched <- get_enriched_cell_type(common_markers, enrichr_database)
-    write.csv(
-      enriched,
-      paste(out_dir,"cluster",cid,"_enriched_intersection.csv",sep=""),
-      row.names=FALSE)
-    plotEnrich(enriched, showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
-    ggsave(paste(out_dir,"cluster",cid,"_enriched_intersection_plot.png",sep=""))
-
+    print(paste("Cluster Id: ", cid, "Len: ", length(common_markers)))
+    if(!length(common_markers) == 0) {
+      enriched <- get_enriched_cell_type(common_markers, enrichr_database)
+      if(nrow(enriched) > 0) {
+        write.csv(
+          enriched,
+          paste(out_dir,"cluster",cid,"_enriched_intersection.csv",sep=""),
+          row.names=FALSE)
+        plotEnrich(enriched, showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
+        ggsave(paste(out_dir,"cluster",cid,"_enriched_intersection_plot.png",sep=""))
+      }
+    }
     specific_markers = get_specific_markers(markers, cid)
+    # View(specific_markers[['scanpy', drop=FALSE]])
     for (tool in names(specific_markers)) {
-      enriched <- get_enriched_cell_type(specific_markers[[tool]], enrichr_database)
-      write.csv(
-        enriched,
-        paste(out_dir,"cluster",cid,"_",tool,"_enriched.csv",sep=""),
-        row.names=FALSE)
-      print(plotEnrich(enriched, showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value"))
-      plotEnrich(enriched, showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
-      ggsave(paste(out_dir,"cluster",cid,"_",tool,"_enriched_plot.png",sep=""))
+      print(paste("Tool : ", tool, "Cluster Id: ", cid)) 
+      enriched <- get_enriched_cell_type(specific_markers[[tool, drop=FALSE]], enrichr_database)
+      print(paste("Enriched: ", length(enriched$Term)))
+      if(!length(enriched$Term) == 0) {
+        print("Se entry qua sei stronzo")
+        write.csv(
+          enriched,
+          paste(out_dir,"cluster",cid,"_",tool,"_enriched.csv",sep=""),
+          row.names=FALSE)
+        print(plotEnrich(enriched, showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value"))
+        plotEnrich(enriched, showTerms = 20, numChar = 40, y = "Count", orderBy = "P.value")
+        ggsave(paste(out_dir,"cluster",cid,"_",tool,"_enriched_plot.png",sep=""))
+      }
     }
   }
 }

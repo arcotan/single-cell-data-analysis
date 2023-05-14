@@ -7,7 +7,7 @@ source("utils.R")
 source("venn.R")
 source("enrichment_lists.R")
 
-TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvitools', 'COTAN')
+TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi', 'COTAN')
 DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'kumar-4-hard', 'kumar-8-hard')
 
 RESULT_DIR = "./results/"
@@ -225,8 +225,15 @@ for (dataset in dataset_found) {
   plot_venn(global_data[[dataset]]$markers, paste(AGGREGATE_RESULT_DIR, dataset, "/", sep=""))
 }
 
+source("enrichment_lists.R")
 # write enrichment results
 for (dataset in dataset_found) {
+  if(dataset == 'tabula-muris-marrow_P7_3') {
+    next
+  }
+  if(dataset == 'tabula-muris-heart') {
+    next
+  }
   if (!dir.exists(DATASET_TAG_TO_GENES_TO_ENRICH_DIR[[dataset]])) {
     dir.create(DATASET_TAG_TO_GENES_TO_ENRICH_DIR[[dataset]])
   }

@@ -12,17 +12,16 @@ source("./utils.R")
 
 ```{r}
 outDir <- tempdir()
-dataset_name = 'tabula-muris-marrow_P7_3-filtered'
-file_name = 'marrow'
+dataset_name = 'kumar-4-hard'
+file_name = 'kumar-4-hard'
 
-IN_DATA_DIR = "./dataset/tabula-muris-marrow_P7_3-filtered/"
-IN_LABEL_DIR = "./dataset/tabula-muris-marrow_P7_3-filtered/"
-CHANNEL = "10X_P7_4"
+IN_DATA_DIR = "./dataset/kumar-4-hard-filtered/"
+IN_LABEL_DIR = "./dataset/kumar-4-hard-filtered/"
 ```
 
 ```{r}
 data <- Read10X(paste(IN_DATA_DIR, '10X', sep=''))
-data = data[1:100, 1:500]
+data = data#[1:100, 1:500]
 ```
 
 ```{r}
@@ -72,7 +71,7 @@ if (file.exists(file_pos)){
     obj <- readRDS(file.path(file_pos))
 } else {
     # ActOnCells True ?
-    obj <- calculateCoex(obj, actOnCells = TRUE)
+    obj <- calculateCoex(obj, actOnCells = FALSE)
     saveRDS(obj, file = file.path(file_pos))
 }
 ```
