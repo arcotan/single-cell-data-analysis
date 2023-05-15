@@ -18,3 +18,10 @@
 
 
 - Eventualmente (ma forse non è una buona idea) inclucere nella nuova matrice di espressione anche degli step che adesso si fanno separatamente come ad esempio la normalizzazione ed il logaritmo.
+
+# COSE oggi (2020-01-16)
+
+- GGsankey
+- classificatore
+- aspettare la risposta 
+

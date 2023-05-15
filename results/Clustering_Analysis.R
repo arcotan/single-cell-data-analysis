@@ -26,7 +26,7 @@ DATASET_TAG_TO_TRUE_LABEL_DIR = DATASET_TAG_TO_MAPPING_DIR
 
 DATASET_TAG_TO_ENRICHR_DB = list("tabula-muris-heart" = "Tabula_Muris",
                                  "tabula-muris-marrow_P7_3" = "Tabula_Muris",
-                                 "peripheal-blood" = "???") # TODO: add the correct database
+                                 "peripheal-blood" = "Tabula_Sapiens") # TODO: add the correct database
 
 DATASET_TAG_TO_GENES_TO_ENRICH_DIR = list()
 DATASET_TAG_TO_ENRICHER_DIR = list()
