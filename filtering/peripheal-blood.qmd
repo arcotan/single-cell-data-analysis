@@ -88,7 +88,7 @@ plot1 + plot2
 
 ```{r}
 # Set very loose limits for COTAN
-pbmc <- subset(pbmc, subset = nFeature_RNA > 0 & nFeature_RNA < 5000 & percent.mt < 5)
+pbmc <- subset(pbmc, subset = nFeature_RNA > 0 & nFeature_RNA < 5000 & percent.mt < 10)
 ```
 
 ```{r}
