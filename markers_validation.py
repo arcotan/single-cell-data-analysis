@@ -1,65 +1,18 @@
-import argparse
 import pandas as pd
 import scanpy as sc
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_selection import RFE
+from sklearn.feature_selection import RFECV
 from sklearn.metrics import classification_report
 from sklearn.model_selection import cross_val_predict
+import matplotlib.pyplot as plt
 
-"""
-parser = argparse.ArgumentParser(
-    description='Markers validation through classification'
-)
-parser.add_argument(
-    '--markers-path',
-    action='store',
-    type=str,
-    required=True,
-    help="The path to the .csv file with markers."
-)
-parser.add_argument(
-    '--data-path',
-    action='store',
-    type=str,
-    required=True,
-    help="The path to the dataset."
-)
-parser.add_argument(
-    '--labels-path',
-    action='store',
-    type=str,
-    required=True,
-    help="The path to the .csv file with labels."
-)
-parser.add_argument(
-    '--out-path',
-    action='store',
-    type=str,
-    required=True,
-    help="The path to the output folder."
-)
-parser.add_argument(
-    '--simulated',
-    action=argparse.BooleanOptionalAction,
-    default=False,
-    help="Wheter the dataset is simulated."
-)
-args = parser.parse_args()
-data_path = args.data_path
-markers_path = args.markers_path
-labels_path = args.labels_path
-out_path = args.out_path
-simulated = args.simulated
-"""
-
-# -------- To test it without cmd line args --------
-# TODO: change paths
-markers_path = "./results/seurat/markers_10X_P7_4_seurat.csv"
-data_path = "./filtered_dataset/tabulamuris/data_10X_P7_4/"
-labels_path = "./filtered_dataset/tabulamuris/labels_10X_P7_4.csv"
+# TODO: run for all
+markers_path = "./results/seurat/markers_10X_P7_4.csv"
+data_path = "./dataset/tabula-muris-heart-filtered/10X/"
+labels_path = "./dataset/tabula-muris-heart-filtered/labels.csv" # TODO:assuming no nan values
 out_path = "./"
-simulated = False
-# --------------------------------------------------
 
 def apply_classifier(X, y):
     clf = RandomForestClassifier()
@@ -68,59 +21,82 @@ def apply_classifier(X, y):
     clf.fit(X, y)
     return report, clf.feature_importances_
 
-if simulated:
-    pass
-    # TODO:
-    # read matrix
-    # adata = ad.AnnData(matrix)
-    # adata.obs_names = ...
-    # adata.var_names = ...
-else:
-    adata = sc.read_10x_mtx(
-        data_path,
-        var_names='gene_symbols',
-        cache=False
-    )
+adata = sc.read_10x_mtx(
+    data_path,
+    var_names='gene_symbols',
+    cache=False
+)
 
 markers_df = pd.read_csv(markers_path)
 markers = markers_df.gene.unique()
+n_markers = len(markers_df[markers_df['cluster']==1])
+n_clusters = len(markers_df['cluster'].unique())
 
-y_df = pd.read_csv(labels_path)
-y = np.array([y_df[y_df.cell == cell]['cluster.ids'] for cell in adata.obs_names])
-nan_mask = ~np.isnan(y).reshape(-1)
-y = y[nan_mask]
+y_df = pd.read_csv(labels_path, index_col=0)
+joined = pd.DataFrame(adata.obs_names, columns=["cell"]).join(y_df, on="cell")
+mask = ~np.isnan(np.array(joined['cluster.ids'])).reshape(-1)
+y = np.array(joined['cluster.ids'][mask])
 
-X_all = adata.X.toarray()[nan_mask, :]
-X_top = adata[:, markers].X.toarray()[nan_mask, :]
+# -------- train with increasing # of features taken from markers rank --------
+scores = []
+step = 3
+score = 'f1-score'
+for i in range(step, n_markers+step, step):
+    top_markers = markers_df[markers_df['rank']<=i].gene.unique()
+    X = adata[mask, top_markers].X.toarray()
+    report, _ = apply_classifier(X, y)
+    scores.append(report['weighted avg'][score])
 
+x_ticks = [i for i in range(step, n_markers+step, step)]
+x_ticks[-1] = n_markers
+plt.xticks(x_ticks, x_ticks)
+plt.plot(x_ticks, scores, marker='o')
+plt.ylabel("f1 weighted")
+plt.xlabel("# features")
+plt.tight_layout()
+plt.show()
+plt.savefig(out_path+"score.eps")
+
+pd.DataFrame(scores, columns=['f1 weighted']).to_csv(out_path+"clf_score.csv")
+
+# -------- train on all features and on markers --------
+
+X_all = adata[mask, :].X.toarray()
 report_all, feature_importance = apply_classifier(X_all, y)
-report_top, _ = apply_classifier(X_top, y)
+report_markers, _ = apply_classifier(adata[mask, markers].X.toarray(), y)
 
-pd.DataFrame(report_all).transpose().to_csv(out_path+"clf_score_all.csv")
-pd.DataFrame(report_top).transpose().to_csv(out_path+"clf_score_top.csv")
+pd.DataFrame(report_all).transpose().to_csv(out_path+"clf_report_all.csv")
+pd.DataFrame(report_markers).transpose().to_csv(out_path+"clf_report_markers.csv")
 
 sorted_idx = (-feature_importance).argsort()
-features_sorted = adata.var_names[sorted_idx]
+rf_features_sorted = adata.var_names[sorted_idx]
 importaces_sorted = feature_importance[sorted_idx]
 pd.DataFrame(
-    {'genes' : features_sorted, 'importaces' : importaces_sorted}
+    {'genes' : rf_features_sorted, 'importaces' : importaces_sorted}
     ).to_csv(out_path+"importances.csv")
+
+# -------- select n_markers*n_clusters features with RFE and RF --------
+
+selector = RFE(RandomForestClassifier(), n_features_to_select=n_markers*n_clusters, step=0.5)
+selector.fit(X_all, y)
+sorted_idx = (selector.ranking_).argsort()
+rfe_features_sorted = adata.var_names[sorted_idx]
+pd.DataFrame(
+    {'genes' : rfe_features_sorted}
+    ).to_csv(out_path+"rfe_ranking.csv")
+
+# automatically choose the number of features
+# rfe = RFECV(estimator=RandomForestClassifier())
+# rfe.fit(X_all, y)
+# rfe.show()
 
 # TODO:
 # - valutare intersezione
 # - valutare bontà del ranking allenando con markers più in basso nella classifica?
-# - selezionare il numero di marcatori in base alle prestazioni del classificatore
-"""
-# select top features with recursive feature elimination and random forest
-from sklearn.feature_selection import RFE
-selector = RFE(RandomForestClassifier(), n_features_to_select=120, step=0.5)
-selector.fit(X_all, y)
-important_features = adata.var_names[selector.support_] # to test!
-"""
 
-important_features = features_sorted[0:120]
+# important_features = features_sorted[0:120]
 # important_features = [f for f, i in zip(features_sorted, importaces_sorted) if i >= importaces_sorted[119]]
-intersection = set(markers).intersection(set(important_features))
+# intersection = set(markers).intersection(set(important_features))
 
 #        rank di randomforest                  rank del tool
 # gene1         100 *                         * 1 - (0-20)
