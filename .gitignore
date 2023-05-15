@@ -1,3 +1,4 @@
+
 # Dataset folder
 dataset/
 tests/
@@ -75,3 +76,4 @@ rsconnect/
 
 # VSCode data
 .vscode/
+score.eps
