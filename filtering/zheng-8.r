@@ -2,7 +2,7 @@ library(dplyr)
 library(Seurat)
 library(patchwork)
 library(DropletUtils)
-source("utils.R")
+source("./libraries/utils.R")
 
 DATASETS_FOLDER = './dataset/'
 NAME = 'zheng-8'
