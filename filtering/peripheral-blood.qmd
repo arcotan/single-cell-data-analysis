@@ -49,14 +49,18 @@ pbmc = subset(pbmc, cells = common_cells)
 
 ```{r}
 library(scater)
+library(scran)
 
+# Extract counts for Antibody data and SC-RNA data
 antibodyDataFiltered = t(data.frame(absr@assays[[1]]@counts))
 genesData    = t(data.frame(pbmc@assays[[1]]@counts))
 
+# Log normalize antibody data and process clusters
 absce = as.SingleCellExperiment(absr)
 ablnc = logNormCounts(absce)
 clusters = scran::clusterCells(ablnc, assay.type = "logcounts")
 
+# Show clusters in Genes data
 gdsce = as.SingleCellExperiment(pbmc)
 gdsce <- applySCE(gdsce, logNormCounts)
 gdumap = runUMAP(gdsce)
@@ -70,10 +74,11 @@ se.averaged = sumCountsAcrossCells(absce, clusters, exprs_values = "logcounts", 
 library(pheatmap)
 averaged = assay(se.averaged)
 pheatmap(t(averaged - rowMeans(averaged)), breaks = seq(-3, 3, length.out = 101), kmeans_k = NA, cluster_cols = TRUE, cluster_rows = FALSE)
+table(clusters)
 ```
 
 ```{r}
-data_to_write = t(genesData)
+data_to_write = GetAssayData(object = pbmc, assay = "RNA", slot = "data")
 write.csv(data_to_write, paste(outDataDir, "data.csv", sep=""))
 Dir10X = paste(outDataDir, "10X", sep="")
 if (!dir.exists(Dir10X)) {
