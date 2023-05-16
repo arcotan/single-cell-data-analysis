@@ -4,7 +4,7 @@ library(Seurat)
 library(patchwork)
 library(DropletUtils)
 
-source("utils.R")
+source("./libraries/utils.R")
 
 IN_DATA_DIR = "./dataset/tabula-muris-marrow_P7_2/"
 OUT_DATA_DIR = "./dataset/tabula-muris-marrow_P7_2-filtered/"

@@ -1,6 +1,6 @@
 library(monocle3)
 
-source("utils.R")
+source("./libraries/utils.R")
 
 DATA_DIR = "./filtered_dataset/tabulamuris/data_10X_P7_4"
 LABEL_DIR = "filtered_dataset/tabulamuris/"
