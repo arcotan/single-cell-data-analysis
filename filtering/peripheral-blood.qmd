@@ -5,7 +5,7 @@ library(Seurat)
 library(patchwork)
 library(factoextra)
 library(DropletUtils)
-source("utils.R")
+source("./libraries/utils.R")
 
 DATASETS_FOLDER = './dataset/'
 NAME = 'peripheal-blood'
