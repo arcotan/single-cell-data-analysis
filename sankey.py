@@ -4,7 +4,8 @@ import os
 
 DATA_DIR = './results/aggregate'
 
-DATASET_TAGS = ['tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'kumar-4-hard', 'kumar-8-hard']
+# DATASET_TAGS = ['tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'kumar-4-hard', 'kumar-8-hard']
+DATASET_TAGS = ['tabula-muris-heart']
 
 colors = [
     '#1f77b4',  # muted blue
@@ -20,9 +21,6 @@ colors = [
 ]
 
 def plot_sankey(labels, source, target, value, title):
-    print(len(source)-1)
-    print(len(target))
-    print(colors[0:len(source)-1] + colors[0:len(target)-1])
     fig = go.Figure(data=[go.Sankey(
         node = dict(
         pad = 15,
@@ -44,7 +42,6 @@ for dataset in DATASET_TAGS:
     cur_path = DATA_DIR + '/' + dataset + '/'
     # check if labels.csv exists
     if os.path.exists(cur_path + "labels.csv"):
-        print('AYAYA')
         labels = pd.read_csv(cur_path + "labels.csv")
 
         if labels.columns[-1] != 'true_labels':
@@ -58,7 +55,7 @@ for dataset in DATASET_TAGS:
             for i in range(cluster_num):
                 mapping_path = "./dataset/" + dataset + "-filtered/mapping.csv"
                 mapping_df = pd.read_csv(mapping_path)
-                go_id = mapping_df[mapping_df['id'] == i+1]['go'].values # TODO:check
+                go_id = mapping_df[mapping_df['id'] == i]['go'].values # TODO:check
                 plot_label.append(go_id)
 
             for tool in tool_tags:
