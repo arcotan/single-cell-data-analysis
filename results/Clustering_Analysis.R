@@ -3,9 +3,9 @@ library(dplyr)
 library(enrichR)
 library(ggplot2)
 
-source("utils.R")
-source("venn.R")
-source("enrichment_lists.R")
+source("./libraries/utils.R")
+source("./libraries/venn.R")
+source("./libraries/enrichment_lists.R")
 
 TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi', 'COTAN')
 DATASET_TAGS= c('peripheal-blood')

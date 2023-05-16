@@ -3,7 +3,7 @@ library(Seurat)
 library(patchwork)
 library(DropletUtils)
 
-source("utils.R")
+source("./libraries/utils.R")
 
 IN_DATA_DIR = "./dataset/tabulamuris/droplet/Heart_and_Aorta-10X_P7_4"
 OUT_DATA_DIR = "./filtered_dataset/tabulamuris/"
