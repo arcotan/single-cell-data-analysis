@@ -1,3 +1,4 @@
+
 library(dplyr)
 library(Seurat)
 library(patchwork)
@@ -5,12 +6,12 @@ library(DropletUtils)
 
 source("utils.R")
 
-IN_DATA_DIR = "./dataset/tabulamuris/droplet/Heart_and_Aorta-10X_P7_4"
-OUT_DATA_DIR = "./filtered_dataset/tabulamuris/"
-IN_LABEL_DIR = "./dataset/tabulamuris"
-OUT_LABEL_DIR = "./filtered_dataset/tabulamuris/"
-CHANNEL = "10X_P7_4"
-OUT_RES_DIR = "./results/seurat"
+IN_DATA_DIR = "./dataset/tabula-muris-marrow_P7_2/"
+OUT_DATA_DIR = "./dataset/tabula-muris-marrow_P7_2-filtered/"
+IN_LABEL_DIR = "./dataset/tabula-muris-marrow_P7_2/"
+OUT_LABEL_DIR = "./dataset/tabula-muris-marrow_P7_2-filtered/"
+CHANNEL = "10X_P7_2"
+OUT_RES_DIR = "./results/tabula-muris-marrow_P7_2/seurat"
 TOP_MARKER_NUM = 20
 RES_FILE_TAG = CHANNEL
 
@@ -47,7 +48,7 @@ pbmc <- subset(pbmc, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent
 # Write pre-processed data
 data_to_write = GetAssayData(object = pbmc, assay = "RNA", slot = "data")
 write.csv(data_to_write, paste(OUT_DATA_DIR, "data_", CHANNEL, ".csv", sep=""))
-Dir10X = paste(OUT_DATA_DIR, "data_", CHANNEL, sep="")
+Dir10X = paste(OUT_DATA_DIR, "10X", sep="")
 if (!dir.exists(Dir10X)) {
   write10xCounts(Dir10X, data_to_write)
 }
@@ -55,6 +56,7 @@ if (!dir.exists(Dir10X)) {
 filtered_labels = left_join(data.frame("cell"=colnames(data_to_write)), experiment_data$labels)
 write.csv(filtered_labels, paste(OUT_LABEL_DIR, "labels_", CHANNEL, ".csv", sep=""), row.names = FALSE)
 
+write.csv(experiment_data$mapping, paste(OUT_LABEL_DIR, "mapping_", CHANNEL, ".csv", sep=""), row.names = FALSE)
 
 # *******  END PREPROCESSING *******
 
@@ -88,7 +90,7 @@ ElbowPlot(object = pbmc,
 
 # Get clustering data
 pbmc <- FindNeighbors(pbmc, dims = 1:10)
-pbmc <- FindClusters(pbmc, resolution = 0.4)
+pbmc <- FindClusters(pbmc, resolution = 0.3)
 
 label_df = merge(experiment_data$labels, data.frame(Idents(pbmc)), by.x = "cell", by.y = 0)
 names(label_df)[2:3] <- c("true_id", "computed_id") #TODO non usare 2 e 3
@@ -107,11 +109,41 @@ confusion_matrix
 seurat_clustering_plot(pbmc, label_df$cell, label_df$computed_id) + seurat_clustering_plot(pbmc, label_df$cell, label_df$true_id)
 
 # find markers for every cluster compared to all remaining cells
-pbmc.markers <- FindAllMarkers(pbmc, min.pct = 0.25, logfc.threshold = 0.25)
+pbmc.markers <- FindAllMarkers(pbmc, min.pct = 0.1, logfc.threshold = 0.15) # suggested by Silvia
 
-plot_de(data_to_write, pbmc.markers, "gene", "cluster", label_df, "cell", "computed_id", OUT_RES_DIR, RES_FILE_TAG)
+plot_de(GetAssayData(object = pbmc, assay = "RNA", slot = "data"), pbmc.markers, "gene", "cluster", label_df, "cell", "computed_id", OUT_RES_DIR, RES_FILE_TAG)
 
 write_clustering(OUT_RES_DIR, RES_FILE_TAG, label_df, "cell", "computed_id", "true_id", dist(Embeddings(pbmc[['pca']])[,1:50]))
 
 write_markers(OUT_RES_DIR, RES_FILE_TAG, pbmc.markers, "gene", "cluster", "avg_log2FC", TRUE, TOP_MARKER_NUM)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

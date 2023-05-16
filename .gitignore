@@ -1,11 +1,15 @@
+
 # Dataset folder
 dataset/
 tests/
 filtered_dataset/
+old_dataset/
+datasets.tar.gz
 
 #enviroments
 # Delete all folders named `.venv`
 **/.venv
+**/.env
 
 
 #vscode conf
@@ -62,4 +66,14 @@ po/*~
 rsconnect/
 
 # SCVI TEMP DATA
-.scviTools/data/
+.scviTools/data
+
+# eps data
+/results/**/*.eps
+
+# txt data
+/results/**/*.txt
+
+# VSCode data
+.vscode/
+score.eps
