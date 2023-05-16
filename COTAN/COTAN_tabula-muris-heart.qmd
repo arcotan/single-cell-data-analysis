@@ -82,6 +82,7 @@ It is possible to obtain a cell clusterization based on the concept of uniformit
 
 ```{r}
 outDir = paste('./COTAN/', dataset_name, sep="")
+clusterFile = paste(outDir, '/', dataset_name, '/', 'Seurat_obj_with_cotan_clusters.RDS', sep="")
 ```
 
 ```{r eval=FALSE, include=TRUE}
@@ -89,17 +90,22 @@ outDir = paste('./COTAN/', dataset_name, sep="")
 # TODO ppure da l'errore:
 # Error: 'VST.default' is not implemented yet
 # Distance default o distance='euclidean' ?
-fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.4, cores = 10,
-                                       saveObj = TRUE, outDir = outDir)
+if (file.exists(clusterFile)) {
+    print("Reading clusters from file")
+    fineClusters <- readRDS(clusterFile)
+} else {
+    print("Computing clusters")
+    fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.4, cores = 10,
+                                saveObj = TRUE, outDir = outDir)
+}
 ```
-
 
 ```{r}
 obj <- addClusterization(obj, clName = "FineClusters", clusters = fineClusters)
 ```
 
 ```{r eval=FALSE, include=TRUE}
-c(coexDF, pValueDF) %<-% DEAOnClusters(obj, clusters = fineClusters)
+c(coexDF, pValueDF) %<-% DEAOnClusters(obj, clusters = fineClusters$pca)
 obj <- addClusterizationCoex(obj, clName = "FineClusters",
                              coexDF = coexDF)
 ```

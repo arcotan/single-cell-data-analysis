@@ -4,7 +4,21 @@ import os
 
 DATA_DIR = './results/aggregate'
 
-DATASET_TAGS = ['tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'kumar-4-hard', 'kumar-8-hard']
+# DATASET_TAGS = ['tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'kumar-4-hard', 'kumar-8-hard']
+DATASET_TAGS = ['tabula-muris-heart']
+
+colors = [
+    '#1f77b4',  # muted blue
+    '#ff7f0e',  # safety orange
+    '#2ca02c',  # cooked asparagus green
+    '#d62728',  # brick red
+    '#9467bd',  # muted purple
+    '#8c564b',  # chestnut brown
+    '#e377c2',  # raspberry yogurt pink
+    '#7f7f7f',  # middle gray
+    '#bcbd22',  # curry yellow-green
+    '#17becf'   # blue-teal
+]
 
 def plot_sankey(labels, source, target, value, title):
     fig = go.Figure(data=[go.Sankey(
@@ -13,7 +27,7 @@ def plot_sankey(labels, source, target, value, title):
         thickness = 20,
         line = dict(color = "black", width = 0.5),
         label = labels,
-        color = "blue"
+        color = colors[0:len(source)-1] + colors[0:len(target)-1]
         ),
         link = dict(
         source = source,
@@ -28,7 +42,6 @@ for dataset in DATASET_TAGS:
     cur_path = DATA_DIR + '/' + dataset + '/'
     # check if labels.csv exists
     if os.path.exists(cur_path + "labels.csv"):
-        print('AYAYA')
         labels = pd.read_csv(cur_path + "labels.csv")
 
         if labels.columns[-1] != 'true_labels':
@@ -38,9 +51,12 @@ for dataset in DATASET_TAGS:
             cluster_num = labels['true_labels'].nunique()
             plot_label = []
             for i in range(cluster_num):
-                plot_label.append('C' + str(i))
+                plot_label.append('cluster' + str(i))
             for i in range(cluster_num):
-                plot_label.append('T' + str(i))
+                mapping_path = "./dataset/" + dataset + "-filtered/mapping.csv"
+                mapping_df = pd.read_csv(mapping_path)
+                go_id = mapping_df[mapping_df['id'] == i]['go'].values # TODO:check
+                plot_label.append(go_id)
 
             for tool in tool_tags:
                 # generate confusion matrix between labels

@@ -87,7 +87,6 @@ write_enrichment_result = function(markers, out_dir, enrichr_database) {
       enriched <- get_enriched_cell_type(specific_markers[[tool, drop=FALSE]], enrichr_database)
       print(paste("Enriched: ", length(enriched$Term)))
       if(!length(enriched$Term) == 0) {
-        print("Se entry qua sei stronzo")
         write.csv(
           enriched,
           paste(out_dir,"cluster",cid,"_",tool,"_enriched.csv",sep=""),

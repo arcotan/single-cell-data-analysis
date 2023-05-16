@@ -55,7 +55,7 @@ pbmc <- FindNeighbors(pbmc, dims = 1:10)
 ```
 
 ```{r}
-pbmc <- FindClusters(pbmc, resolution = 1.1)
+pbmc <- FindClusters(pbmc, resolution = 1.0)
 ```
 
 ```{r}
