@@ -12,7 +12,6 @@ inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='')
 dir.create(outDataDir, recursive = TRUE, showWarnings = FALSE)
 
-
 # Loading data
 data = readRDS(paste(inDataDir, RDS, sep="/"))
 counts = assays(data)$counts

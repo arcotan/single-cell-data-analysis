@@ -21,7 +21,7 @@ IN_LABEL_DIR = paste(dataset_path, dataset_name, '-filtered/', sep="")
 
 ```{r}
 data <- Read10X(paste(IN_DATA_DIR, '10X', sep=''))
-data = data#[1:100, 1:500]
+data = data[1:10000, 1:600]
 ```
 
 ```{r}
@@ -89,10 +89,18 @@ outDir = paste('./COTAN/', dataset_name, sep="")
 # TODO ppure da l'errore:
 # Error: 'VST.default' is not implemented yet
 # Distance default o distance='euclidean' ?
-fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.4, cores = 10,
+if (file.exists(file.path(outDir, "FineClusters.RDS"))){
+    fineClusters <- readRDS(file.path(outDir, "FineClusters.RDS"))
+}else{ 
+    fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.4, cores = 10,
                                        saveObj = TRUE, outDir = outDir)
+    writeRDS(fineClusters, file.path(outDir, "/FineClusters.RDS"))
+}
 ```
 
+```{r}
+fineClusters
+```
 
 ```{r}
 obj <- addClusterization(obj, clName = "FineClusters", clusters = fineClusters)
