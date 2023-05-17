@@ -112,10 +112,29 @@ obj <- addClusterizationCoex(obj, clName = "FineClusters",
 
 ```{r eval=FALSE, include=TRUE}
 c(mergedClusters, coexDF, pValueDF) %<-%
-  mergeUniformCellsClusters(obj, GDIThreshold = 1.4, cores = 10,
+  mergeUniformCellsClusters(obj, clusters = fineClusters, GDIThreshold = 1.4, cores = 7,
                             saveObj = TRUE, outDir = outDir)
 obj <- addClusterization(obj, clName = "MergedClusters",
                          clusters = mergedClusters, coexDF = coexDF)
+```
+
+```{r}
+c(mergedClusters1, coexDF1, pValueDF1) %<-%
+  mergeUniformCellsClusters(obj, GDIThreshold = 1.4, cores = 10,
+                            saveObj = TRUE, outDir = outDir, notMergeable = c('1', '1_2-merge'))
+
+```
+
+```{r}
+library(scater)
+library(scran)
+
+srat = CreateSeuratObject(counts = data, project = dataset_name, min.cells = 0, min.features = 0)
+
+gdsce = as.SingleCellExperiment(srat)
+gdumap = runUMAP(gdsce)
+colLabels(gdumap) <- factor(mergedClusters)
+plotUMAP(gdumap, colour_by="label", text_by="label", text_color="red")
 ```
 
 ```{r eval=FALSE, include=TRUE}
