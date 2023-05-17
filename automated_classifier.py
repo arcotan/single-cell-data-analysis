@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import scanpy as sc
+import os
 import sys
 from joblib import Parallel, delayed
 from sklearn.ensemble import RandomForestClassifier
@@ -11,7 +12,7 @@ import pickle
 
 
 DATASET_TAGS = ['tabula-muris-heart']#, 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'kumar-4-hard', 'kumar-8-hard']
-N_MARKERS = 50
+N_MARKERS = 50#50
 
 def apply_classifier(X, y):
 	clf = RandomForestClassifier()
@@ -54,16 +55,16 @@ def process(tool, clusters, weights, markers_df, adata, y_ovr):
         # mean for each cluster
         print("Cluster {} done for tool {}".format(cluster, tool), file=sys.stderr)
     
-    m = np.array(m, shape=(len(clusters), N_MARKERS))
+    m = np.array(m)
 
     # multiply each column of m pointwise with the weights array
     
     assert m.shape[0] == len(weights)
     assert m.shape[1] == N_MARKERS
 
-    m = np.multiply(m, weights)
+    m = np.multiply(m, weights.reshape(-1, 1))
 
-    scores[tool]['mean'] = np.mean(m, axis=1) / np.sum(weights)
+    scores[tool]['mean'] = np.mean(m, axis=0) / np.sum(weights)
         
     return scores
 
@@ -126,19 +127,20 @@ for dataset in DATASET_TAGS:
 		cluster_features[cluster] = rfe_features_sorted
 	pd.DataFrame(cluster_features).to_csv(out_path+"rfe_ranking.csv")
 
-	scores = Parallel(n_jobs=len(tools))(delayed(process)( # TODO: vedere se funziona
-		tool,
-		clusters,
-		weights,
-		markers_df,
-		adata,
-		y_ovr) for tool in tools)
-	scores2 = {}
-	for i, el in enumerate(scores):
-		scores2[list(el.keys())[0]] = el[list(el.keys())[0]]
-	scores = scores2
-	with open(scores_path, 'wb') as handle:
-		pickle.dump(scores, handle, protocol=pickle.HIGHEST_PROTOCOL)   
+	if not os.path.exists(scores_path):
+		scores = Parallel(n_jobs=len(tools))(delayed(process)( # TODO: vedere se funziona
+			tool,
+			clusters,
+			weights,
+			markers_df,
+			adata,
+			y_ovr) for tool in tools)
+		scores2 = {}
+		for i, el in enumerate(scores):
+			scores2[list(el.keys())[0]] = el[list(el.keys())[0]]
+		scores = scores2
+		with open(scores_path, 'wb') as handle:
+			pickle.dump(scores, handle, protocol=pickle.HIGHEST_PROTOCOL)   
 
 # plot with increasing features (feature di un classificatore in particolare errata...)
 # multi-class?

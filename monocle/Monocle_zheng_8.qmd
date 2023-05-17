@@ -26,7 +26,7 @@ plot_pc_variance_explained(cds)
 ```
 
 ```{r}
-cds <- cluster_cells(cds, resolution=0.05, reduction_method = "PCA")
+cds <- cluster_cells(cds, resolution=0.008, reduction_method = "PCA")
 print(paste("Clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
 ```
 

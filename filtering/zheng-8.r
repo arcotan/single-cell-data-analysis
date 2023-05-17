@@ -6,11 +6,10 @@ source("./libraries/utils.R")
 
 DATASETS_FOLDER = './dataset/'
 NAME = 'zheng-8'
-RDS = 'sce_full_Zhengmix4eq.rds'
+RDS = 'sce_full_Zhengmix8eq.rds'
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='')
-
 
 # Loading data
 data = readRDS(paste(inDataDir, RDS, sep="/"))
