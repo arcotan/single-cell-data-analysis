@@ -6,7 +6,7 @@ source("./libraries/utils.R")
 
 DATASETS_FOLDER = './dataset/'
 NAME = 'zheng-8'
-RDS = 'sce_full_Zhengmix4eq.rds'
+RDS = 'sce_full_Zhengmix8eq.rds'
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='')
@@ -47,7 +47,7 @@ plot2 <- FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "nFeature_RNA"
 plot1 + plot2
 
 # Set very loose limits for COTAN
-pbmc <- subset(pbmc, subset = percent.mt < 5& nFeature_RNA < 1500)
+pbmc <- subset(pbmc, subset = percent.mt < 5 & nFeature_RNA < 1500)
 
 # Write pre-processed data
 data_to_write = GetAssayData(object = pbmc, assay = "RNA", slot = "data")
