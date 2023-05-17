@@ -20,8 +20,12 @@ IN_LABEL_DIR = paste(dataset_path, dataset_name, '-filtered/', sep="")
 ```
 
 ```{r}
+SSAMPLING = 0.2
+
 data <- Read10X(paste(IN_DATA_DIR, '10X', sep=''))
-data = data#[1:100, 1:500]
+# Retain only SSAMPLING of columns in data
+set.seed(123)
+data = data[, sample(ncol(data), floor(ncol(data) * SSAMPLING))]
 ```
 
 ```{r}
@@ -34,12 +38,12 @@ obj = initializeMetaDataset(obj,
 ```
 
 ```{r}
-ECDPlot(obj, yCut = 700)
+# ECDPlot(obj, yCut = 700)
 
 ```
 
 ```{r}
-cellSizePlot(obj)
+# cellSizePlot(obj)
 ```
 
 ```{r}
@@ -49,21 +53,23 @@ obj <- clean(obj, genesCutoff=0, cellsCutoff=0)
 ```
 
 ```{r}
-genesPlot
+# genesPlot
 ```
 
 ```{r}
-UDEPlot
+# UDEPlot
 ```
 
 ```{r}
 #  Threshold and MaxIteration ?
-obj = estimateDispersionBisection(obj, cores = 10)
+obj = estimateDispersionBisection(obj, cores = 7)
 
 ```
 
 ```{r}
-file_pos = paste('./COTAN/', dataset_name, '/', dataset_name, '.cotan.RDS', sep = "")
+outDir = paste('./COTAN/', dataset_name, sep="")
+dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
+file_pos = paste(outDir, '/', dataset_name, '.cotan.RDS', sep = "")
 ```
 
 ```{r}
@@ -106,10 +112,30 @@ obj <- addClusterizationCoex(obj, clName = "FineClusters",
 
 ```{r eval=FALSE, include=TRUE}
 c(mergedClusters, coexDF, pValueDF) %<-%
-  mergeUniformCellsClusters(obj, GDIThreshold = 1.4, cores = 10,
+  mergeUniformCellsClusters(obj, clusters = fineClusters, GDIThreshold = 1.4, cores = 7,
                             saveObj = TRUE, outDir = outDir)
 obj <- addClusterization(obj, clName = "MergedClusters",
                          clusters = mergedClusters, coexDF = coexDF)
+```
+
+```{r}
+full_data <- Read10X(paste(IN_DATA_DIR, '10X', sep=''))
+centroids = t(obj@clustersCoex$CL_MergedClusters)
+
+# Cluster data in centroids (cosine distance)
+km = kmeans(t(full_data), centroids, iter.max = 1, centers = 5)
+```
+
+```{r}
+library(scater)
+library(scran)
+
+srat = CreateSeuratObject(counts = data, project = dataset_name, min.cells = 0, min.features = 0)
+
+gdsce = as.SingleCellExperiment(srat)
+gdumap = runUMAP(gdsce)
+colLabels(gdumap) <- factor(fineClusters)
+plotUMAP(gdumap, colour_by="label", text_by="label", text_color="red")
 ```
 
 ```{r eval=FALSE, include=TRUE}
@@ -117,4 +143,12 @@ obj <- addClusterization(obj, clName = "MergedClusters",
                         #    title = "Fine Cluster UMAP Plot")
 # mergedUMAPPlot <- UMAPPlot(coexDF)
 # plot(mergedUMAPPlot)
+```
+
+```{r}
+centroids = obj@clustersCoex$CL_MergedClusters
+
+# Calculate distances between centroids
+distances = dist(centroids, method = "euclidean")
+
 ```

@@ -69,7 +69,7 @@ obj = estimateDispersionBisection(obj, cores = 7)
 ```{r}
 outDir = paste('./COTAN/', dataset_name, sep="")
 dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
-file_pos = paste(outDir '/', dataset_name, '.cotan.RDS', sep = "")
+file_pos = paste(outDir, '/', dataset_name, '.cotan.RDS', sep = "")
 ```
 
 ```{r}
@@ -119,10 +119,11 @@ obj <- addClusterization(obj, clName = "MergedClusters",
 ```
 
 ```{r}
-c(mergedClusters1, coexDF1, pValueDF1) %<-%
-  mergeUniformCellsClusters(obj, GDIThreshold = 1.4, cores = 10,
-                            saveObj = TRUE, outDir = outDir, notMergeable = c('1', '1_2-merge'))
+full_data <- Read10X(paste(IN_DATA_DIR, '10X', sep=''))
+centroids = t(obj@clustersCoex$CL_MergedClusters)
 
+# Cluster data in centroids (cosine distance)
+km = kmeans(t(full_data), centroids, iter.max = 1, centers = 5)
 ```
 
 ```{r}
@@ -142,4 +143,12 @@ plotUMAP(gdumap, colour_by="label", text_by="label", text_color="red")
                         #    title = "Fine Cluster UMAP Plot")
 # mergedUMAPPlot <- UMAPPlot(coexDF)
 # plot(mergedUMAPPlot)
+```
+
+```{r}
+centroids = obj@clustersCoex$CL_MergedClusters
+
+# Calculate distances between centroids
+distances = dist(centroids, method = "euclidean")
+
 ```
