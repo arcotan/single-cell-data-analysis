@@ -28,6 +28,8 @@ colnames(counts) = cells
 rownames(counts) = genes
 
 counts = counts[!dupGenes, !dupCells]
+cells = cells[!dupCells]
+genes = genes[!dupGenes]
 
 # Load the PBMC dataset
 pbmc.data <- counts
@@ -63,7 +65,7 @@ if (!dir.exists(Dir10X)) {
   write10xCounts(Dir10X, data_to_write)
 }
 
-phenoid = data@colData@listData$phenoid
+phenoid = data@colData@listData$phenoid[!dupCells]
 labels = sort(unique(phenoid))
 metadata = data.frame("cell"=cells, "cluster.ids"=match(phenoid, labels), "cell_ontology_class"=phenoid)
 
