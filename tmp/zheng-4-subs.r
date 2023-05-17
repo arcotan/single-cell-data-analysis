@@ -8,7 +8,7 @@ DATASETS_FOLDER = './dataset/'
 NAME = 'zheng-4'
 RDS = 'sce_full_Zhengmix4eq.rds'
 
-SSAMPLING = 0.2
+SSAMPLING = 0.4
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDataDir = paste(DATASETS_FOLDER, NAME, '-subsampled/', sep='')

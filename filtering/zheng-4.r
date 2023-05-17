@@ -20,8 +20,14 @@ cells = data@colData@listData$barcode
 cells = substr(cells, 1, 14)
 genes = data@rowRanges@elementMetadata@listData$symbol
 
+# find duplicates in cells and genes
+dupCells = duplicated(cells)
+dupGenes = duplicated(genes)
+
 colnames(counts) = cells
 rownames(counts) = genes
+
+counts = counts[!dupGenes, !dupCells]
 
 # Load the PBMC dataset
 pbmc.data <- counts
