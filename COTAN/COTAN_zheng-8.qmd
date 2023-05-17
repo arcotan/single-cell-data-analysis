@@ -95,7 +95,7 @@ outDir = paste('./COTAN/', dataset_name, sep="")
 # TODO ppure da l'errore:
 # Error: 'VST.default' is not implemented yet
 # Distance default o distance='euclidean' ?
-fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.4, cores = 10,
+fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.2, cores = 7,
                                        saveObj = TRUE, outDir = outDir)
 ```
 
@@ -133,6 +133,7 @@ library(scran)
 srat = CreateSeuratObject(counts = data, project = dataset_name, min.cells = 0, min.features = 0)
 
 gdsce = as.SingleCellExperiment(srat)
+# gdsce = applySCE(gdsce, logNormCounts)
 gdumap = runUMAP(gdsce)
 colLabels(gdumap) <- factor(fineClusters)
 plotUMAP(gdumap, colour_by="label", text_by="label", text_color="red")
