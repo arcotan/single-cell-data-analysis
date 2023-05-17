@@ -14,18 +14,21 @@ source("./libraries/utils.R")
 outDir <- tempdir()
 dataset_name = 'zheng-4'
 dataset_path = './dataset/'
+result_path = './results/'
+
+TOP_MARKER_NUM = 50
 
 IN_DATA_DIR = paste(dataset_path, dataset_name, '-filtered/', sep="")
 IN_LABEL_DIR = paste(dataset_path, dataset_name, '-filtered/', sep="")
+OUT_RES_DIR = paste(result_path, dataset_name, '/COTAN', sep="")
 ```
 
 ```{r}
-SSAMPLING = 0.2
-
 data <- Read10X(paste(IN_DATA_DIR, '10X', sep=''))
-# Retain only SSAMPLING of columns in data
-set.seed(123)
-data = data[, sample(ncol(data), floor(ncol(data) * SSAMPLING))]
+# TODO remove
+SAMPLE_CELL_SIZE = 200
+SAMPLE_GENE_SIZE = 1000
+data = data[sample(nrow(data), SAMPLE_GENE_SIZE), sample(ncol(data),SAMPLE_CELL_SIZE)]
 ```
 
 ```{r}
@@ -38,38 +41,43 @@ obj = initializeMetaDataset(obj,
 ```
 
 ```{r}
-# ECDPlot(obj, yCut = 700)
+ECDPlot(obj, yCut = 700)
 
 ```
 
 ```{r}
-# cellSizePlot(obj)
+cellSizePlot(obj)
 ```
 
 ```{r}
 obj <- clean(obj, genesCutoff=0, cellsCutoff=0)
-# c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot) %<-% cleanPlots(obj)
-# pcaCellsPlot 
+c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot) %<-% cleanPlots(obj)
 ```
 
 ```{r}
-# genesPlot
+pcaCellsPlot 
 ```
 
 ```{r}
-# UDEPlot
+genesPlot
+```
+
+```{r}
+UDEPlot
 ```
 
 ```{r}
 #  Threshold and MaxIteration ?
-obj = estimateDispersionBisection(obj, cores = 7)
+obj = estimateDispersionBisection(obj, cores = 10)
 
 ```
 
 ```{r}
 outDir = paste('./COTAN/', dataset_name, sep="")
-dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
-file_pos = paste(outDir '/', dataset_name, '.cotan.RDS', sep = "")
+if (!dir.exists(outDir)){
+    dir.create(outDir)
+}
+file_pos = paste(outDir, '/', dataset_name, '.cotan.RDS', sep = "")
 ```
 
 ```{r}
@@ -85,10 +93,6 @@ if (file.exists(file_pos)){
 ## Clustering
 
 It is possible to obtain a cell clusterization based on the concept of uniformity of expression of the genes across the cells. That is the cluster satisfies the null hypothesis of the `COTAN` model: the genes expression is not dependent on the cell in consideration.
-
-```{r}
-outDir = paste('./COTAN/', dataset_name, sep="")
-```
 
 ```{r eval=FALSE, include=TRUE}
 # TODO crash numero di dimensioni
@@ -116,6 +120,27 @@ c(mergedClusters, coexDF, pValueDF) %<-%
                             saveObj = TRUE, outDir = outDir)
 obj <- addClusterization(obj, clName = "MergedClusters",
                          clusters = mergedClusters, coexDF = coexDF)
+```
+
+```{r eval=FALSE, include=TRUE}
+# TODO assegnare correttamente
+cluster = as.data.frame(mergedClusters)
+colnames(cluster)[colnames(cluster) == deparse(substitute(mergedClusters))] <- "cluster"
+cluster$cluster = as.numeric(cluster$cluster)
+cluster$cell = rownames(cluster)
+rownames(cluster) = c(1:nrow(cluster))
+```
+
+```{r eval=FALSE, include=TRUE}
+if (!dir.exists(OUT_RES_DIR)){
+    dir.create(OUT_RES_DIR)
+}
+
+write_clustering(OUT_RES_DIR, cluster, "cell", "cluster")
+
+# TODO formattare il dataframe di pValueDF
+
+write_markers(OUT_RES_DIR, pbmc.markers, "gene", "cluster", "avg_log2FC", TRUE, TOP_MARKER_NUM)
 ```
 
 ```{r eval=FALSE, include=TRUE}
