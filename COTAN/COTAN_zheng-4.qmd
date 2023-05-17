@@ -20,8 +20,12 @@ IN_LABEL_DIR = paste(dataset_path, dataset_name, '-filtered/', sep="")
 ```
 
 ```{r}
+SSAMPLING = 0.2
+
 data <- Read10X(paste(IN_DATA_DIR, '10X', sep=''))
-data = data[1:10000, 1:600]
+# Retain only SSAMPLING of columns in data
+set.seed(123)
+data = data[, sample(ncol(data), floor(ncol(data) * SSAMPLING))]
 ```
 
 ```{r}
@@ -34,12 +38,12 @@ obj = initializeMetaDataset(obj,
 ```
 
 ```{r}
-ECDPlot(obj, yCut = 700)
+# ECDPlot(obj, yCut = 700)
 
 ```
 
 ```{r}
-cellSizePlot(obj)
+# cellSizePlot(obj)
 ```
 
 ```{r}
@@ -49,21 +53,23 @@ obj <- clean(obj, genesCutoff=0, cellsCutoff=0)
 ```
 
 ```{r}
-genesPlot
+# genesPlot
 ```
 
 ```{r}
-UDEPlot
+# UDEPlot
 ```
 
 ```{r}
 #  Threshold and MaxIteration ?
-obj = estimateDispersionBisection(obj, cores = 10)
+obj = estimateDispersionBisection(obj, cores = 7)
 
 ```
 
 ```{r}
-file_pos = paste('./COTAN/', dataset_name, '/', dataset_name, '.cotan.RDS', sep = "")
+outDir = paste('./COTAN/', dataset_name, sep="")
+dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
+file_pos = paste(outDir '/', dataset_name, '.cotan.RDS', sep = "")
 ```
 
 ```{r}
@@ -89,18 +95,10 @@ outDir = paste('./COTAN/', dataset_name, sep="")
 # TODO ppure da l'errore:
 # Error: 'VST.default' is not implemented yet
 # Distance default o distance='euclidean' ?
-if (file.exists(file.path(outDir, "FineClusters.RDS"))){
-    fineClusters <- readRDS(file.path(outDir, "FineClusters.RDS"))
-}else{ 
-    fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.4, cores = 10,
+fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.4, cores = 10,
                                        saveObj = TRUE, outDir = outDir)
-    writeRDS(fineClusters, file.path(outDir, "/FineClusters.RDS"))
-}
 ```
 
-```{r}
-fineClusters
-```
 
 ```{r}
 obj <- addClusterization(obj, clName = "FineClusters", clusters = fineClusters)
