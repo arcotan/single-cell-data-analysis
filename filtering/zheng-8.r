@@ -10,6 +10,7 @@ RDS = 'sce_full_Zhengmix8eq.rds'
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='')
+dir.create(outDataDir, recursive = TRUE, showWarnings = FALSE)
 
 # Loading data
 data = readRDS(paste(inDataDir, RDS, sep="/"))
@@ -18,6 +19,15 @@ counts = assays(data)$counts
 cells = data@colData@listData$barcode
 cells = substr(cells, 1, 14)
 genes = data@rowRanges@elementMetadata@listData$symbol
+
+# find duplicates in cells and genes
+dupCells = duplicated(cells)
+dupGenes = duplicated(genes)
+
+colnames(counts) = cells
+rownames(counts) = genes
+
+counts = counts[!dupGenes, !dupCells]
 
 colnames(counts) = cells
 rownames(counts) = genes
@@ -46,7 +56,7 @@ plot2 <- FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "nFeature_RNA"
 plot1 + plot2
 
 # Set very loose limits for COTAN
-pbmc <- subset(pbmc, subset = percent.mt < 5& nFeature_RNA < 1500)
+pbmc <- subset(pbmc, subset = percent.mt < 5 & nFeature_RNA < 1500)
 
 # Write pre-processed data
 data_to_write = GetAssayData(object = pbmc, assay = "RNA", slot = "data")

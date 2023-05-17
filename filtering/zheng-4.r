@@ -9,6 +9,7 @@ NAME = 'zheng-4'
 RDS = 'sce_full_Zhengmix4eq.rds'
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='')
+dir.create(outDataDir, recursive = TRUE, showWarnings = FALSE)
 
 
 # Loading data
@@ -19,8 +20,14 @@ cells = data@colData@listData$barcode
 cells = substr(cells, 1, 14)
 genes = data@rowRanges@elementMetadata@listData$symbol
 
+# find duplicates in cells and genes
+dupCells = duplicated(cells)
+dupGenes = duplicated(genes)
+
 colnames(counts) = cells
 rownames(counts) = genes
+
+counts = counts[!dupGenes, !dupCells]
 
 # Load the PBMC dataset
 pbmc.data <- counts

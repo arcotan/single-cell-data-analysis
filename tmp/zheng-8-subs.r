@@ -1,4 +1,3 @@
-```{r}
 library(dplyr)
 library(Seurat)
 library(patchwork)
@@ -6,66 +5,57 @@ library(DropletUtils)
 source("./libraries/utils.R")
 
 DATASETS_FOLDER = './dataset/'
-NAME = 'tabula-muris-heart'
-CHANNEL = '10X_P7_4'
+NAME = 'zheng-8'
+RDS = 'sce_full_Zhengmix8eq.rds'
+
+SSAMPLING = 0.2
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
-outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='') 
+outDataDir = paste(DATASETS_FOLDER, NAME, '-subsampled/', sep='')
 dir.create(outDataDir, recursive = TRUE, showWarnings = FALSE)
-```
 
-```{r}
+
 # Loading data
-metadata = read.csv(paste(inDataDir, "/annotations_droplet.csv", sep=""))
-metadata = metadata[metadata$channel == CHANNEL, c("cell", "cell_ontology_class", "cluster.ids")]
-metadata$cell = substr(metadata$cell, 10, 25)
+data = readRDS(paste(inDataDir, RDS, sep="/"))
+counts = assays(data)$counts
 
-data = Read10X(data.dir = inDataDir)
-colnames(data) = substr(colnames(data), 1, 16)
-data = data[,metadata$cell]
+cells = data@colData@listData$barcode
+cells = substr(cells, 1, 14)
+genes = data@rowRanges@elementMetadata@listData$symbol
 
-```
+colnames(counts) = cells
+rownames(counts) = genes
 
-```{r}
+# Retain only SSAMPLING of columns in counts
+set.seed(123)
+counts = counts[, sample(ncol(counts), floor(ncol(counts) * SSAMPLING))]
+
 # Load the PBMC dataset
-pbmc.data <- data
-```
+pbmc.data <- counts
 
-```{r}
 # plot distribution of amount of cells in which each gene is expressed
 ggplot(data.frame("sum" = rowSums(pbmc.data > 0)), aes(x=sum)) + geom_histogram()
 # plot distribution of sum of counts for each cell
 ggplot(data.frame("sum" = colSums(pbmc.data > 0)), aes(x=sum)) + geom_histogram()
-```
 
-```{r}
 # Initialize the Seurat object with the raw (non-normalized data).
-# find the name of the cell with less than 100 genes expressed
-pbmc <- CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 100)
-```
+pbmc <- CreateSeuratObject(counts = pbmc.data, min.cells = 3, min.features = 100)
 
-```{r}
-# The [[ operator can add columns to object metadata. This is a great place to stash QC stats
-# pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, pattern = "^ERCC-")
+pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, pattern = "^MT-")
 
 # Visualize QC metrics as a violin plot
-VlnPlot(pbmc, features = c("nFeature_RNA", "nCount_RNA"), ncol = 2)
-```
+VlnPlot(pbmc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
 
-```{r}
+
 # FeatureScatter is typically used to visualize feature-feature relationships, but can be used
 # for anything calculated by the object, i.e. columns in object metadata, PC scores etc.
-# plot1 <- FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "percent.mt")
+plot1 <- FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "percent.mt")
 plot2 <- FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
 plot1 + plot2
-```
 
-```{r}
 # Set very loose limits for COTAN
-pbmc <- subset(pbmc, subset = nFeature_RNA > 0 & nFeature_RNA < 5000)
-```
+pbmc <- subset(pbmc, subset = percent.mt < 5 & nFeature_RNA < 1500)
 
-```{r}
 # Write pre-processed data
 data_to_write = GetAssayData(object = pbmc, assay = "RNA", slot = "data")
 write.csv(data_to_write, paste(outDataDir, "data.csv", sep=""))
@@ -74,10 +64,9 @@ if (!dir.exists(Dir10X)) {
   write10xCounts(Dir10X, data_to_write)
 }
 
-
-labels = sort(unique(metadata$cell_ontology_class))
-metadata$cluster.ids = match(metadata$cell_ontology_class, labels)
-labels[labels == ''] = 'unknown cluster'
+phenoid = data@colData@listData$phenoid
+labels = sort(unique(phenoid))
+metadata = data.frame("cell"=cells, "cluster.ids"=match(phenoid, labels), "cell_ontology_class"=phenoid)
 
 filtered_labels = merge(data.frame("cell"=colnames(data_to_write)), metadata)
 write.csv(filtered_labels[,c('cell', 'cluster.ids')], paste(outDataDir, "labels.csv", sep=""), row.names = FALSE)
@@ -85,4 +74,3 @@ write.csv(filtered_labels[,c('cell', 'cluster.ids')], paste(outDataDir, "labels.
 
 mapping = data.frame("go"=labels, "id"=1:length(labels))
 write.csv(mapping, paste(outDataDir, "mapping.csv", sep=""), row.names = FALSE)
-```
