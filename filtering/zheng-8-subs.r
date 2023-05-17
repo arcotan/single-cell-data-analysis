@@ -8,8 +8,10 @@ DATASETS_FOLDER = './dataset/'
 NAME = 'zheng-8'
 RDS = 'sce_full_Zhengmix8eq.rds'
 
+SSAMPLING = 0.2
+
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
-outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='')
+outDataDir = paste(DATASETS_FOLDER, NAME, '-subsampled/', sep='')
 dir.create(outDataDir, recursive = TRUE, showWarnings = FALSE)
 
 
@@ -23,6 +25,10 @@ genes = data@rowRanges@elementMetadata@listData$symbol
 
 colnames(counts) = cells
 rownames(counts) = genes
+
+# Retain only SSAMPLING of columns in counts
+set.seed(123)
+counts = counts[, sample(ncol(counts), floor(ncol(counts) * SSAMPLING))]
 
 # Load the PBMC dataset
 pbmc.data <- counts

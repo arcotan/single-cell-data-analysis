@@ -5,11 +5,13 @@ library(DropletUtils)
 source("./libraries/utils.R")
 
 DATASETS_FOLDER = './dataset/'
-NAME = 'zheng-8'
-RDS = 'sce_full_Zhengmix8eq.rds'
+NAME = 'zheng-4'
+RDS = 'sce_full_Zhengmix4eq.rds'
+
+SSAMPLING = 0.2
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
-outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='')
+outDataDir = paste(DATASETS_FOLDER, NAME, '-subsampled/', sep='')
 dir.create(outDataDir, recursive = TRUE, showWarnings = FALSE)
 
 
@@ -23,6 +25,10 @@ genes = data@rowRanges@elementMetadata@listData$symbol
 
 colnames(counts) = cells
 rownames(counts) = genes
+
+# Retain only SSAMPLING of columns in counts
+set.seed(123)
+counts = counts[, sample(ncol(counts), floor(ncol(counts) * SSAMPLING))]
 
 # Load the PBMC dataset
 pbmc.data <- counts
@@ -48,7 +54,7 @@ plot2 <- FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "nFeature_RNA"
 plot1 + plot2
 
 # Set very loose limits for COTAN
-pbmc <- subset(pbmc, subset = percent.mt < 5 & nFeature_RNA < 1500)
+pbmc <- subset(pbmc, subset = percent.mt < 7 & nFeature_RNA < 1500)
 
 # Write pre-processed data
 data_to_write = GetAssayData(object = pbmc, assay = "RNA", slot = "data")

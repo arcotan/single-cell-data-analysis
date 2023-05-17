@@ -9,6 +9,7 @@ NAME = 'zheng-4'
 RDS = 'sce_full_Zhengmix4eq.rds'
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='')
+dir.create(outDataDir, recursive = TRUE, showWarnings = FALSE)
 
 
 # Loading data

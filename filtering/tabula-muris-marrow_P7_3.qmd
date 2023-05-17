@@ -11,6 +11,7 @@ CHANNEL = '10X_P7_3'
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='') 
+dir.create(outDataDir, recursive = TRUE, showWarnings = FALSE)
 ```
 
 ```{r}

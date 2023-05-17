@@ -11,6 +11,7 @@ NAME = 'peripheal-blood'
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='') 
+dir.create(outDataDir, recursive = TRUE, showWarnings = FALSE)
 
 # Loading data
 allData = Read10X(data.dir = inDataDir, strip.suffix = TRUE)
