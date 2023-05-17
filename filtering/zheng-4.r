@@ -6,7 +6,7 @@ source("./libraries/utils.R")
 
 DATASETS_FOLDER = './dataset/'
 NAME = 'zheng-4'
-RDS = 'zheng-4.rds'
+RDS = 'sce_full_Zhengmix4eq.rds'
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='')
 
