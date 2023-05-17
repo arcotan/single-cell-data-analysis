@@ -119,6 +119,26 @@ obj <- addClusterization(obj, clName = "MergedClusters",
 ```
 
 ```{r eval=FALSE, include=TRUE}
+# TODO assegnare correttamente
+cluster = as.data.frame(mergedClusters)
+colnames(cluster)[colnames(cluster) == deparse(substitute(mergedClusters))] <- "cluster"
+cluster$cluster = as.numeric(cluster$cluster)
+cluster$cell = rownames(cluster)
+rownames(cluster) = c(1:nrow(cluster))
+```
+
+```{r eval=FALSE, include=TRUE}
+if (!dir.exists(OUT_RES_DIR)){
+    dir.create(OUT_RES_DIR)
+}
+
+write_clustering(OUT_RES_DIR, cluster, "cell", "cluster")
+
+# TODO formattare il dataframe di pValueDF
+
+write_markers(OUT_RES_DIR, pbmc.markers, "gene", "cluster", "avg_log2FC", TRUE, TOP_MARKER_NUM)
+```
+```{r eval=FALSE, include=TRUE}
 # mergedUMAPPlot <- UMAPPlot(coexDF, elements = layersGenes,
                         #    title = "Fine Cluster UMAP Plot")
 # mergedUMAPPlot <- UMAPPlot(coexDF)
