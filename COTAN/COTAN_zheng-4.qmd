@@ -20,7 +20,7 @@ IN_LABEL_DIR = paste(dataset_path, dataset_name, '-filtered/', sep="")
 ```
 
 ```{r}
-SSAMPLING = 0.2
+SSAMPLING = 0.4
 
 data <- Read10X(paste(IN_DATA_DIR, '10X', sep=''))
 # Retain only SSAMPLING of columns in data
@@ -142,8 +142,10 @@ true_ids = tl$cluster.ids
 gdsce = as.SingleCellExperiment(srat)
 gdsce = applySCE(gdsce, logNormCounts)
 gdumap = runUMAP(gdsce)
-colLabels(gdumap) <- factor(true_ids)
-plotUMAP(gdumap, colour_by="label", text_by="label", text_color="red")
+colLabels(gdumap) <- factor(mergedClusters)
+gdumap[['true']] <- factor(true_ids)
+umap = plotUMAP(gdumap, shape_by="true", colour_by="label", text_by="label", text_color="red")
+ggsave(paste(outDir, '/', dataset_name, '.umap.pdf', sep = ""), umap, width = 10, height = 10)
 ```
 
 ```{r eval=FALSE, include=TRUE}
