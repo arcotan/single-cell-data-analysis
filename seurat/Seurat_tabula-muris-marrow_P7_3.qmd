@@ -74,9 +74,8 @@ print(paste("Numero totale geni: ", nrow(pbmc.markers), sep=""))
 
 # plot_de(GetAssayData(object = pbmc, assay = "RNA", slot = "data"), pbmc.markers, "gene", "cluster", label_df, "cell", "computed_id", OUT_RES_DIR)
 
-write_clustering(OUT_RES_DIR, label_df, "cell", "computed_id", dist(Embeddings(pbmc[['pca']])[,1:20])) # TODO: capire se è okay calcolarla su PCA
+write_clustering(OUT_RES_DIR, label_df, "cell", "computed_id", dist(Embeddings(pbmc[['pca']])[,1:20]))
 
-# TODO scegliere lo score
 write_markers(OUT_RES_DIR, pbmc.markers, "gene", "cluster", "avg_log2FC", TRUE, TOP_MARKER_NUM)
 
 ```
