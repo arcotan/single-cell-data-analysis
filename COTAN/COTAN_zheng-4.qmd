@@ -20,12 +20,12 @@ IN_LABEL_DIR = paste(dataset_path, dataset_name, '-filtered/', sep="")
 ```
 
 ```{r}
-SSAMPLING = 0.2
+# SSAMPLING = 0.2
 
 data <- Read10X(paste(IN_DATA_DIR, '10X', sep=''))
 # Retain only SSAMPLING of columns in data
-set.seed(123)
-data = data[, sample(ncol(data), floor(ncol(data) * SSAMPLING))]
+# set.seed(123)
+# data = data[, sample(ncol(data), floor(ncol(data) * SSAMPLING))]
 ```
 
 ```{r}
@@ -69,7 +69,7 @@ obj = estimateDispersionBisection(obj, cores = 7)
 ```{r}
 outDir = paste('./COTAN/', dataset_name, sep="")
 dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
-file_pos = paste(outDir '/', dataset_name, '.cotan.RDS', sep = "")
+file_pos = paste(outDir, '/', dataset_name, '.cotan.RDS', sep = "")
 ```
 
 ```{r}
@@ -86,17 +86,19 @@ if (file.exists(file_pos)){
 
 It is possible to obtain a cell clusterization based on the concept of uniformity of expression of the genes across the cells. That is the cluster satisfies the null hypothesis of the `COTAN` model: the genes expression is not dependent on the cell in consideration.
 
-```{r}
-outDir = paste('./COTAN/', dataset_name, sep="")
-```
-
 ```{r eval=FALSE, include=TRUE}
 # TODO crash numero di dimensioni
 # TODO ppure da l'errore:
 # Error: 'VST.default' is not implemented yet
 # Distance default o distance='euclidean' ?
-fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.4, cores = 10,
-                                       saveObj = TRUE, outDir = outDir)
+if (file.exists(file.path(outDir, '/', "fineClusters.RDS"))){
+    fineClusters <- readRDS(file.path(outDir, '/', "fineClusters.RDS"))
+} else {
+    print("Computing clusters")
+    fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.25, cores = 6,
+                                  saveObj = TRUE, outDir = outDir)
+    saveRDS(fineClusters, file.path(outDir, '/', "fineClusters.RDS"))
+}
 ```
 
 
@@ -111,9 +113,21 @@ obj <- addClusterizationCoex(obj, clName = "FineClusters",
 ```
 
 ```{r eval=FALSE, include=TRUE}
-c(mergedClusters, coexDF, pValueDF) %<-%
-  mergeUniformCellsClusters(obj, GDIThreshold = 1.4, cores = 10,
-                            saveObj = TRUE, outDir = outDir)
+if (file.exists(file.path(outDir, '/', "mergedClusters.RDS")) ||
+    file.exists(file.path(outDir, '/', "mergedCoex.RDS")) || 
+    file.exists(file.path(outDir, '/', "mergedpValues.RDS"))){
+        
+    mergedClusters <- readRDS(file.path(outDir, '/', "mergedClusters.RDS"))
+    coexDF <- readRDS(file.path(outDir, '/', "mergedCoex.RDS"))
+    pValueDF <- readRDS(file.path(outDir, '/', "mergedpValues.RDS"))
+
+} else {
+    c(mergedClusters, coexDF, pValueDF) %<-%
+      mergeUniformCellsClusters(obj, clusters=fineClusters, GDIThreshold = 1.2, cores = 8)
+    saveRDS(mergedClusters, file.path(outDir, '/', "mergedClusters.RDS"))
+    saveRDS(coexDF, file.path(outDir, '/', "mergedCoex.RDS"))
+    saveRDS(pValueDF, file.path(outDir, '/', "mergedpValues.RDS"))
+}
 obj <- addClusterization(obj, clName = "MergedClusters",
                          clusters = mergedClusters, coexDF = coexDF)
 ```
@@ -128,6 +142,7 @@ rownames(cluster) = c(1:nrow(cluster))
 ```
 
 ```{r eval=FALSE, include=TRUE}
+OUT_RES_DIR = paste('./results/', dataset_name, '/COTAN', sep="")
 if (!dir.exists(OUT_RES_DIR)){
     dir.create(OUT_RES_DIR)
 }

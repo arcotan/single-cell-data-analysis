@@ -34,12 +34,12 @@ obj = initializeMetaDataset(obj,
 ```
 
 ```{r}
-ECDPlot(obj, yCut = 700)
+# ECDPlot(obj, yCut = 700)
 
 ```
 
 ```{r}
-cellSizePlot(obj)
+# cellSizePlot(obj)
 ```
 
 ```{r}
@@ -49,11 +49,11 @@ obj <- clean(obj, genesCutoff=0, cellsCutoff=0)
 ```
 
 ```{r}
-genesPlot
+# genesPlot
 ```
 
 ```{r}
-UDEPlot
+# UDEPlot
 ```
 
 ```{r}
@@ -63,7 +63,8 @@ obj = estimateDispersionBisection(obj, cores = 10)
 ```
 
 ```{r}
-file_pos = paste('./COTAN/', dataset_name, '/', dataset_name, '.cotan.RDS', sep = "")
+outDir = paste('./COTAN/', dataset_name, sep="")
+file_pos = paste(outDir, '/', dataset_name, '.cotan.RDS', sep = "")
 ```
 
 ```{r}
@@ -80,17 +81,19 @@ if (file.exists(file_pos)){
 
 It is possible to obtain a cell clusterization based on the concept of uniformity of expression of the genes across the cells. That is the cluster satisfies the null hypothesis of the `COTAN` model: the genes expression is not dependent on the cell in consideration.
 
-```{r}
-outDir = paste('./COTAN/', dataset_name, sep="")
-```
-
 ```{r eval=FALSE, include=TRUE}
 # TODO crash numero di dimensioni
 # TODO ppure da l'errore:
 # Error: 'VST.default' is not implemented yet
 # Distance default o distance='euclidean' ?
-fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.4, cores = 10,
-                                       saveObj = TRUE, outDir = outDir)
+if (file.exists(file.path(outDir, '/', "fineClusters.RDS"))){
+    fineClusters <- readRDS(file.path(outDir, '/', "fineClusters.RDS"))
+} else {
+    print("Computing clusters")
+    fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.24, cores = 8,
+                                  saveObj = TRUE, outDir = outDir)
+    saveRDS(fineClusters, file.path(outDir, '/', "fineClusters.RDS"))
+}
 ```
 
 
