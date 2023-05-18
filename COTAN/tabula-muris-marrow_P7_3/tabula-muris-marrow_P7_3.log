@@ -1702,3 +1702,74 @@ Removed 33 low GDI genes (such as the fully-expressed) in GDI plot
 Merging clusters 15 and 19_20-merge results in a too high GDI
 The final merged clusterization contains [ 14 ] different clusters: 01_09-merge, 02, 03_11-merge, 04, 05, 06_12-merge, 07, 08, 10_13-merge, 14, 15, 16_17-merge, 18, 19_20-merge
 Merging cells' uniform clustering: DONE
+Initializing `COTAN` meta-data
+Genes/cells selection done: dropped [0] genes and [0] cells
+Working on [13396] genes and [2123] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 14 genes batches from [1:946] to [12451:13396]
+Estimate dispersion: DONE
+dispersion | min: -0.0503082275390625 | max: 3232 | % negative: 14.6237682890415
+Differential Expression Analysis - START
+*
+ analysis of cluster: '01' - START
+* analysis of cluster: '01' - DONE
+*
+ analysis of cluster: '02' - START
+* analysis of cluster: '02' - DONE
+*
+ analysis of cluster: '03' - START
+* analysis of cluster: '03' - DONE
+*
+ analysis of cluster: '04' - START
+* analysis of cluster: '04' - DONE
+*
+ analysis of cluster: '05' - START
+* analysis of cluster: '05' - DONE
+*
+ analysis of cluster: '06' - START
+* analysis of cluster: '06' - DONE
+*
+ analysis of cluster: '07' - START
+* analysis of cluster: '07' - DONE
+*
+ analysis of cluster: '08' - START
+* analysis of cluster: '08' - DONE
+*
+ analysis of cluster: '09' - START
+* analysis of cluster: '09' - DONE
+*
+ analysis of cluster: '10' - START
+* analysis of cluster: '10' - DONE
+*
+ analysis of cluster: '11' - START
+* analysis of cluster: '11' - DONE
+*
+ analysis of cluster: '12' - START
+* analysis of cluster: '12' - DONE
+*
+ analysis of cluster: '13' - START
+* analysis of cluster: '13' - DONE
+*
+ analysis of cluster: '14' - START
+* analysis of cluster: '14' - DONE
+*
+ analysis of cluster: '15' - START
+* analysis of cluster: '15' - DONE
+*
+ analysis of cluster: '16' - START
+* analysis of cluster: '16' - DONE
+*
+ analysis of cluster: '17' - START
+* analysis of cluster: '17' - DONE
+*
+ analysis of cluster: '18' - START
+* analysis of cluster: '18' - DONE
+*
+ analysis of cluster: '19' - START
+* analysis of cluster: '19' - DONE
+*
+ analysis of cluster: '20' - START
+* analysis of cluster: '20' - DONE
+
+Differential Expression Analysis - DONE
