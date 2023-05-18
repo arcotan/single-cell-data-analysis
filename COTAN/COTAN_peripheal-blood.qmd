@@ -182,10 +182,3 @@ colLabels(gdumap) <- factor(mergedClusters)
 umap = plotUMAP(gdumap, colour_by="label", text_by="label", text_color="red")
 ggsave(paste(OUT_RES_DIR, "/umap.jpg", sep=""), umap, width = 10, height = 10)
 ```
-
-```{r eval=FALSE, include=TRUE}
-# mergedUMAPPlot <- UMAPPlot(coexDF, elements = layersGenes,
-                        #    title = "Fine Cluster UMAP Plot")
-# mergedUMAPPlot <- UMAPPlot(coexDF)
-# plot(mergedUMAPPlot)
-```

@@ -14,21 +14,18 @@ source("./libraries/utils.R")
 outDir <- tempdir()
 dataset_name = 'zheng-4'
 dataset_path = './dataset/'
-result_path = './results/'
-
-TOP_MARKER_NUM = 50
 
 IN_DATA_DIR = paste(dataset_path, dataset_name, '-filtered/', sep="")
 IN_LABEL_DIR = paste(dataset_path, dataset_name, '-filtered/', sep="")
-OUT_RES_DIR = paste(result_path, dataset_name, '/COTAN', sep="")
 ```
 
 ```{r}
+# SSAMPLING = 0.2
+
 data <- Read10X(paste(IN_DATA_DIR, '10X', sep=''))
-# TODO remove
-SAMPLE_CELL_SIZE = 200
-SAMPLE_GENE_SIZE = 1000
-data = data[sample(nrow(data), SAMPLE_GENE_SIZE), sample(ncol(data),SAMPLE_CELL_SIZE)]
+# Retain only SSAMPLING of columns in data
+# set.seed(123)
+# data = data[, sample(ncol(data), floor(ncol(data) * SSAMPLING))]
 ```
 
 ```{r}
@@ -41,42 +38,37 @@ obj = initializeMetaDataset(obj,
 ```
 
 ```{r}
-ECDPlot(obj, yCut = 700)
+# ECDPlot(obj, yCut = 700)
 
 ```
 
 ```{r}
-cellSizePlot(obj)
+# cellSizePlot(obj)
 ```
 
 ```{r}
 obj <- clean(obj, genesCutoff=0, cellsCutoff=0)
-c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot) %<-% cleanPlots(obj)
+# c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot) %<-% cleanPlots(obj)
+# pcaCellsPlot 
 ```
 
 ```{r}
-pcaCellsPlot 
+# genesPlot
 ```
 
 ```{r}
-genesPlot
-```
-
-```{r}
-UDEPlot
+# UDEPlot
 ```
 
 ```{r}
 #  Threshold and MaxIteration ?
-obj = estimateDispersionBisection(obj, cores = 10)
+obj = estimateDispersionBisection(obj, cores = 7)
 
 ```
 
 ```{r}
 outDir = paste('./COTAN/', dataset_name, sep="")
-if (!dir.exists(outDir)){
-    dir.create(outDir)
-}
+dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
 file_pos = paste(outDir, '/', dataset_name, '.cotan.RDS', sep = "")
 ```
 
@@ -99,8 +91,14 @@ It is possible to obtain a cell clusterization based on the concept of uniformit
 # TODO ppure da l'errore:
 # Error: 'VST.default' is not implemented yet
 # Distance default o distance='euclidean' ?
-fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.4, cores = 10,
-                                       saveObj = TRUE, outDir = outDir)
+if (file.exists(file.path(outDir, '/', "fineClusters.RDS"))){
+    fineClusters <- readRDS(file.path(outDir, '/', "fineClusters.RDS"))
+} else {
+    print("Computing clusters")
+    fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.25, cores = 6,
+                                  saveObj = TRUE, outDir = outDir)
+    saveRDS(fineClusters, file.path(outDir, '/', "fineClusters.RDS"))
+}
 ```
 
 
@@ -113,11 +111,22 @@ c(coexDF, pValueDF) %<-% DEAOnClusters(obj, clusters = fineClusters)
 obj <- addClusterizationCoex(obj, clName = "FineClusters",
                              coexDF = coexDF)
 ```
-
 ```{r eval=FALSE, include=TRUE}
-c(mergedClusters, coexDF, pValueDF) %<-%
-  mergeUniformCellsClusters(obj, GDIThreshold = 1.4, cores = 10,
-                            saveObj = TRUE, outDir = outDir)
+if (file.exists(file.path(outDir, '/', "mergedClusters.RDS")) ||
+    file.exists(file.path(outDir, '/', "mergedCoex.RDS")) || 
+    file.exists(file.path(outDir, '/', "mergedpValues.RDS"))){
+        
+    mergedClusters <- readRDS(file.path(outDir, '/', "mergedClusters.RDS"))
+    coexDF <- readRDS(file.path(outDir, '/', "mergedCoex.RDS"))
+    pValueDF <- readRDS(file.path(outDir, '/', "mergedpValues.RDS"))
+
+} else {
+    c(mergedClusters, coexDF, pValueDF) %<-%
+      mergeUniformCellsClusters(obj, clusters=fineClusters, GDIThreshold = 2.3, cores = 8)
+    saveRDS(mergedClusters, file.path(outDir, '/', "mergedClusters.RDS"))
+    saveRDS(coexDF, file.path(outDir, '/', "mergedCoex.RDS"))
+    saveRDS(pValueDF, file.path(outDir, '/', "mergedpValues.RDS"))
+}
 obj <- addClusterization(obj, clName = "MergedClusters",
                          clusters = mergedClusters, coexDF = coexDF)
 ```
@@ -132,6 +141,7 @@ rownames(cluster) = c(1:nrow(cluster))
 ```
 
 ```{r eval=FALSE, include=TRUE}
+OUT_RES_DIR = paste('./results/', dataset_name, '/COTAN', sep="")
 if (!dir.exists(OUT_RES_DIR)){
     dir.create(OUT_RES_DIR)
 }
@@ -142,7 +152,6 @@ write_clustering(OUT_RES_DIR, cluster, "cell", "cluster")
 
 write_markers(OUT_RES_DIR, pbmc.markers, "gene", "cluster", "avg_log2FC", TRUE, TOP_MARKER_NUM)
 ```
-
 ```{r eval=FALSE, include=TRUE}
 # mergedUMAPPlot <- UMAPPlot(coexDF, elements = layersGenes,
                         #    title = "Fine Cluster UMAP Plot")

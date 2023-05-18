@@ -82,7 +82,6 @@ if (file.exists(file_pos)){
 ## Clustering
 
 It is possible to obtain a cell clusterization based on the concept of uniformity of expression of the genes across the cells. That is the cluster satisfies the null hypothesis of the `COTAN` model: the genes expression is not dependent on the cell in consideration.
-
 ```{r eval=FALSE, include=TRUE}
 # TODO crash numero di dimensioni
 # TODO ppure da l'errore:
