@@ -132,9 +132,16 @@ library(scran)
 
 srat = CreateSeuratObject(counts = data, project = dataset_name, min.cells = 0, min.features = 0)
 
+tl = read.csv(paste(IN_LABEL_DIR, 'labels.csv', sep=''), header=TRUE)
+
+keep = (tl$cell %in% colnames(data))
+
+true_ids = tl$cluster.ids[keep]
+
 gdsce = as.SingleCellExperiment(srat)
+gdsce = applySCE(gdsce, logNormCounts)
 gdumap = runUMAP(gdsce)
-colLabels(gdumap) <- factor(mergedClusters)
+colLabels(gdumap) <- factor(true_ids)
 plotUMAP(gdumap, colour_by="label", text_by="label", text_color="red")
 ```
 
