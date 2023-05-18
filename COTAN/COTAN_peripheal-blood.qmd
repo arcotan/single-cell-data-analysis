@@ -11,9 +11,11 @@ source("./libraries/utils.R")
 ```
 
 ```{r}
-outDir <- tempdir()
-dataset_name = 'peripheal-blood'
+dataset_name = 'peripheral-blood'
 dataset_path = './dataset/'
+
+outDir = paste('./COTAN/', dataset_name, sep="")
+dir.create(outDir, showWarnings = FALSE, recursive = TRUE)
 
 IN_DATA_DIR = paste(dataset_path, dataset_name, '-filtered/', sep="")
 IN_LABEL_DIR = paste(dataset_path, dataset_name, '-filtered/', sep="")
@@ -26,6 +28,7 @@ data = data#[1:100, 1:500]
 
 ```{r}
 obj = COTAN(raw = data)
+setLoggingFile(paste(outDir, '/', dataset_name, '.log', sep = ""))
 obj = initializeMetaDataset(obj,
                             GEO = "-",
                             sequencingMethod = "10x",
@@ -34,16 +37,16 @@ obj = initializeMetaDataset(obj,
 ```
 
 ```{r}
-ECDPlot(obj, yCut = 700)
+# ECDPlot(obj, yCut = 700)
 
 ```
 
 ```{r}
-cellSizePlot(obj)
+# cellSizePlot(obj)
 ```
 
 ```{r}
-obj <- clean(obj, genesCutoff=0, cellsCutoff=0)
+obj <- clean(obj, cellsCutoff=0)
 # c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot) %<-% cleanPlots(obj)
 # pcaCellsPlot 
 ```
@@ -58,12 +61,11 @@ obj <- clean(obj, genesCutoff=0, cellsCutoff=0)
 
 ```{r}
 #  Threshold and MaxIteration ?
-obj = estimateDispersionBisection(obj, cores = 10)
+obj = estimateDispersionBisection(obj, cores = 8)
 
 ```
 
 ```{r}
-outDir = paste('./COTAN/', dataset_name, sep="")
 file_pos = paste(outDir, '/', dataset_name, '.cotan.RDS', sep = "")
 ```
 
@@ -90,7 +92,7 @@ if (file.exists(file.path(outDir, '/', "fineClusters.RDS"))){
     fineClusters <- readRDS(file.path(outDir, '/', "fineClusters.RDS"))
 } else {
     print("Computing clusters")
-    fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.55, cores = 6,
+    fineClusters <- cellsUniformClustering(obj, GDIThreshold = 2.0, cores = 8,
                                   saveObj = TRUE, outDir = outDir)
     saveRDS(fineClusters, file.path(outDir, '/', "fineClusters.RDS"))
 }
@@ -108,15 +110,65 @@ obj <- addClusterizationCoex(obj, clName = "FineClusters",
 ```
 
 ```{r eval=FALSE, include=TRUE}
-c(mergedClusters, coexDF, pValueDF) %<-%
-  mergeUniformCellsClusters(obj, clusters=fineClusters, GDIThreshold = 1.6, cores = 8)
+if (file.exists(file.path(outDir, '/', "mergedClusters.RDS")) ||
+    file.exists(file.path(outDir, '/', "mergedCoex.RDS")) || 
+    file.exists(file.path(outDir, '/', "mergedpValues.RDS"))){
+        
+    mergedClusters <- readRDS(file.path(outDir, '/', "mergedClusters.RDS"))
+    coexDF <- readRDS(file.path(outDir, '/', "mergedCoex.RDS"))
+    pValueDF <- readRDS(file.path(outDir, '/', "mergedpValues.RDS"))
 
-  
-obj <- addClusterization(obj, clName = "MergedClusters",
-                         clusters = mergedClusters, coexDF = coexDF)
+} else {
+    c(mergedClusters, coexDF, pValueDF) %<-%
+      mergeUniformCellsClusters(obj, clusters=fineClusters, GDIThreshold = 2.0, cores = 8, outDir = outDir)
+    saveRDS(mergedClusters, file.path(outDir, '/', "mergedClusters.RDS"))
+    saveRDS(coexDF, file.path(outDir, '/', "mergedCoex.RDS"))
+    saveRDS(pValueDF, file.path(outDir, '/', "mergedpValues.RDS"))
+}
 ```
 
 ```{r eval=FALSE, include=TRUE}
+cluster = as.data.frame(mergedClusters)
+colnames(cluster)[colnames(cluster) == deparse(substitute(mergedClusters))] <- "cluster"
+cluster$cluster = match(cluster$cluster, levels(mergedClusters))
+cluster$cell = rownames(cluster)
+rownames(cluster) = c(1:nrow(cluster))
+```
+
+```{r}
+OUT_RES_DIR = paste('./results/', dataset_name, '/COTAN', sep="")
+if (!dir.exists(OUT_RES_DIR)){
+    dir.create(OUT_RES_DIR, recursive = TRUE)
+}
+
+write_COTAN_markers = function(OUT_RES_DIR, clusters, pValues, TOP_MARKER_NUM) {
+    markers = data.frame()
+
+    for (cluster_id in (levels(clusters))) {
+        cluster_markers = data.frame()
+        pv = pValues[, cluster_id]
+        names(pv) = rownames(pValues)
+        sorted_pv = sort(pv, decreasing = FALSE)
+        cluster_markers = data.frame(gene = names(sorted_pv)[1:TOP_MARKER_NUM],
+                                    cluster = match(cluster_id, levels(clusters)),
+                                    rank = 1:TOP_MARKER_NUM)
+
+        markers = rbind(markers, cluster_markers)
+    }
+    colnames(markers) = c("gene","cluster","rank")
+
+    write.csv(markers, paste(OUT_RES_DIR, "/markers.csv", sep=""), row.names = FALSE)
+}
+
+write_clustering(OUT_RES_DIR, cluster, "cell", "cluster")
+
+TOP_MARKER_NUM = 50
+
+write_COTAN_markers(OUT_RES_DIR, mergedClusters, pValueDF, TOP_MARKER_NUM)
+
+```
+
+```{r}
 library(scater)
 library(scran)
 
@@ -127,9 +179,6 @@ gdsce = as.SingleCellExperiment(srat)
 gdsce <- applySCE(gdsce, logNormCounts)
 gdumap = runUMAP(gdsce)
 colLabels(gdumap) <- factor(mergedClusters)
-plotUMAP(gdumap, colour_by="label", text_by="label", text_color="red")
-# mergedUMAPPlot <- UMAPPlot(coexDF, elements = layersGenes,
-                        #    title = "Fine Cluster UMAP Plot")
-# mergedUMAPPlot <- UMAPPlot(coexDF)
-# plot(mergedUMAPPlot)
+umap = plotUMAP(gdumap, colour_by="label", text_by="label", text_color="red")
+ggsave(paste(OUT_RES_DIR, "/umap.jpg", sep=""), umap, width = 10, height = 10)
 ```

@@ -40,13 +40,11 @@ label_df <- res$label_dataframe
 marker_test_res <- top_markers(cds,
                                group_cells_by="cluster",
                                reduction_method = "PCA",
-                               cores=8) # TODO genes_to_test_per_group da selezionare in base ai pval degli altri tools
+                               cores=8)
 
 marker_test_res$cell_group <- res$permutation_computed[as.numeric(marker_test_res$cell_group)]
 
 plot_de(exprs(cds), marker_test_res, "gene_id", "cell_group", label_df, "cell", "computed_id", OUT_RES_DIR, RES_FILE_TAG)
-
-# TODO usare matrice di distanza su PCA
 
 write_clustering(OUT_RES_DIR, RES_FILE_TAG, label_df, "cell", "computed_id", "true_id", dist(t(exprs(cds))))
 write_markers(OUT_RES_DIR, RES_FILE_TAG, marker_test_res, "gene_id", "cell_group", "marker_score", TRUE, TOP_MARKER_NUM)

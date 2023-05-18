@@ -3,6 +3,7 @@ library(dplyr)
 library(ggplot2)
 library(gridExtra)
 library(NMF)
+library(Rfast)
 
 # In input: a dataframe with two cluster id columns
 # labels of the computed ids column will be renamed in order to get the best match between clusters.
@@ -98,6 +99,7 @@ seurat_clustering_plot = function(seurat_obj, cell_col, label_col) {
 }
 
 clustering_simple_scores = function(label_df, computed_label, true_label) {
+  label_df = label_df[!rowAny(is.na(label_df[[computed_label]])), ]
   confusion_matrix = table(label_df[[computed_label]], label_df[[true_label]])
   res_overlap = sum(diag(confusion_matrix)) / sum(confusion_matrix)
   res_entropy = entropy(confusion_matrix)
@@ -105,7 +107,11 @@ clustering_simple_scores = function(label_df, computed_label, true_label) {
   return (data.frame("entropy" = res_entropy, "purity" = res_purity, "accuracy" = res_overlap))
 }
 
-clustering_complex_scores = function(label_df, computed_label, distance_matrix) {
+clustering_complex_scores = function(label_df, cell_col, computed_label, gene_expression_matrix) {
+  label_df = label_df[!rowAny(is.na(label_df[[computed_label]])), ]
+  gene_expression_matrix = t(gene_expression_matrix)
+  gene_expression_matrix = gene_expression_matrix[rownames(gene_expression_matrix) %in% label_df[[cell_col]],]
+  distance_matrix <- dist(gene_expression_matrix)
   return (data.frame("silhouette" = mean(silhouette(label_df[[computed_label]], distance_matrix)[,3])))
 }
 
