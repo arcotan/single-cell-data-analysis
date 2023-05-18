@@ -43,7 +43,8 @@ cellSizePlot(obj)
 ```
 
 ```{r}
-obj <- clean(obj, genesCutoff=0, cellsCutoff=0)
+# obj <- clean(obj, genesCutoff=0, cellsCutoff=0)
+obj <- clean(obj)
 # c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot) %<-% cleanPlots(obj)
 # pcaCellsPlot 
 ```

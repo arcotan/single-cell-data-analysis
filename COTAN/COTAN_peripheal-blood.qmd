@@ -90,7 +90,7 @@ if (file.exists(file.path(outDir, '/', "fineClusters.RDS"))){
     fineClusters <- readRDS(file.path(outDir, '/', "fineClusters.RDS"))
 } else {
     print("Computing clusters")
-    fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.4, cores = 6,
+    fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.55, cores = 6,
                                   saveObj = TRUE, outDir = outDir)
     saveRDS(fineClusters, file.path(outDir, '/', "fineClusters.RDS"))
 }
@@ -109,13 +109,25 @@ obj <- addClusterizationCoex(obj, clName = "FineClusters",
 
 ```{r eval=FALSE, include=TRUE}
 c(mergedClusters, coexDF, pValueDF) %<-%
-  mergeUniformCellsClusters(obj, GDIThreshold = 1.4, cores = 10,
-                            saveObj = TRUE, outDir = outDir)
+  mergeUniformCellsClusters(obj, clusters=fineClusters, GDIThreshold = 1.6, cores = 8)
+
+  
 obj <- addClusterization(obj, clName = "MergedClusters",
                          clusters = mergedClusters, coexDF = coexDF)
 ```
 
 ```{r eval=FALSE, include=TRUE}
+library(scater)
+library(scran)
+
+srat = CreateSeuratObject(counts = obj@raw, project = dataset_name)
+
+# Show clusters in Genes data
+gdsce = as.SingleCellExperiment(srat)
+gdsce <- applySCE(gdsce, logNormCounts)
+gdumap = runUMAP(gdsce)
+colLabels(gdumap) <- factor(mergedClusters)
+plotUMAP(gdumap, colour_by="label", text_by="label", text_color="red")
 # mergedUMAPPlot <- UMAPPlot(coexDF, elements = layersGenes,
                         #    title = "Fine Cluster UMAP Plot")
 # mergedUMAPPlot <- UMAPPlot(coexDF)
