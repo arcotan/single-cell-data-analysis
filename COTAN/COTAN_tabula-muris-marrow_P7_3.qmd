@@ -168,6 +168,20 @@ write_COTAN_markers(OUT_RES_DIR, mergedClusters, pValueDF, TOP_MARKER_NUM)
 
 ```
 
+```{r}
+library(scater)
+library(scran)
+
+srat = CreateSeuratObject(counts = obj@raw, project = dataset_name)
+
+# Show clusters in Genes data
+gdsce = as.SingleCellExperiment(srat)
+# gdsce <- applySCE(gdsce, logNormCounts)
+gdumap = runUMAP(gdsce)
+colLabels(gdumap) <- factor(mergedClusters)
+plotUMAP(gdumap, colour_by="label", text_by="label", text_color="red")
+```
+
 ```{r eval=FALSE, include=TRUE}
 # mergedUMAPPlot <- UMAPPlot(coexDF, elements = layersGenes,
                         #    title = "Fine Cluster UMAP Plot")
