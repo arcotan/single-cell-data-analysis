@@ -134,9 +134,10 @@ srat = CreateSeuratObject(counts = data, project = dataset_name, min.cells = 0, 
 
 tl = read.csv(paste(IN_LABEL_DIR, 'labels.csv', sep=''), header=TRUE)
 
-keep = (tl$cell %in% colnames(data))
+# reorder tl such that tl$cell is in the same order as colnames(data)
+tl = tl[match(colnames(data), tl$cell),]
 
-true_ids = tl$cluster.ids[keep]
+true_ids = tl$cluster.ids
 
 gdsce = as.SingleCellExperiment(srat)
 gdsce = applySCE(gdsce, logNormCounts)
