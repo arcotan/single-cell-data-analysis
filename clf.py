@@ -27,7 +27,7 @@ def read_data(data_path, labels_path, markers_path):
 	)
 	y_df = pd.read_csv(labels_path, index_col=0)
 	y_df = pd.DataFrame(adata.obs_names, columns=["cell"]).join(y_df, on="cell")
-	y = np.array(y_df['cluster.ids'])
+	y = np.array(y_df['cluster.ids']).astype(int)
 	markers_df = pd.read_csv(markers_path)
 	return adata, y, markers_df
 
@@ -60,6 +60,10 @@ for dataset in DATASET_TAGS:
 	scores_path = './results/{}/clf_scores.pickle'.format(dataset)
 
 	adata, y, markers_df = read_data(data_path, labels_path, markers_path)
+	na_id = np.isnan(y)
+	adata = adata[~na_id]
+	y = y[~na_id]
+
 	clusters, weights = np.unique(y, return_counts=True)
 	n_clusters = len(clusters)
 	tools = markers_df['tool'].unique()
