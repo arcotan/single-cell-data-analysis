@@ -9,8 +9,8 @@ from sklearn.metrics import f1_score
 from sklearn.model_selection import cross_val_predict
 import pickle
 
-DATASET_TAGS = ['tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'kumar-4-hard', 'kumar-8-hard']
-N_MARKERS = 50
+DATASET_TAGS = ['tabula-muris-heart']#, 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'kumar-4-hard', 'kumar-8-hard']
+N_MARKERS = 5#0
 
 def apply_classifier(X, y):
 	clf = RandomForestClassifier(n_jobs=2)

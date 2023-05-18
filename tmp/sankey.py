@@ -55,7 +55,7 @@ for dataset in DATASET_TAGS:
             for i in range(cluster_num):
                 mapping_path = "./dataset/" + dataset + "-filtered/mapping.csv"
                 mapping_df = pd.read_csv(mapping_path)
-                go_id = mapping_df[mapping_df['id'] == i]['go'].values # TODO:check
+                go_id = mapping_df[mapping_df['id'] == i]['go'].values
                 plot_label.append(go_id)
 
             for tool in tool_tags:
