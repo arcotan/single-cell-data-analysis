@@ -2,18 +2,15 @@
 library(dplyr)
 library(enrichR)
 library(ggplot2)
-# RcppArmadillo is used as dependency
-library(RcppArmadillo)
-# RcppXPtrUtils is used for simple handling of C++ external pointers
-library(RcppXPtrUtils)
-library(parallelDist)
+
 
 source("./libraries/utils.R")
 source("./libraries/venn.R")
 source("./libraries/enrichment_lists.R")
 
 TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi', 'COTAN')
-DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'zheng-4', 'zheng-8')
+# DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'zheng-4', 'zheng-8')
+DATASET_TAGS= c('peripheal-blood')
 
 RESULT_DIR = "./results/"
 AGGREGATE_RESULT_DIR = paste(RESULT_DIR, "aggregate/", sep="")
@@ -147,8 +144,6 @@ collect_dataset_data = function(tool_tag_list, dataset_tag, compute_missing_scor
           score_data[i, "purity"] <- scores_to_add$purity
         }
         if (is.na(cur_info$silhouette) && !is.null(filtered_datasets_dir_map)) {
-          # distance_matrix <- dist(ge)
-          # distance_matrix <- parDist(x=ge.mat, threads=8)
           ge = Read10X(DATASET_TAG_TO_FILTERED_GE_DIR[[dataset_tag]], strip.suffix = TRUE)
           score_data[i, "silhouette"] <- clustering_complex_scores(label_data, "cell", paste(cur_info$tool, "_label", sep=""), ge)$silhouette
         }

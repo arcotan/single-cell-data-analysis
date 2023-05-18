@@ -34,17 +34,17 @@ obj = initializeMetaDataset(obj,
 ```
 
 ```{r}
-ECDPlot(obj, yCut = 700)
+# ECDPlot(obj, yCut = 700)
 
 ```
 
 ```{r}
-cellSizePlot(obj)
+# cellSizePlot(obj)
 ```
 
 ```{r}
-# obj <- clean(obj, genesCutoff=0, cellsCutoff=0)
-obj <- clean(obj)
+obj <- clean(obj, genesCutoff=0, cellsCutoff=0)
+# obj <- clean(obj)
 # c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot) %<-% cleanPlots(obj)
 # pcaCellsPlot 
 ```
@@ -82,9 +82,6 @@ if (file.exists(file_pos)){
 
 It is possible to obtain a cell clusterization based on the concept of uniformity of expression of the genes across the cells. That is the cluster satisfies the null hypothesis of the `COTAN` model: the genes expression is not dependent on the cell in consideration.
 ```{r eval=FALSE, include=TRUE}
-# TODO crash numero di dimensioni
-# TODO ppure da l'errore:
-# Error: 'VST.default' is not implemented yet
 # Distance default o distance='euclidean' ?
 if (file.exists(file.path(outDir, '/', "fineClusters.RDS"))){
     fineClusters <- readRDS(file.path(outDir, '/', "fineClusters.RDS"))
@@ -121,14 +118,43 @@ if (file.exists(file.path(outDir, '/', "mergedClusters.RDS")) ||
     saveRDS(pValueDF, file.path(outDir, '/', "mergedpValues.RDS"))
 }
 ```
-```{r}
-obj <- addClusterization(obj, clName = "MergedClusters",
-                         clusters = mergedClusters, coexDF = coexDF)
+```{r eval=FALSE, include=TRUE}
+cluster = as.data.frame(mergedClusters)
+colnames(cluster)[colnames(cluster) == deparse(substitute(mergedClusters))] <- "cluster"
+cluster$cluster = match(cluster$cluster, levels(mergedClusters))
+cluster$cell = rownames(cluster)
+rownames(cluster) = c(1:nrow(cluster))
 ```
 
 ```{r}
-# mergedUMAPPlot <- UMAPPlot(coexDF, elements = layersGenes,
-                        #    title = "Fine Cluster UMAP Plot")
-# mergedUMAPPlot <- UMAPPlot(coexDF)
-# plot(mergedUMAPPlot)
+OUT_RES_DIR = paste('./results/', dataset_name, '/COTAN', sep="")
+if (!dir.exists(OUT_RES_DIR)){
+    dir.create(OUT_RES_DIR, recursive = TRUE)
+}
+
+write_COTAN_markers = function(OUT_RES_DIR, clusters, pValues, TOP_MARKER_NUM) {
+    markers = data.frame()
+
+    for (cluster_id in (levels(clusters))) {
+        cluster_markers = data.frame()
+        pv = pValues[, cluster_id]
+        names(pv) = rownames(pValues)
+        sorted_pv = sort(pv, decreasing = FALSE)
+        cluster_markers = data.frame(gene = names(sorted_pv)[1:TOP_MARKER_NUM],
+                                    cluster = match(cluster_id, levels(clusters)),
+                                    rank = 1:TOP_MARKER_NUM)
+
+        markers = rbind(markers, cluster_markers)
+    }
+    colnames(markers) = c("gene","cluster","rank")
+
+    write.csv(markers, paste(OUT_RES_DIR, "/markers.csv", sep=""), row.names = FALSE)
+}
+
+write_clustering(OUT_RES_DIR, cluster, "cell", "cluster")
+
+TOP_MARKER_NUM = 50
+
+write_COTAN_markers(OUT_RES_DIR, mergedClusters, pValueDF, TOP_MARKER_NUM)
+
 ```
