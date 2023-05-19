@@ -1,0 +1,262 @@
+
+R version 4.2.3 (2023-03-15) -- "Shortstop Beagle"
+Copyright (C) 2023 The R Foundation for Statistical Computing
+Platform: aarch64-apple-darwin20 (64-bit)
+
+R è un software libero ed è rilasciato SENZA ALCUNA GARANZIA.
+Siamo ben lieti se potrai redistribuirlo, ma sotto certe condizioni.
+Scrivi 'license()' o 'licence()' per maggiori dettagli.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Scrivi 'demo()' per una dimostrazione, 'help()' per la guida
+oppure 'help.start()' per la guida nel browser HTML.
+Scrivi 'q()' per uscire da R.
+
+[Caricato workspace precedentemente salvato]
+
+> 
+> library(dplyr)
+
+Caricamento pacchetto: ‘dplyr’
+
+I seguenti oggetti sono mascherati da ‘package:stats’:
+
+    filter, lag
+
+I seguenti oggetti sono mascherati da ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+> library(enrichR)
+Welcome to enrichR
+Checking connection ... 
+Enrichr ... Connection is Live!
+FlyEnrichr ... Connection is Live!
+WormEnrichr ... Connection is Live!
+YeastEnrichr ... Connection is Live!
+FishEnrichr ... Connection is Live!
+OxEnrichr ... Connection is Live!
+> library(ggplot2)
+> 
+> 
+> source("./libraries/utils.R")
+Attaching SeuratObject
+
+Caricamento pacchetto: ‘gridExtra’
+
+Il seguente oggetto è mascherato da ‘package:dplyr’:
+
+    combine
+
+Caricamento del pacchetto richiesto: pkgmaker
+Caricamento del pacchetto richiesto: registry
+Caricamento del pacchetto richiesto: rngtools
+Caricamento del pacchetto richiesto: cluster
+NMF - BioConductor layer [OK] | Shared memory capabilities [OK] | Cores 9/10
+Caricamento del pacchetto richiesto: Rcpp
+Caricamento del pacchetto richiesto: RcppZiggurat
+
+Caricamento pacchetto: ‘Rfast’
+
+Il seguente oggetto è mascherato da ‘package:Biobase’:
+
+    rowMedians
+
+Il seguente oggetto è mascherato da ‘package:dplyr’:
+
+    nth
+
+> source("./libraries/venn.R")
+> source("./libraries/enrichment_lists.R")
+> 
+> TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi', 'COTAN')
+> DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'zheng-4', 'zheng-8')
+> 
+> RESULT_DIR = "./results/"
+> AGGREGATE_RESULT_DIR = paste(RESULT_DIR, "aggregate/", sep="")
+> DATASET_DIR = "./dataset/"
+> 
+> DATASET_TAG_TO_TRUE_LABEL_DIR = list()
+> DATASET_TAG_TO_MAPPING_DIR = list()
+> DATASET_TAG_TO_FILTERED_GE_DIR = list()
+> for (tag in DATASET_TAGS) {
++   DATASET_TAG_TO_MAPPING_DIR[[tag]] = paste(DATASET_DIR, tag, "-filtered/", sep="")
++   DATASET_TAG_TO_FILTERED_GE_DIR[[tag]] = paste(DATASET_DIR, tag, "-filtered/10X/", sep="")
++ }
+> 
+> DATASET_TAG_TO_TRUE_LABEL_DIR = DATASET_TAG_TO_MAPPING_DIR
+> 
+> DATASET_TAG_TO_ENRICHR_DB = list("tabula-muris-heart" = "Tabula_Muris",
++                                  "tabula-muris-marrow_P7_3" = "Tabula_Muris",
++                                  "peripheal-blood" = "Tabula_Sapiens",
++                                  "zheng-4" = "Tabula_Sapiens",
++                                  "zheng-8" = "Tabula_Sapiens")
+> 
+> DATASET_TAG_TO_GENES_TO_ENRICH_DIR = list()
+> DATASET_TAG_TO_ENRICHER_DIR = list()
+> for (tag in DATASET_TAGS) {
++   DATASET_TAG_TO_GENES_TO_ENRICH_DIR[[tag]] = paste(AGGREGATE_RESULT_DIR, "/", tag, "/genes_to_enrich/", sep="")
++   DATASET_TAG_TO_ENRICHER_DIR[[tag]] = paste(AGGREGATE_RESULT_DIR, "/", tag, "/enrichr_data/", sep="")
++ }
+> 
+> read_single_data = function(tool_tag, dataset_tag) {
++   label_file = paste(RESULT_DIR, dataset_tag, "/", tool_tag, "/clustering_labels", ".csv", sep="")
++   score_file = paste(RESULT_DIR, dataset_tag, "/", tool_tag, "/clustering_scores", ".csv", sep="")
++   marker_file = paste(RESULT_DIR, dataset_tag, "/", tool_tag, "/markers", ".csv", sep="")
++   res = list()
++   if (file.exists(label_file)) {
++     res$labels = read.csv(label_file)
++   }
++   if (file.exists(score_file)) {
++     temp_scores = read.csv(score_file)
++     if (is.null(temp_scores$accuracy)) {
++       temp_scores$accuracy = NA
++     }
++     if (is.null(temp_scores$entropy)) {
++       temp_scores$entropy = NA
++     }
++     if (is.null(temp_scores$purity)) {
++       temp_scores$purity = NA
++     }
++     if (is.null(temp_scores$silhouette)) {
++       temp_scores$silhouette = NA
++     }
++     res$scores = temp_scores
++   }
++   else {
++     res$scores = data.frame("accuracy" = NA, "entropy" = NA, "purity" = NA, "silhouette" = NA)
++   }
++   if (file.exists(marker_file)) {
++     res$markers = read.csv(marker_file)
++   }
++   return (res)
++ }
+> 
+> collect_dataset_data = function(tool_tag_list, dataset_tag, compute_missing_scores = TRUE, filtered_datasets_dir_map = NULL) {
++   print(paste("Collecting data for dataset", dataset_tag, "...", sep=" "))
++   to_init = TRUE
++   label_data = NULL
++   score_data = NULL
++   marker_data = NULL
++   for (tool in tool_tag_list) {
++     # read data of current tool
++     cur_tool_data = read_single_data(tool, dataset_tag)
++     if (!is.null(cur_tool_data$markers) && !is.null(cur_tool_data$labels)) {
++       if (to_init) {
++         label_data = cur_tool_data$labels
++         colnames(label_data)[colnames(label_data) == "cluster"] <- paste(tool ,"_label", sep="")
++         if (!is.null(cur_tool_data$scores)) {
++           score_data = cur_tool_data$scores
++           score_data$tool = tool
++         }
++         else {
++           score_data = data.frame("tool" = tool, "accuracy" = NA, "entropy" = NA, "purity" = NA)
++         }
++         marker_data = cur_tool_data$markers
++         marker_data$tool = tool
++         to_init = FALSE
++       }
++       else {
++         # merge clustering labels
++         labels_to_add = cur_tool_data$labels
++         colnames(labels_to_add)[colnames(labels_to_add) == "cluster"] <- paste(tool ,"_label", sep="")
++         label_data = full_join(label_data, labels_to_add)
++         # merge clustering scores
++         if (!is.null(cur_tool_data$scores)) {
++           scores_to_add = cur_tool_data$scores
++           scores_to_add$tool = tool
++           score_data = full_join(score_data, scores_to_add)
++         }
++         else {
++           score_data = rbind(score_data, data.frame("tool" = tool, "accuracy" = NA, "entropy" = NA, "purity" = NA))
++         }
++         # merge markers
++         markers_to_add = cur_tool_data$markers
++         markers_to_add$tool = tool
++         marker_data = rbind(marker_data, markers_to_add)
++       }
++     }
++   }
++ 
++   if (!to_init) {
++     # read cluster ids of cells of the dataset and merge 
++     # drops cells not used in any clustering
++     true_ids = read.csv(paste(DATASET_TAG_TO_TRUE_LABEL_DIR[[dataset_tag]], "labels.csv", sep=""))
++ 
++     colnames(true_ids)[colnames(true_ids) == "cluster.ids"] <- "true_labels"
++     label_data = merge(label_data, true_ids)
++     
++     # align each clustering with true labels
++     for (label in colnames(label_data)[-1]) {
++       tool = substr(label, 1, nchar(label)-6)
++       alignment = align_clusters(label_data, "true_labels", label)
++       label_data[[label]] <- alignment$label_dataframe[[label]]
++       marker_data[marker_data$tool == tool,]$cluster <- alignment$permutation_computed[marker_data[marker_data$tool == tool,]$cluster]
++     }
++     if (compute_missing_scores) {
++       # compute missing clustering scores (for scanpy and scvi only silhouette should not have NA at this point)
++       for (i in 1:nrow(score_data)) {
++         cur_info = score_data[i, ]
++         if (is.na(cur_info$accuracy) || is.na(cur_info$entropy) || is.na(cur_info$purity)) {
++           scores_to_add = clustering_simple_scores(label_data, paste(cur_info$tool, "_label", sep=""), "true_labels")
++           score_data[i, "accuracy"] <- scores_to_add$accuracy
++           score_data[i, "entropy"] <- scores_to_add$entropy
++           score_data[i, "purity"] <- scores_to_add$purity
++         }
++         if (is.na(cur_info$silhouette) && !is.null(filtered_datasets_dir_map)) {
++           ge = Read10X(DATASET_TAG_TO_FILTERED_GE_DIR[[dataset_tag]], strip.suffix = TRUE)
++           score_data[i, "silhouette"] <- clustering_complex_scores(label_data, "cell", paste(cur_info$tool, "_label", sep=""), ge)$silhouette
++         }
++       }
++     }
++   }
++   
++   return (list("labels" = label_data, "scores" = score_data, "markers" = marker_data))
++ }
+> 
+> collect_data = function(dataset_tag_list, tool_tag_list, write_aggregate = TRUE, compute_missing_scores = TRUE, filtered_datasets_dir_map = NULL) {
++   datasets_aggregate_data_list = list()
++   for (tag in dataset_tag_list) {
++     dataset_data = collect_dataset_data(tool_tag_list, tag, compute_missing_scores, filtered_datasets_dir_map)
++     if (!is.null(dataset_data$labels) || !is.null(dataset_data$scores) || !is.null(dataset_data$markers)) {
++       if (write_aggregate) {
++         if (!dir.exists(paste(AGGREGATE_RESULT_DIR, tag, sep=""))) {
++           dir.create(paste(AGGREGATE_RESULT_DIR, tag, sep=""))
++         }
++         write.csv(dataset_data$labels, paste(AGGREGATE_RESULT_DIR, tag, "/labels.csv", sep=""), row.names = FALSE)
++         write.csv(dataset_data$scores, paste(AGGREGATE_RESULT_DIR, tag, "/scores.csv", sep=""), row.names = FALSE)
++         write.csv(dataset_data$markers, paste(AGGREGATE_RESULT_DIR, tag, "/markers.csv", sep=""), row.names = FALSE)
++       }
++       datasets_aggregate_data_list[[tag]] = dataset_data
++     }
++   }
++   return (datasets_aggregate_data_list)
++ }
+> 
+> # read data
+> global_data = collect_data(DATASET_TAGS, TOOL_TAGS, filtered_datasets_dir_map = DATASET_TAG_TO_FILTERED_GE_DIR)
+[1] "Collecting data for dataset tabula-muris-heart ..."
+Joining with `by = join_by(cell)`
+Joining with `by = join_by(accuracy, entropy, purity, silhouette, tool)`
+Joining with `by = join_by(cell)`
+Joining with `by = join_by(accuracy, entropy, purity, silhouette, tool)`
+Joining with `by = join_by(cell)`
+Joining with `by = join_by(accuracy, entropy, purity, silhouette, tool)`
+Joining with `by = join_by(cell)`
+Joining with `by = join_by(accuracy, entropy, purity, silhouette, tool)`
+[1] "Collecting data for dataset tabula-muris-marrow_P7_3 ..."
+Joining with `by = join_by(cell)`
+Joining with `by = join_by(accuracy, entropy, purity, silhouette, tool)`
+Joining with `by = join_by(cell)`
+Joining with `by = join_by(accuracy, entropy, purity, silhouette, tool)`
+Joining with `by = join_by(cell)`
+Joining with `by = join_by(accuracy, entropy, purity, silhouette, tool)`
+Joining with `by = join_by(cell)`
+Joining with `by = join_by(accuracy, entropy, purity, silhouette, tool)`
+
+Esecuzione interrotta

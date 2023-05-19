@@ -9,8 +9,7 @@ source("./libraries/venn.R")
 source("./libraries/enrichment_lists.R")
 
 TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi', 'COTAN')
-# DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'zheng-4', 'zheng-8')
-DATASET_TAGS= c('peripheal-blood')
+DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'zheng-4', 'zheng-8')
 
 RESULT_DIR = "./results/"
 AGGREGATE_RESULT_DIR = paste(RESULT_DIR, "aggregate/", sep="")
