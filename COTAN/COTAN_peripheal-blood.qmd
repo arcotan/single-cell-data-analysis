@@ -11,7 +11,7 @@ source("./libraries/utils.R")
 ```
 
 ```{r}
-dataset_name = 'peripheral-blood'
+dataset_name = 'peripheal-blood'
 dataset_path = './dataset/'
 
 outDir = paste('./COTAN/', dataset_name, sep="")
@@ -84,9 +84,6 @@ if (file.exists(file_pos)){
 It is possible to obtain a cell clusterization based on the concept of uniformity of expression of the genes across the cells. That is the cluster satisfies the null hypothesis of the `COTAN` model: the genes expression is not dependent on the cell in consideration.
 
 ```{r eval=FALSE, include=TRUE}
-# TODO crash numero di dimensioni
-# TODO ppure da l'errore:
-# Error: 'VST.default' is not implemented yet
 # Distance default o distance='euclidean' ?
 if (file.exists(file.path(outDir, '/', "fineClusters.RDS"))){
     fineClusters <- readRDS(file.path(outDir, '/', "fineClusters.RDS"))
@@ -120,7 +117,7 @@ if (file.exists(file.path(outDir, '/', "mergedClusters.RDS")) ||
 
 } else {
     c(mergedClusters, coexDF, pValueDF) %<-%
-      mergeUniformCellsClusters(obj, clusters=fineClusters, GDIThreshold = 2.0, cores = 8, outDir = outDir)
+      mergeUniformCellsClusters(obj, clusters=fineClusters, GDIThreshold = 1.4, cores = 8, outDir = outDir)
     saveRDS(mergedClusters, file.path(outDir, '/', "mergedClusters.RDS"))
     saveRDS(coexDF, file.path(outDir, '/', "mergedCoex.RDS"))
     saveRDS(pValueDF, file.path(outDir, '/', "mergedpValues.RDS"))
