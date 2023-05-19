@@ -88,7 +88,7 @@ if (file.exists(file.path(outDir, '/', "fineClusters.RDS"))){
     fineClusters <- readRDS(file.path(outDir, '/', "fineClusters.RDS"))
 } else {
     print("Computing clusters")
-    fineClusters <- cellsUniformClustering(obj, GDIThreshold = 2.0, cores = 8,
+    fineClusters <- cellsUniformClustering(obj, GDIThreshold = 2.3, cores = 8,
                                   saveObj = TRUE, outDir = outDir)
     saveRDS(fineClusters, file.path(outDir, '/', "fineClusters.RDS"))
 }
@@ -116,7 +116,7 @@ if (file.exists(file.path(outDir, '/', "mergedClusters.RDS")) ||
 
 } else {
     c(mergedClusters, coexDF, pValueDF) %<-%
-      mergeUniformCellsClusters(obj, clusters=fineClusters, GDIThreshold = 2.1, cores = 8, outDir = outDir)
+      mergeUniformCellsClusters(obj, clusters=fineClusters, GDIThreshold = 1.95, cores = 4, outDir = outDir)
     saveRDS(mergedClusters, file.path(outDir, '/', "mergedClusters.RDS"))
     saveRDS(coexDF, file.path(outDir, '/', "mergedCoex.RDS"))
     saveRDS(pValueDF, file.path(outDir, '/', "mergedpValues.RDS"))
@@ -172,7 +172,7 @@ srat = CreateSeuratObject(counts = obj@raw, project = dataset_name)
 
 # Show clusters in Genes data
 gdsce = as.SingleCellExperiment(srat)
-# gdsce <- applySCE(gdsce, logNormCounts)
+gdsce <- applySCE(gdsce, logNormCounts)
 gdumap = runUMAP(gdsce)
 colLabels(gdumap) <- factor(mergedClusters)
 plotUMAP(gdumap, colour_by="label", text_by="label", text_color="red")
