@@ -15,7 +15,7 @@ ranks = pd.DataFrame(columns=['gene', 'cluster', 'rank', 'tool', 'truth_label'])
 
 for cluster, marker_list in markers_lists.items():
 	for marker in marker_list:
-		to_concat = df[df['gene']==marker].copy()
+		to_concat = df[df['gene']==marker]
 		to_concat['truth_label'] = cluster
 		ranks = pd.concat([ranks, to_concat])
 
