@@ -76,7 +76,7 @@ CLIP = 250
 
 library(pheatmap)
 averaged = assay(se.averaged)
-hmap = pheatmap((averaged - rowMeans(averaged)), breaks = seq(-CLIP, CLIP, length.out = 101), kmeans_k = NA, cluster_cols = FALSE, cluster_rows = FALSE)
+hmap = pheatmap((averaged - rowMeans(averaged))[,c(2,4,10)], breaks = seq(-CLIP, CLIP, length.out = 101), kmeans_k = NA, cluster_cols = FALSE, cluster_rows = FALSE)
 table(clusters)
 ggsave(paste(outDataDir, "heatmap.png", sep=""), hmap)
 
