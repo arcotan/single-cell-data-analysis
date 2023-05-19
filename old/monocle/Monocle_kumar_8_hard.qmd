@@ -1,0 +1,51 @@
+```{r}
+library(monocle3)
+
+source("./libraries/utils.R")
+
+dataset_name = 'kumar-8-hard'
+
+DATASET_PATH = "./dataset/"
+
+DATA_DIR = paste(DATASET_PATH, dataset_name, '-filtered/10X', sep='')
+LABEL_DIR = paste(DATASET_PATH, dataset_name, '-filtered', sep='')
+OUT_RES_DIR = paste("./results/", dataset_name, '/monocle/', sep='')
+TOP_MARKER_NUM = 50
+```
+
+```{r}
+cds <- load_mm_data(
+  mat_path = paste(DATA_DIR, "matrix.mtx", sep = "/"), 
+  feature_anno_path = paste(DATA_DIR, "genes.tsv", sep = "/"),
+  cell_anno_path = paste(DATA_DIR, "barcodes.tsv", sep = "/")
+)
+```
+```{r}
+cds <- preprocess_cds(cds, num_dim = 10, method = "PCA")
+plot_pc_variance_explained(cds)
+```
+
+```{r}
+cds <- cluster_cells(cds, resolution=0.05, reduction_method = "PCA")
+print(paste("Clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
+```
+
+```{r}
+label_df = data.frame(clusters(cds, reduction_method = "PCA"))
+label_df$cell <- rownames(label_df)
+rownames(label_df) <- 1:nrow(label_df)
+colnames(label_df)[1] <- "computed_id"
+label_df$computed_id <- as.numeric(label_df$computed_id)
+```
+
+```{r}
+marker_test_res <- top_markers(cds,
+                               group_cells_by="cluster",
+                               genes_to_test_per_group = 1000,
+                               reduction_method='PCA',
+                               cores=10)
+```
+```{r}
+write_clustering(OUT_RES_DIR, label_df, "cell", "computed_id", dist(t(exprs(cds))))
+write_markers(OUT_RES_DIR, marker_test_res, "gene_id", "cell_group", "marker_score", TRUE, TOP_MARKER_NUM)
+```

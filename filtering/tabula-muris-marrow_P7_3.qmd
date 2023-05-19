@@ -3,7 +3,7 @@ library(dplyr)
 library(Seurat)
 library(patchwork)
 library(DropletUtils)
-source("utils.R")
+source("./libraries/utils.R")
 
 DATASETS_FOLDER = './dataset/'
 NAME = 'tabula-muris-marrow_P7_3'
@@ -11,6 +11,7 @@ CHANNEL = '10X_P7_3'
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='') 
+dir.create(outDataDir, recursive = TRUE, showWarnings = FALSE)
 ```
 
 ```{r}

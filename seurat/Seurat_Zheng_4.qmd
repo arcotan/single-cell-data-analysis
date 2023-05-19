@@ -1,0 +1,78 @@
+```{r}
+library(dplyr)
+library(Seurat)
+library(patchwork)
+library(DropletUtils)
+source("./libraries/utils.R")
+```
+
+```{r}
+dataset_name = "zheng-4"
+dataset_path = './dataset/'
+
+DATA_DIR = paste(dataset_path, dataset_name, '-filtered/10X', sep='')
+LABEL_PATH = paste(dataset_path, dataset_name, '-filtered/labels.csv', sep='')
+OUT_RES_DIR = paste("./results/", dataset_name, "/seurat", sep='')
+dir.create(OUT_RES_DIR, recursive = TRUE, showWarnings = FALSE)
+
+TOP_MARKER_NUM = 50
+```
+
+```{r}
+pbmc.data <- Read10X(DATA_DIR, strip.suffix=TRUE)
+pbmc <- CreateSeuratObject(counts = pbmc.data, min.cells = 3)
+```
+
+```{r}
+# gene variance elbow plot
+plot(log(sort(apply(pbmc.data,1,var), decreasing=TRUE)))
+```
+
+```{r}
+pbmc <- NormalizeData(pbmc, normalization.method = "LogNormalize", scale.factor = 10000)
+pbmc <- FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 3000)
+```
+
+```{r}
+VariableFeaturePlot(pbmc)
+```
+
+```{r}
+all.genes <- rownames(pbmc)
+pbmc <- ScaleData(pbmc, features = all.genes)
+```
+
+```{r}
+pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
+```
+
+```{r}
+ElbowPlot(object = pbmc, 
+          ndims = 50)
+```
+
+```{r}
+pbmc <- FindNeighbors(pbmc, dims = 1:10)
+```
+
+```{r}
+pbmc <- FindClusters(pbmc, resolution = 0.03)
+```
+
+```{r}
+label_df = data.frame(Idents(pbmc))
+label_df$cell <- rownames(label_df)
+rownames(label_df) <- 1:nrow(label_df)
+colnames(label_df)[colnames(label_df) == "Idents.pbmc."] <- "computed_id"
+label_df$computed_id <- as.numeric(label_df$computed_id)
+```
+
+```{r}
+pbmc.markers <- FindAllMarkers(pbmc, min.pct = 0.1, logfc.threshold = 0.15)
+pbmc.markers$cluster <- as.numeric(pbmc.markers$cluster)
+
+write_clustering(OUT_RES_DIR, label_df, "cell", "computed_id") 
+
+write_markers(OUT_RES_DIR, pbmc.markers, "gene", "cluster", "avg_log2FC", TRUE, TOP_MARKER_NUM)
+
+```

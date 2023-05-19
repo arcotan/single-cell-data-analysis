@@ -3,12 +3,14 @@ library(dplyr)
 library(enrichR)
 library(ggplot2)
 
-source("utils.R")
-source("venn.R")
-source("enrichment_lists.R")
+
+source("./libraries/utils.R")
+source("./libraries/venn.R")
+source("./libraries/enrichment_lists.R")
 
 TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi', 'COTAN')
-DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'kumar-4-hard', 'kumar-8-hard')
+# DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'zheng-4', 'zheng-8')
+DATASET_TAGS= c('peripheal-blood')
 
 RESULT_DIR = "./results/"
 AGGREGATE_RESULT_DIR = paste(RESULT_DIR, "aggregate/", sep="")
@@ -26,7 +28,9 @@ DATASET_TAG_TO_TRUE_LABEL_DIR = DATASET_TAG_TO_MAPPING_DIR
 
 DATASET_TAG_TO_ENRICHR_DB = list("tabula-muris-heart" = "Tabula_Muris",
                                  "tabula-muris-marrow_P7_3" = "Tabula_Muris",
-                                 "peripheal-blood" = "Tabula_Sapiens") # TODO: add the correct database
+                                 "peripheal-blood" = "Tabula_Sapiens",
+                                 "zheng-4" = "Tabula_Sapiens",
+                                 "zheng-8" = "Tabula_Sapiens")
 
 DATASET_TAG_TO_GENES_TO_ENRICH_DIR = list()
 DATASET_TAG_TO_ENRICHER_DIR = list()
@@ -140,10 +144,8 @@ collect_dataset_data = function(tool_tag_list, dataset_tag, compute_missing_scor
           score_data[i, "purity"] <- scores_to_add$purity
         }
         if (is.na(cur_info$silhouette) && !is.null(filtered_datasets_dir_map)) {
-          ge = t(Read10X(DATASET_TAG_TO_FILTERED_GE_DIR[[dataset_tag]], strip.suffix = TRUE))
-          ge = ge[rownames(ge) %in% label_data$cell,]
-          distance_matrix <- dist(ge)
-          score_data[i, "silhouette"] <- clustering_complex_scores(label_data, paste(cur_info$tool, "_label", sep=""), distance_matrix)$silhouette
+          ge = Read10X(DATASET_TAG_TO_FILTERED_GE_DIR[[dataset_tag]], strip.suffix = TRUE)
+          score_data[i, "silhouette"] <- clustering_complex_scores(label_data, "cell", paste(cur_info$tool, "_label", sep=""), ge)$silhouette
         }
       }
     }
@@ -217,6 +219,12 @@ for (dataset in dataset_found) {
     # plot de 
     plot_de(pbmc.data, global_data[[dataset]]$markers[global_data[[dataset]]$markers$tool == tool,], "gene", "cluster", global_data[[dataset]]$labels, "cell", label, paste(RESULT_DIR, dataset, "/", tool, "/", sep=""))
   }
+  # plot ground truth
+  print("True labels")
+  cur_plot <- seurat_clustering_plot(pbmc, global_data[[dataset]]$labels$cell, pi[global_data[[dataset]]$labels$true_labels])
+  ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", "true_labels", ".png", sep=""), cur_plot)
+  ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", "true_labels", ".eps", sep=""), cur_plot)
+  
   print("--------------------------------------")
 }
 
@@ -225,15 +233,8 @@ for (dataset in dataset_found) {
   plot_venn(global_data[[dataset]]$markers, paste(AGGREGATE_RESULT_DIR, dataset, "/", sep=""))
 }
 
-source("enrichment_lists.R")
 # write enrichment results
 for (dataset in dataset_found) {
-  if(dataset == 'tabula-muris-marrow_P7_3') {
-    next
-  }
-  if(dataset == 'tabula-muris-heart') {
-    next
-  }
   if (!dir.exists(DATASET_TAG_TO_GENES_TO_ENRICH_DIR[[dataset]])) {
     dir.create(DATASET_TAG_TO_GENES_TO_ENRICH_DIR[[dataset]])
   }

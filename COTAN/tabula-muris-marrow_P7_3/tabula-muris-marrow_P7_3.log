@@ -1,0 +1,1897 @@
+Initializing `COTAN` meta-data
+Genes/cells selection done: dropped [0] genes and [0] cells
+Working on [13396] genes and [2123] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 14 genes batches from [1:946] to [12451:13396]
+Estimate dispersion: DONE
+dispersion | min: -0.0503082275390625 | max: 3232 | % negative: 14.6237682890415
+Calculate cells' coex: START
+Retrieving expected cells' contingency table
+calculating NN..
+ done
+calculating YN..
+NY..
+YY..
+ done
+Calculating cells' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0
+Retrieving observed cells' yes/yes contingency table
+calculating YY..
+ done
+Estimating cells' coex
+Calculate cells' coex: DONE
+Creating cells' uniform clustering: START
+In iteration 0 
+the number of cells to re-cluster is 2123 cells belonging to 0 clusters
+Creating Seurat object: START
+Used resolution for Seurat clusterization is: 0.5
+Creating PDF UMAP in file:./COTAN/tabula-muris-marrow_P7_3/tabula-muris-marrow_P7_3/reclustering_0/pdf_umap.pdf
+Creating Seurat object: DONE
+*
+ checking uniformity of cluster '0' of 15 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [4309] genes and [0] cells
+Working on [9087] genes and [297] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 9 genes batches from [1:1003] to [8085:9087]
+Estimate dispersion: DONE
+dispersion | min: -0.191925048828125 | max: 228 | % negative: 52.6576427863981
+Only analysis time 0.0275177001953125
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.381382865670971
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.417527067661285
+Only genes' coex time 0.3845512231191
+Checking uniformity for the cluster '0' with 297 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 35 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 0 is uniform
+*
+ checking uniformity of cluster '1' of 15 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [6536] genes and [0] cells
+Working on [6860] genes and [294] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 7 genes batches from [1:975] to [5886:6860]
+Estimate dispersion: DONE
+dispersion | min: -0.0802001953125 | max: 180 | % negative: 66.2244897959184
+Only analysis time 0.0253079771995544
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.761160112742705
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.230426649252574
+Only genes' coex time 0.199515104293823
+Checking uniformity for the cluster '1' with 294 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 15 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 1 is uniform
+*
+ checking uniformity of cluster '2' of 15 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [2618] genes and [0] cells
+Working on [10778] genes and [290] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 11 genes batches from [1:971] to [9808:10778]
+Estimate dispersion: DONE
+dispersion | min: -0.5166015625 | max: 430 | % negative: 43.6351827797365
+Only analysis time 0.0291858871777852
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.233517882539348
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.579921881357829
+Only genes' coex time 0.544988012313843
+Checking uniformity for the cluster '2' with 290 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 108 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 2 is uniform
+*
+ checking uniformity of cluster '3' of 15 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [1394] genes and [0] cells
+Working on [12002] genes and [209] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 12 genes batches from [1:991] to [11012:12002]
+Estimate dispersion: DONE
+dispersion | min: -1.125 | max: 759 | % negative: 35.4857523746042
+Only analysis time 0.0282108187675476
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.154750736300816
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.632261550426483
+Only genes' coex time 0.597871053218842
+Checking uniformity for the cluster '3' with 209 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 134 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 3 has too high GDI: will be reclustered!
+*
+ checking uniformity of cluster '4' of 15 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [3410] genes and [0] cells
+Working on [9986] genes and [174] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 10 genes batches from [1:991] to [8996:9986]
+Estimate dispersion: DONE
+dispersion | min: -0.4453125 | max: 269 | % negative: 44.5824153815341
+Only analysis time 0.0248618721961975
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.214470459905508
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.377257585525513
+Only genes' coex time 0.346993990739187
+Checking uniformity for the cluster '4' with 174 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 127 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 4 is uniform
+*
+ checking uniformity of cluster '5' of 15 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [2604] genes and [0] cells
+Working on [10792] genes and [164] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 11 genes batches from [1:973] to [9820:10792]
+Estimate dispersion: DONE
+dispersion | min: -0.9287109375 | max: 520 | % negative: 36.4343958487769
+Only analysis time 0.0243299206097921
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.384763907804231
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.398535692691803
+Only genes' coex time 0.368533992767334
+Checking uniformity for the cluster '5' with 164 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 22 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 5 has too high GDI: will be reclustered!
+*
+ checking uniformity of cluster '6' of 15 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [1528] genes and [0] cells
+Working on [11868] genes and [156] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 12 genes batches from [1:980] to [10889:11868]
+Estimate dispersion: DONE
+dispersion | min: -1.044921875 | max: 391 | % negative: 46.2504213009774
+Only analysis time 0.0249865730603536
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.291991926355468
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.51718004544576
+Only genes' coex time 0.486222219467163
+Checking uniformity for the cluster '6' with 156 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 194 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 6 is uniform
+*
+ checking uniformity of cluster '7' of 15 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [2138] genes and [0] cells
+Working on [11258] genes and [126] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 11 genes batches from [1:1015] to [10244:11258]
+Estimate dispersion: DONE
+dispersion | min: -0.826416015625 | max: 257 | % negative: 55.1163616983478
+Only analysis time 0.0236685196558634
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.305683768651962
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.405957090854645
+Only genes' coex time 0.37695152759552
+Checking uniformity for the cluster '7' with 126 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 120 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 7 is uniform
+*
+ checking uniformity of cluster '8' of 15 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [2552] genes and [0] cells
+Working on [10844] genes and [121] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 11 genes batches from [1:977] to [9868:10844]
+Estimate dispersion: DONE
+dispersion | min: -0.408935546875 | max: 532 | % negative: 59.7381040206566
+Only analysis time 0.0229787071545919
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.41316792624145
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.347438700993856
+Only genes' coex time 0.318837189674377
+Checking uniformity for the cluster '8' with 121 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 140 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 8 is uniform
+*
+ checking uniformity of cluster '9' of 15 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [3364] genes and [0] cells
+Working on [10032] genes and [73] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 10 genes batches from [1:996] to [9037:10032]
+Estimate dispersion: DONE
+dispersion | min: -0.508056640625 | max: 361 | % negative: 64.683014354067
+Only analysis time 0.0211031238238017
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.515075072833811
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.262087670962016
+Only genes' coex time 0.235828411579132
+Checking uniformity for the cluster '9' with 73 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 109 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 9 is uniform
+*
+ checking uniformity of cluster '10' of 15 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [5963] genes and [0] cells
+Working on [7433] genes and [67] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 8 genes batches from [1:924] to [6510:7433]
+Estimate dispersion: DONE
+dispersion | min: -0.548095703125 | max: 245 | % negative: 72.3395667967173
+Only analysis time 0.0210333188374837
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.673338482371494
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.170508829752604
+Only genes' coex time 0.144280004501343
+Checking uniformity for the cluster '10' with 67 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 68 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 10 is uniform
+*
+ checking uniformity of cluster '11' of 15 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [3980] genes and [0] cells
+Working on [9416] genes and [60] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 10 genes batches from [1:934] to [8483:9416]
+Estimate dispersion: DONE
+dispersion | min: -0.3133544921875 | max: 238 | % negative: 65.1550552251487
+Only analysis time 0.0208306511243184
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.56058014442508
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.237996745109558
+Only genes' coex time 0.211989855766296
+Checking uniformity for the cluster '11' with 60 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 108 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 11 is uniform
+*
+ checking uniformity of cluster '12' of 15 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [4105] genes and [0] cells
+Working on [9291] genes and [34] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 10 genes batches from [1:922] to [8370:9291]
+Estimate dispersion: DONE
+dispersion | min: -1.02734375 | max: 92.5 | % negative: 64.8477020772791
+Only analysis time 0.020824925104777
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.503481027863003
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.234235680103302
+Only genes' coex time 0.207925128936768
+Checking uniformity for the cluster '12' with 34 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 175 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 12 is uniform
+*
+ checking uniformity of cluster '13' of 15 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [4170] genes and [0] cells
+Working on [9226] genes and [31] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 10 genes batches from [1:916] to [8311:9226]
+Estimate dispersion: DONE
+dispersion | min: -0.81591796875 | max: 53.25 | % negative: 66.6160849772382
+Only analysis time 0.0204602519671122
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.507315581133053
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.226220552126567
+Only genes' coex time 0.200447249412537
+Checking uniformity for the cluster '13' with 31 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 157 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 13 is uniform
+*
+ checking uniformity of cluster '14' of 15 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [4110] genes and [0] cells
+Working on [9286] genes and [27] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 10 genes batches from [1:922] to [8365:9286]
+Estimate dispersion: DONE
+dispersion | min: -1.142578125 | max: 98.5 | % negative: 62.9442171010123
+Only analysis time 0.0204771359761556
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.531820735290294
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.228047355016073
+Only genes' coex time 0.202387197812398
+Checking uniformity for the cluster '14' with 27 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 209 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 14 is uniform
+
+Found 13 uniform and  2 non-uniform clusters
+In iteration 1 
+the number of cells to re-cluster is 373 cells belonging to 2 clusters
+Creating Seurat object: START
+Used resolution for Seurat clusterization is: 0.5
+Creating PDF UMAP in file:./COTAN/tabula-muris-marrow_P7_3/tabula-muris-marrow_P7_3/reclustering_1/pdf_umap.pdf
+Creating Seurat object: DONE
+*
+ checking uniformity of cluster '0' of 5 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [1109] genes and [0] cells
+Working on [12287] genes and [116] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 12 genes batches from [1:1014] to [11274:12287]
+Estimate dispersion: DONE
+dispersion | min: -0.755859375 | max: 932 | % negative: 45.6905672662163
+Only analysis time 0.0241541743278503
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.261145942484943
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.477330919106801
+Only genes' coex time 0.447460567951202
+Checking uniformity for the cluster '0' with 116 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 145 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 0 is uniform
+*
+ checking uniformity of cluster '1' of 5 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [2845] genes and [0] cells
+Working on [10551] genes and [90] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 11 genes batches from [1:951] to [9601:10551]
+Estimate dispersion: DONE
+dispersion | min: -1.060546875 | max: 285 | % negative: 41.3230973367453
+Only analysis time 0.0218984921773275
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.368910107655017
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.307991409301758
+Only genes' coex time 0.280829588572184
+Checking uniformity for the cluster '1' with 90 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 68 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 1 has too high GDI: will be reclustered!
+*
+ checking uniformity of cluster '2' of 5 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [6723] genes and [0] cells
+Working on [6673] genes and [74] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 7 genes batches from [1:949] to [5725:6673]
+Estimate dispersion: DONE
+dispersion | min: -0.42529296875 | max: 137.5 | % negative: 69.4590139367601
+Only analysis time 0.0206704258918762
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.762214912913942
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.147001715501149
+Only genes' coex time 0.120856229464213
+Checking uniformity for the cluster '2' with 74 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 42 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 2 is uniform
+*
+ checking uniformity of cluster '3' of 5 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [2269] genes and [0] cells
+Working on [11127] genes and [61] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 11 genes batches from [1:1003] to [10125:11127]
+Estimate dispersion: DONE
+dispersion | min: -0.90234375 | max: 202 | % negative: 51.3885144243731
+Only analysis time 0.0215390960375468
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.356728637932731
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.339425233999888
+Only genes' coex time 0.312185982863108
+Checking uniformity for the cluster '3' with 61 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 358 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 3 is uniform
+*
+ checking uniformity of cluster '4' of 5 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [3478] genes and [0] cells
+Working on [9918] genes and [32] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 10 genes batches from [1:984] to [8935:9918]
+Estimate dispersion: DONE
+dispersion | min: -1.189453125 | max: 101.75 | % negative: 57.733413994757
+Only analysis time 0.020351787408193
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.452955529829937
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.263871212800344
+Only genes' coex time 0.238313396771749
+Checking uniformity for the cluster '4' with 32 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 462 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 4 is uniform
+
+Found 4 uniform and  1 non-uniform clusters
+In iteration 2 
+the number of cells to re-cluster is 90 cells belonging to 1 clusters
+Creating Seurat object: START
+Number of clusters is too small. Reclustering at higher resolution: 0.5
+Used resolution for Seurat clusterization is: 1
+Creating PDF UMAP in file:./COTAN/tabula-muris-marrow_P7_3/tabula-muris-marrow_P7_3/reclustering_2/pdf_umap.pdf
+Creating Seurat object: DONE
+*
+ checking uniformity of cluster '0' of 3 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [3187] genes and [0] cells
+Working on [10209] genes and [34] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 10 genes batches from [1:1013] to [9197:10209]
+Estimate dispersion: DONE
+dispersion | min: -0.986328125 | max: 106 | % negative: 50.6513860319326
+Only analysis time 0.0206164638201396
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.431614573724534
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.282565307617188
+Only genes' coex time 0.256743053595225
+Checking uniformity for the cluster '0' with 34 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 419 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 0 is uniform
+*
+ checking uniformity of cluster '1' of 3 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [7037] genes and [0] cells
+Working on [6359] genes and [28] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 7 genes batches from [1:904] to [5456:6359]
+Estimate dispersion: DONE
+dispersion | min: -0.8701171875 | max: 100.5 | % negative: 67.164648529643
+Only analysis time 0.0197766065597534
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.65873668875194
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.137863000233968
+Only genes' coex time 0.112637587388357
+Checking uniformity for the cluster '1' with 28 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 119 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 1 is uniform
+*
+ checking uniformity of cluster '2' of 3 clusters
+Cotan analysis functions started
+Genes/cells selection done: dropped [6523] genes and [0] cells
+Working on [6873] genes and [28] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 7 genes batches from [1:977] to [5897:6873]
+Estimate dispersion: DONE
+dispersion | min: -0.7646484375 | max: 49.875 | % negative: 66.8849119743926
+Only analysis time 0.0195078174273173
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.597580501742809
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.155588273207347
+Only genes' coex time 0.130579853057861
+Checking uniformity for the cluster '2' with 28 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 179 low GDI genes (such as the fully-expressed) in GDI plot
+cluster 2 is uniform
+
+Found 3 uniform and  0 non-uniform clusters
+NO new possible uniform clusters! Unclustered cell left: 0
+The final raw clusterization contains [ 20 ] different clusters: 00_0000, 00_0001, 00_0002, 00_0004, 00_0006, 00_0007, 00_0008, 00_0009, 00_0010, 00_0011, 00_0012, 00_0013, 00_0014, 01_0000, 01_0002, 01_0003, 01_0004, 02_0000, 02_0001, 02_0002
+Cluster, UMAP and Saving the Seurat dataset
+Creating cells' uniform clustering: DONE
+Differential Expression Analysis - START
+*
+ analysis of cluster: '01' - START
+* analysis of cluster: '01' - DONE
+*
+ analysis of cluster: '02' - START
+* analysis of cluster: '02' - DONE
+*
+ analysis of cluster: '03' - START
+* analysis of cluster: '03' - DONE
+*
+ analysis of cluster: '04' - START
+* analysis of cluster: '04' - DONE
+*
+ analysis of cluster: '05' - START
+* analysis of cluster: '05' - DONE
+*
+ analysis of cluster: '06' - START
+* analysis of cluster: '06' - DONE
+*
+ analysis of cluster: '07' - START
+* analysis of cluster: '07' - DONE
+*
+ analysis of cluster: '08' - START
+* analysis of cluster: '08' - DONE
+*
+ analysis of cluster: '09' - START
+* analysis of cluster: '09' - DONE
+*
+ analysis of cluster: '10' - START
+* analysis of cluster: '10' - DONE
+*
+ analysis of cluster: '11' - START
+* analysis of cluster: '11' - DONE
+*
+ analysis of cluster: '12' - START
+* analysis of cluster: '12' - DONE
+*
+ analysis of cluster: '13' - START
+* analysis of cluster: '13' - DONE
+*
+ analysis of cluster: '14' - START
+* analysis of cluster: '14' - DONE
+*
+ analysis of cluster: '15' - START
+* analysis of cluster: '15' - DONE
+*
+ analysis of cluster: '16' - START
+* analysis of cluster: '16' - DONE
+*
+ analysis of cluster: '17' - START
+* analysis of cluster: '17' - DONE
+*
+ analysis of cluster: '18' - START
+* analysis of cluster: '18' - DONE
+*
+ analysis of cluster: '19' - START
+* analysis of cluster: '19' - DONE
+*
+ analysis of cluster: '20' - START
+* analysis of cluster: '20' - DONE
+
+Differential Expression Analysis - DONE
+Merging cells' uniform clustering: START
+Start merging smallest clusters: iteration 1
+Differential Expression Analysis - START
+*
+ analysis of cluster: '01' - START
+* analysis of cluster: '01' - DONE
+*
+ analysis of cluster: '02' - START
+* analysis of cluster: '02' - DONE
+*
+ analysis of cluster: '03' - START
+* analysis of cluster: '03' - DONE
+*
+ analysis of cluster: '04' - START
+* analysis of cluster: '04' - DONE
+*
+ analysis of cluster: '05' - START
+* analysis of cluster: '05' - DONE
+*
+ analysis of cluster: '06' - START
+* analysis of cluster: '06' - DONE
+*
+ analysis of cluster: '07' - START
+* analysis of cluster: '07' - DONE
+*
+ analysis of cluster: '08' - START
+* analysis of cluster: '08' - DONE
+*
+ analysis of cluster: '09' - START
+* analysis of cluster: '09' - DONE
+*
+ analysis of cluster: '10' - START
+* analysis of cluster: '10' - DONE
+*
+ analysis of cluster: '11' - START
+* analysis of cluster: '11' - DONE
+*
+ analysis of cluster: '12' - START
+* analysis of cluster: '12' - DONE
+*
+ analysis of cluster: '13' - START
+* analysis of cluster: '13' - DONE
+*
+ analysis of cluster: '14' - START
+* analysis of cluster: '14' - DONE
+*
+ analysis of cluster: '15' - START
+* analysis of cluster: '15' - DONE
+*
+ analysis of cluster: '16' - START
+* analysis of cluster: '16' - DONE
+*
+ analysis of cluster: '17' - START
+* analysis of cluster: '17' - DONE
+*
+ analysis of cluster: '18' - START
+* analysis of cluster: '18' - DONE
+*
+ analysis of cluster: '19' - START
+* analysis of cluster: '19' - DONE
+*
+ analysis of cluster: '20' - START
+* analysis of cluster: '20' - DONE
+
+Differential Expression Analysis - DONE
+Created leafs ID for merging: 06 12 05 14 10 13 03 11 02 15 19 20 01 09 16 17
+*
+06_12-merge
+Cotan analysis functions started
+Genes/cells selection done: dropped [1893] genes and [0] cells
+Working on [11503] genes and [157] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 12 genes batches from [1:949] to [10555:11503]
+Estimate dispersion: DONE
+dispersion | min: -0.789306640625 | max: 253 | % negative: 54.4466660871077
+Only analysis time 0.0243466774622599
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.287630474822012
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.465471148490906
+Only genes' coex time 0.435621734460195
+Checking uniformity for the cluster '06_12-merge' with 157 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 111 low GDI genes (such as the fully-expressed) in GDI plot
+Clusters 06 and 12 can be merged
+*
+05_14-merge
+Cotan analysis functions started
+Genes/cells selection done: dropped [1249] genes and [0] cells
+Working on [12147] genes and [272] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 12 genes batches from [1:1003] to [11145:12147]
+Estimate dispersion: DONE
+dispersion | min: -0.472900390625 | max: 695 | % negative: 34.6176010537581
+Only analysis time 0.0299796501795451
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.150618972032293
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.749545069535573
+Only genes' coex time 0.713401742776235
+Checking uniformity for the cluster '05_14-merge' with 272 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 113 low GDI genes (such as the fully-expressed) in GDI plot
+Merging clusters 05 and 14 results in a too high GDI
+*
+10_13-merge
+Cotan analysis functions started
+Genes/cells selection done: dropped [2863] genes and [0] cells
+Working on [10533] genes and [87] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 11 genes batches from [1:949] to [9585:10533]
+Estimate dispersion: DONE
+dispersion | min: -0.3931884765625 | max: 339 | % negative: 55.008069875629
+Only analysis time 0.0212077617645264
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.439301699392027
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.297599871953328
+Only genes' coex time 0.271184957027435
+Checking uniformity for the cluster '10_13-merge' with 87 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 98 low GDI genes (such as the fully-expressed) in GDI plot
+Clusters 10 and 13 can be merged
+*
+03_11-merge
+Cotan analysis functions started
+Genes/cells selection done: dropped [2250] genes and [0] cells
+Working on [11146] genes and [324] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 11 genes batches from [1:1005] to [10142:11146]
+Estimate dispersion: DONE
+dispersion | min: -0.3369140625 | max: 613 | % negative: 40.1220168670375
+Only analysis time 0.0304833928743998
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.225436221052653
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.650042076905568
+Only genes' coex time 0.613644790649414
+Checking uniformity for the cluster '03_11-merge' with 324 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 99 low GDI genes (such as the fully-expressed) in GDI plot
+Clusters 03 and 11 can be merged
+*
+02_15-merge
+Cotan analysis functions started
+Genes/cells selection done: dropped [5530] genes and [0] cells
+Working on [7866] genes and [368] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 8 genes batches from [1:978] to [6889:7866]
+Estimate dispersion: DONE
+dispersion | min: -0.166015625 | max: 507.5 | % negative: 59.5601322145945
+Only analysis time 0.0295295874277751
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.707892763726317
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.345385575294495
+Only genes' coex time 0.310662964979808
+Checking uniformity for the cluster '02_15-merge' with 368 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 11 low GDI genes (such as the fully-expressed) in GDI plot
+Merging clusters 02 and 15 results in a too high GDI
+*
+19_20-merge
+Cotan analysis functions started
+Genes/cells selection done: dropped [5578] genes and [0] cells
+Working on [7818] genes and [56] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 8 genes batches from [1:972] to [6847:7818]
+Estimate dispersion: DONE
+dispersion | min: -0.521484375 | max: 188.5 | % negative: 60.7444359171144
+Only analysis time 0.0199299057324727
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.573363955816543
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.197166228294373
+Only genes' coex time 0.172105209032694
+Checking uniformity for the cluster '19_20-merge' with 56 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 85 low GDI genes (such as the fully-expressed) in GDI plot
+Clusters 19 and 20 can be merged
+*
+01_09-merge
+Cotan analysis functions started
+Genes/cells selection done: dropped [4086] genes and [0] cells
+Working on [9310] genes and [364] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 10 genes batches from [1:924] to [8387:9310]
+Estimate dispersion: DONE
+dispersion | min: -0.162826538085938 | max: 536 | % negative: 51.0418904403867
+Only analysis time 0.0293453454971313
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.379371684346881
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.486045436064402
+Only genes' coex time 0.451285433769226
+Checking uniformity for the cluster '01_09-merge' with 364 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 29 low GDI genes (such as the fully-expressed) in GDI plot
+Clusters 01 and 09 can be merged
+*
+16_17-merge
+Cotan analysis functions started
+Genes/cells selection done: dropped [1976] genes and [0] cells
+Working on [11420] genes and [93] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 12 genes batches from [1:943] to [10478:11420]
+Estimate dispersion: DONE
+dispersion | min: -0.845703125 | max: 311 | % negative: 46.5586690017513
+Only analysis time 0.0219621777534485
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.327795174373075
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.38183513879776
+Only genes' coex time 0.354506357510885
+Checking uniformity for the cluster '16_17-merge' with 93 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 289 low GDI genes (such as the fully-expressed) in GDI plot
+Clusters 16 and 17 can be merged
+Start merging smallest clusters: iteration 2
+Differential Expression Analysis - START
+*
+ analysis of cluster: '01_09-merge' - START
+* analysis of cluster: '01_09-merge' - DONE
+*
+ analysis of cluster: '02' - START
+* analysis of cluster: '02' - DONE
+*
+ analysis of cluster: '03_11-merge' - START
+* analysis of cluster: '03_11-merge' - DONE
+*
+ analysis of cluster: '04' - START
+* analysis of cluster: '04' - DONE
+*
+ analysis of cluster: '05' - START
+* analysis of cluster: '05' - DONE
+*
+ analysis of cluster: '06_12-merge' - START
+* analysis of cluster: '06_12-merge' - DONE
+*
+ analysis of cluster: '07' - START
+* analysis of cluster: '07' - DONE
+*
+ analysis of cluster: '08' - START
+* analysis of cluster: '08' - DONE
+*
+ analysis of cluster: '10_13-merge' - START
+* analysis of cluster: '10_13-merge' - DONE
+*
+ analysis of cluster: '14' - START
+* analysis of cluster: '14' - DONE
+*
+ analysis of cluster: '15' - START
+* analysis of cluster: '15' - DONE
+*
+ analysis of cluster: '16_17-merge' - START
+* analysis of cluster: '16_17-merge' - DONE
+*
+ analysis of cluster: '18' - START
+* analysis of cluster: '18' - DONE
+*
+ analysis of cluster: '19_20-merge' - START
+* analysis of cluster: '19_20-merge' - DONE
+
+Differential Expression Analysis - DONE
+Created leafs ID for merging: 05 14 03_11-merge 07 06_12-merge 10_13-merge 01_09-merge 04 15 19_20-merge
+*
+05_14-merge
+Clusters 05 and 14 already analyzed and not mergeable: skip.
+*
+03_11-merge_07-merge
+Cotan analysis functions started
+Genes/cells selection done: dropped [1727] genes and [0] cells
+Working on [11669] genes and [445] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 12 genes batches from [1:963] to [10707:11669]
+Estimate dispersion: DONE
+dispersion | min: -0.2978515625 | max: 843 | % negative: 37.183991773074
+Only analysis time 0.0364655653635661
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.210489448199233
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.875781349341075
+Only genes' coex time 0.833148328463236
+Checking uniformity for the cluster '03_11-merge_07-merge' with 445 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 91 low GDI genes (such as the fully-expressed) in GDI plot
+Merging clusters 03_11-merge and 07 results in a too high GDI
+*
+06_12-merge_10_13-merge-merge
+Cotan analysis functions started
+Genes/cells selection done: dropped [2171] genes and [0] cells
+Working on [11225] genes and [244] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 11 genes batches from [1:1012] to [10214:11225]
+Estimate dispersion: DONE
+dispersion | min: -0.34619140625 | max: 334.5 | % negative: 40.9175946547884
+Only analysis time 0.0275945504506429
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.157108351317753
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.556424923737844
+Only genes' coex time 0.523152367273967
+Checking uniformity for the cluster '06_12-merge_10_13-merge-merge' with 244 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 88 low GDI genes (such as the fully-expressed) in GDI plot
+Merging clusters 06_12-merge and 10_13-merge results in a too high GDI
+*
+01_09-merge_04-merge
+Cotan analysis functions started
+Genes/cells selection done: dropped [3267] genes and [0] cells
+Working on [10129] genes and [538] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 10 genes batches from [1:1005] to [9125:10129]
+Estimate dispersion: DONE
+dispersion | min: -0.35693359375 | max: 271 | % negative: 34.8603021028729
+Only analysis time 0.0377815763155619
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.166810104245558
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.771564428011576
+Only genes' coex time 0.727754437923431
+Checking uniformity for the cluster '01_09-merge_04-merge' with 538 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 28 low GDI genes (such as the fully-expressed) in GDI plot
+Merging clusters 01_09-merge and 04 results in a too high GDI
+*
+15_19_20-merge-merge
+Cotan analysis functions started
+Genes/cells selection done: dropped [4656] genes and [0] cells
+Working on [8740] genes and [130] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 9 genes batches from [1:965] to [7776:8740]
+Estimate dispersion: DONE
+dispersion | min: -0.37890625 | max: 442 | % negative: 55.3890160183066
+Only analysis time 0.0219114820162455
+Cotan genes' coex estimation started
+Calculate genes' coex: START
+Retrieving expected genes' contingency table
+calculating NN..
+ done
+calculating NY..
+YN..
+YY..
+ done
+Calculating genes' coex normalization factor
+Fraction of genes with very low expected contingency tables: 0.607087564666056
+Retrieving observed genes' yes/yes contingency table
+calculating YY..
+ done
+Estimating genes' coex
+Calculate genes' coex: DONE
+Total time 0.237167227268219
+Only genes' coex time 0.210101294517517
+Checking uniformity for the cluster '15_19_20-merge-merge' with 130 cells
+Using S
+Calculating S: START
+Calculating S: DONE
+Calculate GDI dataframe: START
+Calculate GDI dataframe: DONE
+PCA: START
+PCA: DONE
+Hierarchical clustering: START
+Hierarchical clustering: DONE
+GDI plot
+Removed 33 low GDI genes (such as the fully-expressed) in GDI plot
+Merging clusters 15 and 19_20-merge results in a too high GDI
+The final merged clusterization contains [ 14 ] different clusters: 01_09-merge, 02, 03_11-merge, 04, 05, 06_12-merge, 07, 08, 10_13-merge, 14, 15, 16_17-merge, 18, 19_20-merge
+Merging cells' uniform clustering: DONE
+Initializing `COTAN` meta-data
+Genes/cells selection done: dropped [0] genes and [0] cells
+Working on [13396] genes and [2123] cells
+Estimate dispersion: START
+Effective number of cores used: 7
+Executing 14 genes batches from [1:946] to [12451:13396]
+Estimate dispersion: DONE
+dispersion | min: -0.0503082275390625 | max: 3232 | % negative: 14.6237682890415
+Differential Expression Analysis - START
+*
+ analysis of cluster: '01' - START
+* analysis of cluster: '01' - DONE
+*
+ analysis of cluster: '02' - START
+* analysis of cluster: '02' - DONE
+*
+ analysis of cluster: '03' - START
+* analysis of cluster: '03' - DONE
+*
+ analysis of cluster: '04' - START
+* analysis of cluster: '04' - DONE
+*
+ analysis of cluster: '05' - START
+* analysis of cluster: '05' - DONE
+*
+ analysis of cluster: '06' - START
+* analysis of cluster: '06' - DONE
+*
+ analysis of cluster: '07' - START
+* analysis of cluster: '07' - DONE
+*
+ analysis of cluster: '08' - START
+* analysis of cluster: '08' - DONE
+*
+ analysis of cluster: '09' - START
+* analysis of cluster: '09' - DONE
+*
+ analysis of cluster: '10' - START
+* analysis of cluster: '10' - DONE
+*
+ analysis of cluster: '11' - START
+* analysis of cluster: '11' - DONE
+*
+ analysis of cluster: '12' - START
+* analysis of cluster: '12' - DONE
+*
+ analysis of cluster: '13' - START
+* analysis of cluster: '13' - DONE
+*
+ analysis of cluster: '14' - START
+* analysis of cluster: '14' - DONE
+*
+ analysis of cluster: '15' - START
+* analysis of cluster: '15' - DONE
+*
+ analysis of cluster: '16' - START
+* analysis of cluster: '16' - DONE
+*
+ analysis of cluster: '17' - START
+* analysis of cluster: '17' - DONE
+*
+ analysis of cluster: '18' - START
+* analysis of cluster: '18' - DONE
+*
+ analysis of cluster: '19' - START
+* analysis of cluster: '19' - DONE
+*
+ analysis of cluster: '20' - START
+* analysis of cluster: '20' - DONE
+
+Differential Expression Analysis - DONE
+Initializing `COTAN` meta-data
+Genes/cells selection done: dropped [1] genes and [0] cells
+Working on [13386] genes and [1870] cells
+Estimate dispersion: START
+Effective number of cores used: 8
+Executing 14 genes batches from [1:945] to [12442:13386]
+Estimate dispersion: DONE
+dispersion | min: -0.0754470825195312 | max: 2876 | % negative: 16.8011355147169
+Differential Expression Analysis - START
+*
+ analysis of cluster: '01' - START
+* analysis of cluster: '01' - DONE
+*
+ analysis of cluster: '02' - START
+* analysis of cluster: '02' - DONE
+*
+ analysis of cluster: '03' - START
+* analysis of cluster: '03' - DONE
+*
+ analysis of cluster: '04' - START
+* analysis of cluster: '04' - DONE
+*
+ analysis of cluster: '05' - START
+* analysis of cluster: '05' - DONE
+*
+ analysis of cluster: '06' - START
+* analysis of cluster: '06' - DONE
+*
+ analysis of cluster: '07' - START
+* analysis of cluster: '07' - DONE
+*
+ analysis of cluster: '08' - START
+* analysis of cluster: '08' - DONE
+*
+ analysis of cluster: '09' - START
+* analysis of cluster: '09' - DONE
+*
+ analysis of cluster: '10' - START
+* analysis of cluster: '10' - DONE
+*
+ analysis of cluster: '11' - START
+* analysis of cluster: '11' - DONE
+*
+ analysis of cluster: '12' - START
+* analysis of cluster: '12' - DONE
+*
+ analysis of cluster: '13' - START
+* analysis of cluster: '13' - DONE
+*
+ analysis of cluster: '14' - START
+* analysis of cluster: '14' - DONE
+*
+ analysis of cluster: '15' - START
+* analysis of cluster: '15' - DONE
+*
+ analysis of cluster: '16' - START
+* analysis of cluster: '16' - DONE
+*
+ analysis of cluster: '17' - START
+* analysis of cluster: '17' - DONE
+*
+ analysis of cluster: '18' - START
+* analysis of cluster: '18' - DONE
+*
+ analysis of cluster: '19' - START
+* analysis of cluster: '19' - DONE
+*
+ analysis of cluster: '20' - START
+* analysis of cluster: '20' - DONE
+*
+ analysis of cluster: '21' - START
+* analysis of cluster: '21' - DONE
+*
+ analysis of cluster: '22' - START
+* analysis of cluster: '22' - DONE
+*
+ analysis of cluster: '23' - START
+* analysis of cluster: '23' - DONE
+*
+ analysis of cluster: '24' - START
+* analysis of cluster: '24' - DONE
+*
+ analysis of cluster: '25' - START
+* analysis of cluster: '25' - DONE
+*
+ analysis of cluster: '26' - START
+* analysis of cluster: '26' - DONE
+*
+ analysis of cluster: '27' - START
+* analysis of cluster: '27' - DONE
+*
+ analysis of cluster: '28' - START
+* analysis of cluster: '28' - DONE
+*
+ analysis of cluster: 'not_clustered' - START
+* analysis of cluster: 'not_clustered' - DONE
+
+Differential Expression Analysis - DONE
+Initializing `COTAN` meta-data
+Genes/cells selection done: dropped [50] genes and [0] cells
+Working on [13596] genes and [617] cells
+Estimate dispersion: START
+Effective number of cores used: 9
+Executing 14 genes batches from [1:960] to [12637:13596]
+Estimate dispersion: DONE
+dispersion | min: -0.11175537109375 | max: 852.5 | % negative: 19.2556634304207
+Initializing `COTAN` meta-data
+Genes/cells selection done: dropped [0] genes and [0] cells
+Working on [13646] genes and [617] cells
+Estimate dispersion: START
+Effective number of cores used: 9
+Executing 14 genes batches from [1:963] to [12684:13646]
+Estimate dispersion: DONE
+dispersion | min: -0.11175537109375 | max: 852.5 | % negative: 19.46357907079
+Initializing `COTAN` meta-data
+Genes/cells selection done: dropped [0] genes and [0] cells
+Working on [13646] genes and [617] cells
+Estimate dispersion: START
+Effective number of cores used: 9
+Executing 14 genes batches from [1:963] to [12684:13646]
+Estimate dispersion: DONE
+dispersion | min: -0.11175537109375 | max: 852.5 | % negative: 19.46357907079

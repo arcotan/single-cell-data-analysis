@@ -3,7 +3,7 @@ library(dplyr)
 library(Seurat)
 library(patchwork)
 library(DropletUtils)
-source("utils.R")
+source("./libraries/utils.R")
 
 DATASETS_FOLDER = './dataset/'
 NAME = 'tabula-muris-heart'
@@ -11,6 +11,7 @@ CHANNEL = '10X_P7_4'
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='') 
+dir.create(outDataDir, recursive = TRUE, showWarnings = FALSE)
 ```
 
 ```{r}
@@ -76,7 +77,7 @@ if (!dir.exists(Dir10X)) {
 
 labels = sort(unique(metadata$cell_ontology_class))
 metadata$cluster.ids = match(metadata$cell_ontology_class, labels)
-labels[labels == ''] = 'unknown cluster'
+labels[labels == ''] = 'immune cell'
 
 filtered_labels = merge(data.frame("cell"=colnames(data_to_write)), metadata)
 write.csv(filtered_labels[,c('cell', 'cluster.ids')], paste(outDataDir, "labels.csv", sep=""), row.names = FALSE)
