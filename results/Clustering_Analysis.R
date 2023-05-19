@@ -219,6 +219,12 @@ for (dataset in dataset_found) {
     # plot de 
     plot_de(pbmc.data, global_data[[dataset]]$markers[global_data[[dataset]]$markers$tool == tool,], "gene", "cluster", global_data[[dataset]]$labels, "cell", label, paste(RESULT_DIR, dataset, "/", tool, "/", sep=""))
   }
+  # plot ground truth
+  print("True labels")
+  cur_plot <- seurat_clustering_plot(pbmc, global_data[[dataset]]$labels$cell, pi[global_data[[dataset]]$labels$true_labels])
+  ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", "true_labels", ".png", sep=""), cur_plot)
+  ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", "true_labels", ".eps", sep=""), cur_plot)
+  
   print("--------------------------------------")
 }
 
