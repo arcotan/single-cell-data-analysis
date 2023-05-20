@@ -8,9 +8,8 @@ source("./libraries/utils.R")
 source("./libraries/venn.R")
 source("./libraries/enrichment_lists.R")
 
-TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi', 'COTAN')
-# DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'zheng-4', 'zheng-8')
-DATASET_TAGS= c('peripheal-blood')
+TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi-tools', 'COTAN')
+DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'zheng-4', 'zheng-8')
 
 RESULT_DIR = "./results/"
 AGGREGATE_RESULT_DIR = paste(RESULT_DIR, "aggregate/", sep="")
@@ -134,7 +133,7 @@ collect_dataset_data = function(tool_tag_list, dataset_tag, compute_missing_scor
       marker_data[marker_data$tool == tool,]$cluster <- alignment$permutation_computed[marker_data[marker_data$tool == tool,]$cluster]
     }
     if (compute_missing_scores) {
-      # compute missing clustering scores (for scanpy and scvi only silhouette should not have NA at this point)
+      # compute missing clustering scores (for scanpy and scvi-tools only silhouette should not have NA at this point)
       for (i in 1:nrow(score_data)) {
         cur_info = score_data[i, ]
         if (is.na(cur_info$accuracy) || is.na(cur_info$entropy) || is.na(cur_info$purity)) {

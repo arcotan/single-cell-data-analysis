@@ -1,12 +1,5 @@
 # tante belle domande su cotan e molto altro
 
-- DE: meglio valutare solo togliendo intersezione tra tutti?
-- quale database usare per i geni di peripheral blood
-- peripheral blood generazione ground truth corretta?
-- Tabula muris ha geni mitocondriali? Cercando "Mthfd1l" su ontology appare qualcosa di simile ma
-qui dicono che non sono stati sequenziali https://github.com/czbiohub/tabula-muris/issues/221
-- 
-
 # COSE
 
 - monocle può usare leiden (con risoluzione, usat anche da altri tool) o louvian (senza risoluzione)
@@ -16,11 +9,6 @@ qui dicono che non sono stati sequenziali https://github.com/czbiohub/tabula-mur
 
 # PLOT
 
-- tipo chord diagram per casi particolari (altrimenti sono 25) / confusion matrix
-- venn diagram (intersezioni top genes per ogni cluster / intersezioni top 120 genes)
-- confronto clustering
-- box plot con espressione (controllare tanto espressi)
-- heatmap con markers
 - dot plot https://satijalab.org/seurat/articles/visualization_vignette.html 
    https://scanpy-tutorials.readthedocs.io/en/latest/plotting/core.html
 - violin plot 1 vs rest per vedere distribuzioni dei markers nei clusters

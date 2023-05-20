@@ -65,7 +65,7 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
-# SCVI TEMP DATA
+# scvitools TEMP DATA
 .scviTools/data
 
 # eps data

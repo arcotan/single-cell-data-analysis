@@ -85,9 +85,6 @@ outDir = paste('./COTAN/', dataset_name, sep="")
 ```
 
 ```{r eval=FALSE, include=TRUE}
-# TODO crash numero di dimensioni
-# TODO ppure da l'errore:
-# Error: 'VST.default' is not implemented yet
 # Distance default o distance='euclidean' ?
 fineClusters <- cellsUniformClustering(obj, GDIThreshold = 1.4, cores = 10,
                                        saveObj = TRUE, outDir = outDir)
