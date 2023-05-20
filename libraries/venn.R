@@ -2,7 +2,7 @@ library(venn)
 
 # takes the path to the csv with aggregated markers and a directory path where to store images
 plot_venn = function(markers, out_dir) {
-  COLORS = c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3", "#a6d854")
+  COLORS = c("#66c2a5","#e78ac3", "#8da0cb", "#a6d854", "#fc8d62")
   cluster_ids = unique(markers$cluster)
   for (i in cluster_ids){
     cluster_markers = markers[markers$cluster == i,]
