@@ -39,7 +39,6 @@ TOOL_TAGS = {
 	'scanpy': 'Scanpy',
 	'monocle':'Monocle',
 	'scvi-tools': 'scVI-tools',
-	'scvi': 'scVI-tools'
 }
 
 order = ['COTAN', 'Seurat', 'Scanpy', 'Monocle', 'scVI-tools']
