@@ -1,0 +1,6 @@
+{   "COTAN": "#66c2a5", 
+    "seurat": "#fc8d62", 
+    "scanpy": "#8da0cb", 
+    "monocle": "#e78ac3", 
+    "scvi-tools": "#a6d854"
+}

@@ -74,7 +74,7 @@ Il seguente oggetto è mascherato da ‘package:dplyr’:
 > source("./libraries/venn.R")
 > source("./libraries/enrichment_lists.R")
 > 
-> TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi', 'COTAN')
+> TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi-tools', 'COTAN')
 > DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'zheng-4', 'zheng-8')
 > 
 > RESULT_DIR = "./results/"
@@ -199,7 +199,7 @@ Il seguente oggetto è mascherato da ‘package:dplyr’:
 +       marker_data[marker_data$tool == tool,]$cluster <- alignment$permutation_computed[marker_data[marker_data$tool == tool,]$cluster]
 +     }
 +     if (compute_missing_scores) {
-+       # compute missing clustering scores (for scanpy and scvi only silhouette should not have NA at this point)
++       # compute missing clustering scores (for scanpy and scvi-tools only silhouette should not have NA at this point)
 +       for (i in 1:nrow(score_data)) {
 +         cur_info = score_data[i, ]
 +         if (is.na(cur_info$accuracy) || is.na(cur_info$entropy) || is.na(cur_info$purity)) {
@@ -301,27 +301,27 @@ Joining with `by = join_by(accuracy, entropy, purity, silhouette, tool)`
 +   print(colSums(is.na(global_data[[dataset]]$labels[,2:ncol(global_data[[dataset]]$labels)])))
 + }
 [1] "Dataset:  tabula-muris-heart"
-monocle_label  scanpy_label  seurat_label    scvi_label   COTAN_label 
+monocle_label  scanpy_label  seurat_label    scvi-tools_label   COTAN_label 
             0             0             0             0             0 
   true_labels 
             0 
 [1] "Dataset:  tabula-muris-marrow_P7_3"
-monocle_label  scanpy_label  seurat_label    scvi_label   COTAN_label 
+monocle_label  scanpy_label  seurat_label    scvi-tools_label   COTAN_label 
             0             0             0             0             0 
   true_labels 
             0 
 [1] "Dataset:  peripheal-blood"
-monocle_label  scanpy_label  seurat_label    scvi_label   COTAN_label 
+monocle_label  scanpy_label  seurat_label    scvi-tools_label   COTAN_label 
             0             0             0             0             0 
   true_labels 
             0 
 [1] "Dataset:  zheng-4"
-monocle_label  scanpy_label  seurat_label    scvi_label   COTAN_label 
+monocle_label  scanpy_label  seurat_label    scvi-tools_label   COTAN_label 
             0             0             0             0             0 
   true_labels 
             0 
 [1] "Dataset:  zheng-8"
-monocle_label  scanpy_label  seurat_label    scvi_label   COTAN_label 
+monocle_label  scanpy_label  seurat_label    scvi-tools_label   COTAN_label 
             0             0             0             0             0 
   true_labels 
             0 
@@ -378,7 +378,37 @@ Calculating feature variances of standardized and clipped values
 [----|----|----|----|----|----|----|----|----|----|
 **************************************************|
 Centering and scaling data matrix
-  |                                                                              |                                                                      |   0%  |                                                                              |=====                                                                 |   7%  |                                                                              |==========                                                            |  14%  |                                                                              |===============                                                       |  21%  |                                                                              |====================                                                  |  29%  |                                                                              |=========================                                             |  36%  |                                                                              |==============================                                        |  43%  |                                                                              |===================================                                   |  50%  |                                                                              |========================================                              |  57%  |                                                                              |=============================================                         |  64%  |                                                                              |==================================================                    |  71%  |                                                                              |=======================================================               |  79%  |                                                                              |============================================================          |  86%  |                                                                              |=================================================================     |  93%  |                                                                              |======================================================================| 100%
+
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |=====                                                                 |   7%
+  |                                                                            
+  |==========                                                            |  14%
+  |                                                                            
+  |===============                                                       |  21%
+  |                                                                            
+  |====================                                                  |  29%
+  |                                                                            
+  |=========================                                             |  36%
+  |                                                                            
+  |==============================                                        |  43%
+  |                                                                            
+  |===================================                                   |  50%
+  |                                                                            
+  |========================================                              |  57%
+  |                                                                            
+  |=============================================                         |  64%
+  |                                                                            
+  |==================================================                    |  71%
+  |                                                                            
+  |=======================================================               |  79%
+  |                                                                            
+  |============================================================          |  86%
+  |                                                                            
+  |=================================================================     |  93%
+  |                                                                            
+  |======================================================================| 100%
 PC_ 1 
 Positive:  Lyz1, Ctss, Alox5ap, Lyz2, Csf1r, Laptm5, Tyrobp, Fcgr3, Fcer1g, C1qc 
 	   C1qb, Ctsc, Cd68, Lcp1, Aif1, C1qa, Mrc1, Clec4a2, Ly86, Sfpi1 
@@ -531,44 +561,44 @@ Saving 7 x 7 in image
 504 Clec3b       5    4 seurat
 505  Htra3       5    5 seurat
 Saving 7 x 7 in image
-[1] "Tool: scvi"
+[1] "Tool: scvi-tools"
 Saving 7 x 7 in image
 Saving 7 x 7 in image
 [1] "Class: 1"
         gene cluster rank tool
-851   Laptm5       1    1 scvi
-852     Cd53       1    2 scvi
-853     Cd52       1    3 scvi
-854 Sh3bgrl3       1    4 scvi
-855     Rac2       1    5 scvi
+851   Laptm5       1    1 scvi-tools
+852     Cd53       1    2 scvi-tools
+853     Cd52       1    3 scvi-tools
+854 Sh3bgrl3       1    4 scvi-tools
+855     Rac2       1    5 scvi-tools
 [1] "Class: 2"
       gene cluster rank tool
-951 Cox6a2       2    1 scvi
-952  Tnnt2       2    2 scvi
-953   Nppa       2    3 scvi
-954  Tnni3       2    4 scvi
-955   Myl4       2    5 scvi
+951 Cox6a2       2    1 scvi-tools
+952  Tnnt2       2    2 scvi-tools
+953   Nppa       2    3 scvi-tools
+954  Tnni3       2    4 scvi-tools
+955   Myl4       2    5 scvi-tools
 [1] "Class: 3"
       gene cluster rank tool
-901   Npr3       3    1 scvi
-902 Tm4sf1       3    2 scvi
-903    Cpe       3    3 scvi
-904  Cgnl1       3    4 scvi
-905    Eng       3    5 scvi
+901   Npr3       3    1 scvi-tools
+902 Tm4sf1       3    2 scvi-tools
+903    Cpe       3    3 scvi-tools
+904  Cgnl1       3    4 scvi-tools
+905    Eng       3    5 scvi-tools
 [1] "Class: 4"
      gene cluster rank tool
-801 Fabp4       4    1 scvi
-802  Cd36       4    2 scvi
-803 Ly6c1       4    3 scvi
-804  Cdh5       4    4 scvi
-805  Cav1       4    5 scvi
+801 Fabp4       4    1 scvi-tools
+802  Cd36       4    2 scvi-tools
+803 Ly6c1       4    3 scvi-tools
+804  Cdh5       4    4 scvi-tools
+805  Cav1       4    5 scvi-tools
 [1] "Class: 5"
         gene cluster rank tool
-751      Gsn       5    1 scvi
-752    Plac9       5    2 scvi
-753   Col1a2       5    3 scvi
-754 Serping1       5    4 scvi
-755     Lhfp       5    5 scvi
+751      Gsn       5    1 scvi-tools
+752    Plac9       5    2 scvi-tools
+753   Col1a2       5    3 scvi-tools
+754 Serping1       5    4 scvi-tools
+755     Lhfp       5    5 scvi-tools
 Saving 7 x 7 in image
 [1] "Tool: COTAN"
 Saving 7 x 7 in image
@@ -628,7 +658,37 @@ Calculating feature variances of standardized and clipped values
 [----|----|----|----|----|----|----|----|----|----|
 **************************************************|
 Centering and scaling data matrix
-  |                                                                              |                                                                      |   0%  |                                                                              |=====                                                                 |   7%  |                                                                              |==========                                                            |  14%  |                                                                              |===============                                                       |  21%  |                                                                              |====================                                                  |  29%  |                                                                              |=========================                                             |  36%  |                                                                              |==============================                                        |  43%  |                                                                              |===================================                                   |  50%  |                                                                              |========================================                              |  57%  |                                                                              |=============================================                         |  64%  |                                                                              |==================================================                    |  71%  |                                                                              |=======================================================               |  79%  |                                                                              |============================================================          |  86%  |                                                                              |=================================================================     |  93%  |                                                                              |======================================================================| 100%
+
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |=====                                                                 |   7%
+  |                                                                            
+  |==========                                                            |  14%
+  |                                                                            
+  |===============                                                       |  21%
+  |                                                                            
+  |====================                                                  |  29%
+  |                                                                            
+  |=========================                                             |  36%
+  |                                                                            
+  |==============================                                        |  43%
+  |                                                                            
+  |===================================                                   |  50%
+  |                                                                            
+  |========================================                              |  57%
+  |                                                                            
+  |=============================================                         |  64%
+  |                                                                            
+  |==================================================                    |  71%
+  |                                                                            
+  |=======================================================               |  79%
+  |                                                                            
+  |============================================================          |  86%
+  |                                                                            
+  |=================================================================     |  93%
+  |                                                                            
+  |======================================================================| 100%
 PC_ 1 
 Positive:  Ptma, Hmgb1, Snrpf, Hsp90aa1, Erh, Rps2, Ran, Tubb5, Serbp1, Npm1 
 	   Rpl36a, Rpl10a, Rpl14, Ncl, Ranbp1, Hsp90ab1, Rpl12, Set, Slc25a5, Tuba1b 
@@ -970,107 +1030,107 @@ Saving 7 x 7 in image
 1804     Cd3g      14    4 seurat
 1805     Nkg7      14    5 seurat
 Saving 7 x 7 in image
-[1] "Tool: scvi"
+[1] "Tool: scvi-tools"
 Saving 7 x 7 in image
 Saving 7 x 7 in image
 [1] "Class: 1"
        gene cluster rank tool
-2701  Mcpt8       1    1 scvi
-2702   Cpa3       1    2 scvi
-2703  Gata2       1    3 scvi
-2704   Cd63       1    4 scvi
-2705 Fcer1a       1    5 scvi
+2701  Mcpt8       1    1 scvi-tools
+2702   Cpa3       1    2 scvi-tools
+2703  Gata2       1    3 scvi-tools
+2704   Cd63       1    4 scvi-tools
+2705 Fcer1a       1    5 scvi-tools
 [1] "Class: 2"
         gene cluster rank tool
-2451  Retnlg       2    1 scvi
-2452 S100a11       2    2 scvi
-2453    Mmp9       2    3 scvi
-2454    Mmp8       2    4 scvi
-2455  S100a6       2    5 scvi
+2451  Retnlg       2    1 scvi-tools
+2452 S100a11       2    2 scvi-tools
+2453    Mmp9       2    3 scvi-tools
+2454    Mmp8       2    4 scvi-tools
+2455  S100a6       2    5 scvi-tools
 [1] "Class: 3"
        gene cluster rank tool
-2551 Beta-s       3    1 scvi
-2552 Hba-a2       3    2 scvi
-2553 Hbb-b1       3    3 scvi
-2554   Bpgm       3    4 scvi
-2555 Hbb-b2       3    5 scvi
+2551 Beta-s       3    1 scvi-tools
+2552 Hba-a2       3    2 scvi-tools
+2553 Hbb-b1       3    3 scvi-tools
+2554   Bpgm       3    4 scvi-tools
+2555 Hbb-b2       3    5 scvi-tools
 [1] "Class: 4"
        gene cluster rank tool
-2751 Txndc5       4    1 scvi
-2752  Pdia4       4    2 scvi
-2753   Ssr4       4    3 scvi
-2754  Spcs1       4    4 scvi
-2755 Creld2       4    5 scvi
+2751 Txndc5       4    1 scvi-tools
+2752  Pdia4       4    2 scvi-tools
+2753   Ssr4       4    3 scvi-tools
+2754  Spcs1       4    4 scvi-tools
+2755 Creld2       4    5 scvi-tools
 [1] "Class: 5"
               gene cluster rank tool
-2201        Ifitm6       5    1 scvi
-2202           Ltf       5    2 scvi
-2203      AA467197       5    3 scvi
-2204 1100001G20Rik       5    4 scvi
-2205        S100a8       5    5 scvi
+2201        Ifitm6       5    1 scvi-tools
+2202           Ltf       5    2 scvi-tools
+2203      AA467197       5    3 scvi-tools
+2204 1100001G20Rik       5    4 scvi-tools
+2205        S100a8       5    5 scvi-tools
 [1] "Class: 6"
        gene cluster rank tool
-2251  Hmgn2       6    1 scvi
-2252 Chi3l3       6    2 scvi
-2253   Camp       6    3 scvi
-2254    Ngp       6    4 scvi
-2255  Cebpe       6    5 scvi
+2251  Hmgn2       6    1 scvi-tools
+2252 Chi3l3       6    2 scvi-tools
+2253   Camp       6    3 scvi-tools
+2254    Ngp       6    4 scvi-tools
+2255  Cebpe       6    5 scvi-tools
 [1] "Class: 7"
        gene cluster rank tool
-2501  Elane       7    1 scvi
-2502  Ms4a3       7    2 scvi
-2503  Prtn3       7    3 scvi
-2504    Mpo       7    4 scvi
-2505 Prss57       7    5 scvi
+2501  Elane       7    1 scvi-tools
+2502  Ms4a3       7    2 scvi-tools
+2503  Prtn3       7    3 scvi-tools
+2504    Mpo       7    4 scvi-tools
+2505 Prss57       7    5 scvi-tools
 [1] "Class: 8"
       gene cluster rank tool
-2651 Cd79a       8    1 scvi
-2652  Cd74       8    2 scvi
-2653 Ms4a1       8    3 scvi
-2654 Faim3       8    4 scvi
-2655  Ly6d       8    5 scvi
+2651 Cd79a       8    1 scvi-tools
+2652  Cd74       8    2 scvi-tools
+2653 Ms4a1       8    3 scvi-tools
+2654 Faim3       8    4 scvi-tools
+2655  Ly6d       8    5 scvi-tools
 [1] "Class: 9"
         gene cluster rank tool
-2351 Chchd10       9    1 scvi
-2352  Vpreb3       9    2 scvi
-2353    Ptma       9    3 scvi
-2354 Ptprcap       9    4 scvi
-2355   Cd79a       9    5 scvi
+2351 Chchd10       9    1 scvi-tools
+2352  Vpreb3       9    2 scvi-tools
+2353    Ptma       9    3 scvi-tools
+2354 Ptprcap       9    4 scvi-tools
+2355   Cd79a       9    5 scvi-tools
 [1] "Class: 10"
         gene cluster rank tool
-2401    Bst2      10    1 scvi
-2402 Siglech      10    2 scvi
-2403    Tcf4      10    3 scvi
-2404    Irf8      10    4 scvi
-2405   Rpl31      10    5 scvi
+2401    Bst2      10    1 scvi-tools
+2402 Siglech      10    2 scvi-tools
+2403    Tcf4      10    3 scvi-tools
+2404    Irf8      10    4 scvi-tools
+2405   Rpl31      10    5 scvi-tools
 [1] "Class: 11"
         gene cluster rank tool
-2101    Ctss      11    1 scvi
-2102  Ifitm3      11    2 scvi
-2103 Gm11428      11    3 scvi
-2104    Npc2      11    4 scvi
-2105    Ccr2      11    5 scvi
+2101    Ctss      11    1 scvi-tools
+2102  Ifitm3      11    2 scvi-tools
+2103 Gm11428      11    3 scvi-tools
+2104    Npc2      11    4 scvi-tools
+2105    Ccr2      11    5 scvi-tools
 [1] "Class: 12"
        gene cluster rank tool
-2301  Prdx2      12    1 scvi
-2302   Car2      12    2 scvi
-2303   Hmbs      12    3 scvi
-2304 Metap2      12    4 scvi
-2305    Rhd      12    5 scvi
+2301  Prdx2      12    1 scvi-tools
+2302   Car2      12    2 scvi-tools
+2303   Hmbs      12    3 scvi-tools
+2304 Metap2      12    4 scvi-tools
+2305    Rhd      12    5 scvi-tools
 [1] "Class: 13"
       gene cluster rank tool
-2151 H2afy      13    1 scvi
-2152 Hint1      13    2 scvi
-2153  Ppia      13    3 scvi
-2154  Ptma      13    4 scvi
-2155 Stmn1      13    5 scvi
+2151 H2afy      13    1 scvi-tools
+2152 Hint1      13    2 scvi-tools
+2153  Ppia      13    3 scvi-tools
+2154  Ptma      13    4 scvi-tools
+2155 Stmn1      13    5 scvi-tools
 [1] "Class: 14"
          gene cluster rank tool
-2601 AW112010      14    1 scvi
-2602    Rplp1      14    2 scvi
-2603   Rps15a      14    3 scvi
-2604    Uba52      14    4 scvi
-2605    Rps24      14    5 scvi
+2601 AW112010      14    1 scvi-tools
+2602    Rplp1      14    2 scvi-tools
+2603   Rps15a      14    3 scvi-tools
+2604    Uba52      14    4 scvi-tools
+2605    Rps24      14    5 scvi-tools
 Saving 7 x 7 in image
 [1] "Tool: COTAN"
 Saving 7 x 7 in image
@@ -1193,7 +1253,47 @@ Calculating feature variances of standardized and clipped values
 [----|----|----|----|----|----|----|----|----|----|
 **************************************************|
 Centering and scaling data matrix
-  |                                                                              |                                                                      |   0%  |                                                                              |====                                                                  |   5%  |                                                                              |=======                                                               |  11%  |                                                                              |===========                                                           |  16%  |                                                                              |===============                                                       |  21%  |                                                                              |==================                                                    |  26%  |                                                                              |======================                                                |  32%  |                                                                              |==========================                                            |  37%  |                                                                              |=============================                                         |  42%  |                                                                              |=================================                                     |  47%  |                                                                              |=====================================                                 |  53%  |                                                                              |=========================================                             |  58%  |                                                                              |============================================                          |  63%  |                                                                              |================================================                      |  68%  |                                                                              |====================================================                  |  74%  |                                                                              |=======================================================               |  79%  |                                                                              |===========================================================           |  84%  |                                                                              |===============================================================       |  89%  |                                                                              |==================================================================    |  95%  |                                                                              |======================================================================| 100%
+
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |====                                                                  |   5%
+  |                                                                            
+  |=======                                                               |  11%
+  |                                                                            
+  |===========                                                           |  16%
+  |                                                                            
+  |===============                                                       |  21%
+  |                                                                            
+  |==================                                                    |  26%
+  |                                                                            
+  |======================                                                |  32%
+  |                                                                            
+  |==========================                                            |  37%
+  |                                                                            
+  |=============================                                         |  42%
+  |                                                                            
+  |=================================                                     |  47%
+  |                                                                            
+  |=====================================                                 |  53%
+  |                                                                            
+  |=========================================                             |  58%
+  |                                                                            
+  |============================================                          |  63%
+  |                                                                            
+  |================================================                      |  68%
+  |                                                                            
+  |====================================================                  |  74%
+  |                                                                            
+  |=======================================================               |  79%
+  |                                                                            
+  |===========================================================           |  84%
+  |                                                                            
+  |===============================================================       |  89%
+  |                                                                            
+  |==================================================================    |  95%
+  |                                                                            
+  |======================================================================| 100%
 PC_ 1 
 Positive:  MALAT1, TRBC2, CD3D, TRAC, LTB, CD3G, IL32, IL7R, CD69, TCF7 
 	   CD7, CD247, CD2, TRBC1, CD27, BCL11B, SPOCK2, SYNE2, ISG20, RASGRP1 
@@ -1472,86 +1572,86 @@ Saving 7 x 7 in image
 1504 CDKN1C      11    4 seurat
 1505  MS4A7      11    5 seurat
 Saving 7 x 7 in image
-[1] "Tool: scvi"
+[1] "Tool: scvi-tools"
 Saving 7 x 7 in image
 Saving 7 x 7 in image
 [1] "Class: 1"
       gene cluster rank tool
-1651 RPS3A       1    1 scvi
-1652 RPL32       1    2 scvi
-1653 RPL30       1    3 scvi
-1654 RPS13       1    4 scvi
-1655  RPS6       1    5 scvi
+1651 RPS3A       1    1 scvi-tools
+1652 RPL32       1    2 scvi-tools
+1653 RPL30       1    3 scvi-tools
+1654 RPS13       1    4 scvi-tools
+1655  RPS6       1    5 scvi-tools
 [1] "Class: 2"
      gene cluster rank tool
-1901 CCL5       2    1 scvi
-1902 NKG7       2    2 scvi
-1903 CST7       2    3 scvi
-1904 GZMA       2    4 scvi
-1905  B2M       2    5 scvi
+1901 CCL5       2    1 scvi-tools
+1902 NKG7       2    2 scvi-tools
+1903 CST7       2    3 scvi-tools
+1904 GZMA       2    4 scvi-tools
+1905  B2M       2    5 scvi-tools
 [1] "Class: 3"
      gene cluster rank tool
-1751 IL32       3    1 scvi
-1752 IL7R       3    2 scvi
-1753 TRAC       3    3 scvi
-1754  LTB       3    4 scvi
-1755  B2M       3    5 scvi
+1751 IL32       3    1 scvi-tools
+1752 IL7R       3    2 scvi-tools
+1753 TRAC       3    3 scvi-tools
+1754  LTB       3    4 scvi-tools
+1755  B2M       3    5 scvi-tools
 [1] "Class: 4"
        gene cluster rank tool
-2151 CLEC9A       4    1 scvi
-2152   IDO1       4    2 scvi
-2153  RAB7B       4    3 scvi
-2154   SNX3       4    4 scvi
-2155   CD74       4    5 scvi
+2151 CLEC9A       4    1 scvi-tools
+2152   IDO1       4    2 scvi-tools
+2153  RAB7B       4    3 scvi-tools
+2154   SNX3       4    4 scvi-tools
+2155   CD74       4    5 scvi-tools
 [1] "Class: 5"
          gene cluster rank tool
-2051     CD74       5    1 scvi
-2052   FCER1A       5    2 scvi
-2053 HLA-DPA1       5    3 scvi
-2054 HLA-DRB1       5    4 scvi
-2055 HLA-DPB1       5    5 scvi
+2051     CD74       5    1 scvi-tools
+2052   FCER1A       5    2 scvi-tools
+2053 HLA-DPA1       5    3 scvi-tools
+2054 HLA-DRB1       5    4 scvi-tools
+2055 HLA-DPB1       5    5 scvi-tools
 [1] "Class: 6"
          gene cluster rank tool
-1951    MS4A1       6    1 scvi
-1952    CD79A       6    2 scvi
-1953    BANK1       6    3 scvi
-1954    CD79B       6    4 scvi
-1955 HLA-DQA1       6    5 scvi
+1951    MS4A1       6    1 scvi-tools
+1952    CD79A       6    2 scvi-tools
+1953    BANK1       6    3 scvi-tools
+1954    CD79B       6    4 scvi-tools
+1955 HLA-DQA1       6    5 scvi-tools
 [1] "Class: 7"
       gene cluster rank tool
-1701 NEAT1       7    1 scvi
-1702  PSAP       7    2 scvi
-1703  CPVL       7    3 scvi
-1704  FGL2       7    4 scvi
-1705  FTH1       7    5 scvi
+1701 NEAT1       7    1 scvi-tools
+1702  PSAP       7    2 scvi-tools
+1703  CPVL       7    3 scvi-tools
+1704  FGL2       7    4 scvi-tools
+1705  FTH1       7    5 scvi-tools
 [1] "Class: 8"
      gene cluster rank tool
-1851 GNLY       8    1 scvi
-1852 NKG7       8    2 scvi
-1853 PRF1       8    3 scvi
-1854 CTSW       8    4 scvi
-1855 CST7       8    5 scvi
+1851 GNLY       8    1 scvi-tools
+1852 NKG7       8    2 scvi-tools
+1853 PRF1       8    3 scvi-tools
+1854 CTSW       8    4 scvi-tools
+1855 CST7       8    5 scvi-tools
 [1] "Class: 9"
         gene cluster rank tool
-1801  S100A8       9    1 scvi
-1802  S100A9       9    2 scvi
-1803  S100A6       9    3 scvi
-1804 S100A12       9    4 scvi
-1805    MNDA       9    5 scvi
+1801  S100A8       9    1 scvi-tools
+1802  S100A9       9    2 scvi-tools
+1803  S100A6       9    3 scvi-tools
+1804 S100A12       9    4 scvi-tools
+1805    MNDA       9    5 scvi-tools
 [1] "Class: 10"
       gene cluster rank tool
-2001  IGHM      10    1 scvi
-2002  IGHD      10    2 scvi
-2003  CD37      10    3 scvi
-2004 CD79A      10    4 scvi
-2005 CD79B      10    5 scvi
+2001  IGHM      10    1 scvi-tools
+2002  IGHD      10    2 scvi-tools
+2003  CD37      10    3 scvi-tools
+2004 CD79A      10    4 scvi-tools
+2005 CD79B      10    5 scvi-tools
 [1] "Class: 11"
        gene cluster rank tool
-2101   LST1      11    1 scvi
-2102 FCGR3A      11    2 scvi
-2103  COTL1      11    3 scvi
-2104 SMIM25      11    4 scvi
-2105 FCER1G      11    5 scvi
+2101   LST1      11    1 scvi-tools
+2102 FCGR3A      11    2 scvi-tools
+2103  COTL1      11    3 scvi-tools
+2104 SMIM25      11    4 scvi-tools
+2105 FCER1G      11    5 scvi-tools
 Saving 7 x 7 in image
 [1] "Tool: COTAN"
 Saving 7 x 7 in image
@@ -1653,7 +1753,35 @@ Calculating feature variances of standardized and clipped values
 [----|----|----|----|----|----|----|----|----|----|
 **************************************************|
 Centering and scaling data matrix
-  |                                                                              |                                                                      |   0%  |                                                                              |=====                                                                 |   8%  |                                                                              |===========                                                           |  15%  |                                                                              |================                                                      |  23%  |                                                                              |======================                                                |  31%  |                                                                              |===========================                                           |  38%  |                                                                              |================================                                      |  46%  |                                                                              |======================================                                |  54%  |                                                                              |===========================================                           |  62%  |                                                                              |================================================                      |  69%  |                                                                              |======================================================                |  77%  |                                                                              |===========================================================           |  85%  |                                                                              |=================================================================     |  92%  |                                                                              |======================================================================| 100%
+
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |=====                                                                 |   8%
+  |                                                                            
+  |===========                                                           |  15%
+  |                                                                            
+  |================                                                      |  23%
+  |                                                                            
+  |======================                                                |  31%
+  |                                                                            
+  |===========================                                           |  38%
+  |                                                                            
+  |================================                                      |  46%
+  |                                                                            
+  |======================================                                |  54%
+  |                                                                            
+  |===========================================                           |  62%
+  |                                                                            
+  |================================================                      |  69%
+  |                                                                            
+  |======================================================                |  77%
+  |                                                                            
+  |===========================================================           |  85%
+  |                                                                            
+  |=================================================================     |  92%
+  |                                                                            
+  |======================================================================| 100%
 PC_ 1 
 Positive:  LTB, CD52, RPS18, CD3E, CD3D, MALAT1, ARHGDIB, LDHB, B2M, IL32 
 	   CD7, CD27, CD8B, NOSIP, JUNB, CD79A, CD37, CTSW, CD79B, FLT3LG 
@@ -1785,37 +1913,37 @@ Saving 7 x 7 in image
 554 HLA-DPA1       4    4 seurat
 555 HLA-DPB1       4    5 seurat
 Saving 7 x 7 in image
-[1] "Tool: scvi"
+[1] "Tool: scvi-tools"
 Saving 7 x 7 in image
 Saving 7 x 7 in image
 [1] "Class: 1"
         gene cluster rank tool
-651     CD74       1    1 scvi
-652    CD79A       1    2 scvi
-653    CD79B       1    3 scvi
-654  HLA-DRA       1    4 scvi
-655 HLA-DPA1       1    5 scvi
+651     CD74       1    1 scvi-tools
+652    CD79A       1    2 scvi-tools
+653    CD79B       1    3 scvi-tools
+654  HLA-DRA       1    4 scvi-tools
+655 HLA-DPA1       1    5 scvi-tools
 [1] "Class: 2"
       gene cluster rank tool
-701    FTL       2    1 scvi
-702 S100A9       2    2 scvi
-703 TYROBP       2    3 scvi
-704 S100A4       2    4 scvi
-705 S100A8       2    5 scvi
+701    FTL       2    1 scvi-tools
+702 S100A9       2    2 scvi-tools
+703 TYROBP       2    3 scvi-tools
+704 S100A4       2    4 scvi-tools
+705 S100A8       2    5 scvi-tools
 [1] "Class: 3"
     gene cluster rank tool
-601  B2M       3    1 scvi
-602 CD3E       3    2 scvi
-603 CD3D       3    3 scvi
-604 IL32       3    4 scvi
-605 LDHB       3    5 scvi
+601  B2M       3    1 scvi-tools
+602 CD3E       3    2 scvi-tools
+603 CD3D       3    3 scvi-tools
+604 IL32       3    4 scvi-tools
+605 LDHB       3    5 scvi-tools
 [1] "Class: 4"
         gene cluster rank tool
-751 HLA-DPA1       4    1 scvi
-752 HLA-DPB1       4    2 scvi
-753  HLA-DRA       4    3 scvi
-754     CST3       4    4 scvi
-755     CPVL       4    5 scvi
+751 HLA-DPA1       4    1 scvi-tools
+752 HLA-DPB1       4    2 scvi-tools
+753  HLA-DRA       4    3 scvi-tools
+754     CST3       4    4 scvi-tools
+755     CPVL       4    5 scvi-tools
 Saving 7 x 7 in image
 [1] "Tool: COTAN"
 Saving 7 x 7 in image
@@ -1868,7 +1996,35 @@ Calculating feature variances of standardized and clipped values
 [----|----|----|----|----|----|----|----|----|----|
 **************************************************|
 Centering and scaling data matrix
-  |                                                                              |                                                                      |   0%  |                                                                              |=====                                                                 |   8%  |                                                                              |===========                                                           |  15%  |                                                                              |================                                                      |  23%  |                                                                              |======================                                                |  31%  |                                                                              |===========================                                           |  38%  |                                                                              |================================                                      |  46%  |                                                                              |======================================                                |  54%  |                                                                              |===========================================                           |  62%  |                                                                              |================================================                      |  69%  |                                                                              |======================================================                |  77%  |                                                                              |===========================================================           |  85%  |                                                                              |=================================================================     |  92%  |                                                                              |======================================================================| 100%
+
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |=====                                                                 |   8%
+  |                                                                            
+  |===========                                                           |  15%
+  |                                                                            
+  |================                                                      |  23%
+  |                                                                            
+  |======================                                                |  31%
+  |                                                                            
+  |===========================                                           |  38%
+  |                                                                            
+  |================================                                      |  46%
+  |                                                                            
+  |======================================                                |  54%
+  |                                                                            
+  |===========================================                           |  62%
+  |                                                                            
+  |================================================                      |  69%
+  |                                                                            
+  |======================================================                |  77%
+  |                                                                            
+  |===========================================================           |  85%
+  |                                                                            
+  |=================================================================     |  92%
+  |                                                                            
+  |======================================================================| 100%
 PC_ 1 
 Positive:  CST3, S100A9, LYZ, S100A8, FCN1, HLA-DRB1, AIF1, LST1, TYMP, HLA-DRB5 
 	   CFD, GPX1, FTL, TMEM176B, CD14, HLA-DRA, PSAP, FTH1, LGALS2, CD74 
@@ -2084,65 +2240,65 @@ Saving 7 x 7 in image
 1104    PMAIP1       8    4 seurat
 1105 LINC00152       8    5 seurat
 Saving 7 x 7 in image
-[1] "Tool: scvi"
+[1] "Tool: scvi-tools"
 Saving 7 x 7 in image
 Saving 7 x 7 in image
 [1] "Class: 1"
          gene cluster rank tool
-1401     CD74       1    1 scvi
-1402  HLA-DRA       1    2 scvi
-1403    CD79A       1    3 scvi
-1404 HLA-DPA1       1    4 scvi
-1405    CD79B       1    5 scvi
+1401     CD74       1    1 scvi-tools
+1402  HLA-DRA       1    2 scvi-tools
+1403    CD79A       1    3 scvi-tools
+1404 HLA-DPA1       1    4 scvi-tools
+1405    CD79B       1    5 scvi-tools
 [1] "Class: 2"
        gene cluster rank tool
-1351    FTL       2    1 scvi
-1352 S100A8       2    2 scvi
-1353 S100A9       2    3 scvi
-1354   FTH1       2    4 scvi
-1355   CST3       2    5 scvi
+1351    FTL       2    1 scvi-tools
+1352 S100A8       2    2 scvi-tools
+1353 S100A9       2    3 scvi-tools
+1354   FTH1       2    4 scvi-tools
+1355   CST3       2    5 scvi-tools
 [1] "Class: 3"
          gene cluster rank tool
-1551   CLEC9A       3    1 scvi
-1552 HLA-DPA1       3    2 scvi
-1553 HLA-DPB1       3    3 scvi
-1554  HLA-DRA       3    4 scvi
-1555 HLA-DQA1       3    5 scvi
+1551   CLEC9A       3    1 scvi-tools
+1552 HLA-DPA1       3    2 scvi-tools
+1553 HLA-DPB1       3    3 scvi-tools
+1554  HLA-DRA       3    4 scvi-tools
+1555 HLA-DQA1       3    5 scvi-tools
 [1] "Class: 4"
        gene cluster rank tool
-1301   GNLY       4    1 scvi
-1302   NKG7       4    2 scvi
-1303   CST7       4    3 scvi
-1304   GZMA       4    4 scvi
-1305 MALAT1       4    5 scvi
+1301   GNLY       4    1 scvi-tools
+1302   NKG7       4    2 scvi-tools
+1303   CST7       4    3 scvi-tools
+1304   GZMA       4    4 scvi-tools
+1305 MALAT1       4    5 scvi-tools
 [1] "Class: 5"
      gene cluster rank tool
-1251 IL32       5    1 scvi
-1252  LTB       5    2 scvi
-1253 IL7R       5    3 scvi
-1254  B2M       5    4 scvi
-1255  VIM       5    5 scvi
+1251 IL32       5    1 scvi-tools
+1252  LTB       5    2 scvi-tools
+1253 IL7R       5    3 scvi-tools
+1254  B2M       5    4 scvi-tools
+1255  VIM       5    5 scvi-tools
 [1] "Class: 6"
        gene cluster rank tool
-1451   CD8B       6    1 scvi
-1452  RPL32       6    2 scvi
-1453  RPS12       6    3 scvi
-1454  RPL31       6    4 scvi
-1455 RPS15A       6    5 scvi
+1451   CD8B       6    1 scvi-tools
+1452  RPL32       6    2 scvi-tools
+1453  RPS12       6    3 scvi-tools
+1454  RPL31       6    4 scvi-tools
+1455 RPS15A       6    5 scvi-tools
 [1] "Class: 7"
        gene cluster rank tool
-1201   RPL3       7    1 scvi
-1202   RPS6       7    2 scvi
-1203   RPL4       7    3 scvi
-1204  RPL10       7    4 scvi
-1205 EEF1A1       7    5 scvi
+1201   RPL3       7    1 scvi-tools
+1202   RPS6       7    2 scvi-tools
+1203   RPL4       7    3 scvi-tools
+1204  RPL10       7    4 scvi-tools
+1205 EEF1A1       7    5 scvi-tools
 [1] "Class: 8"
         gene cluster rank tool
-1501    IL32       8    1 scvi
-1502     B2M       8    2 scvi
-1503   HLA-A       8    3 scvi
-1504    ACTB       8    4 scvi
-1505 ARHGDIB       8    5 scvi
+1501    IL32       8    1 scvi-tools
+1502     B2M       8    2 scvi-tools
+1503   HLA-A       8    3 scvi-tools
+1504    ACTB       8    4 scvi-tools
+1505 ARHGDIB       8    5 scvi-tools
 Saving 7 x 7 in image
 [1] "Tool: COTAN"
 Saving 7 x 7 in image
@@ -2276,7 +2432,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  37"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  5"
+[1] "Tool :  scvi-tools Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -2347,7 +2503,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  32"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  4"
+[1] "Tool :  scvi-tools Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -2410,7 +2566,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  39"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  1"
+[1] "Tool :  scvi-tools Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -2481,7 +2637,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  39"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  3"
+[1] "Tool :  scvi-tools Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -2544,7 +2700,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  31"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  2"
+[1] "Tool :  scvi-tools Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -2575,7 +2731,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  8"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  11"
+[1] "Tool :  scvi-tools Cluster Id:  11"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -2615,7 +2771,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  49"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  11"
+[1] "Tool :  scvi-tools Cluster Id:  11"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -2652,7 +2808,7 @@ Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
 [1] "Enriched:  0"
-[1] "Tool :  scvi Cluster Id:  3"
+[1] "Tool :  scvi-tools Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -2692,7 +2848,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  6"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  3"
+[1] "Tool :  scvi-tools Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -2763,7 +2919,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  37"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  14"
+[1] "Tool :  scvi-tools Cluster Id:  14"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -2834,7 +2990,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  45"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  8"
+[1] "Tool :  scvi-tools Cluster Id:  8"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -2904,7 +3060,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  49"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  1"
+[1] "Tool :  scvi-tools Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -2969,7 +3125,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  43"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  4"
+[1] "Tool :  scvi-tools Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3038,7 +3194,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  31"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  13"
+[1] "Tool :  scvi-tools Cluster Id:  13"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3109,7 +3265,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  42"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  5"
+[1] "Tool :  scvi-tools Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3182,7 +3338,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  47"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  2"
+[1] "Tool :  scvi-tools Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3253,7 +3409,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  20"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  12"
+[1] "Tool :  scvi-tools Cluster Id:  12"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3292,7 +3448,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  21"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  6"
+[1] "Tool :  scvi-tools Cluster Id:  6"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3330,7 +3486,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  42"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  6"
+[1] "Tool :  scvi-tools Cluster Id:  6"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3377,7 +3533,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  7"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  9"
+[1] "Tool :  scvi-tools Cluster Id:  9"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3415,7 +3571,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  32"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  9"
+[1] "Tool :  scvi-tools Cluster Id:  9"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3486,7 +3642,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  60"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  10"
+[1] "Tool :  scvi-tools Cluster Id:  10"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3527,7 +3683,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  21"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  7"
+[1] "Tool :  scvi-tools Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3567,7 +3723,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  21"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  7"
+[1] "Tool :  scvi-tools Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3614,7 +3770,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  129"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  7"
+[1] "Tool :  scvi-tools Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3654,7 +3810,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  452"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  7"
+[1] "Tool :  scvi-tools Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3701,7 +3857,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  222"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  5"
+[1] "Tool :  scvi-tools Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3739,7 +3895,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  364"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  5"
+[1] "Tool :  scvi-tools Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3778,7 +3934,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  102"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  4"
+[1] "Tool :  scvi-tools Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3818,7 +3974,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  227"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  4"
+[1] "Tool :  scvi-tools Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3889,7 +4045,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  457"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  1"
+[1] "Tool :  scvi-tools Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3960,7 +4116,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  269"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  3"
+[1] "Tool :  scvi-tools Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3999,7 +4155,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  36"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  9"
+[1] "Tool :  scvi-tools Cluster Id:  9"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4039,7 +4195,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  442"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  9"
+[1] "Tool :  scvi-tools Cluster Id:  9"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4079,7 +4235,7 @@ Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
 [1] "Enriched:  0"
-[1] "Tool :  scvi Cluster Id:  10"
+[1] "Tool :  scvi-tools Cluster Id:  10"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4118,7 +4274,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  200"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  10"
+[1] "Tool :  scvi-tools Cluster Id:  10"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4189,7 +4345,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  79"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  2"
+[1] "Tool :  scvi-tools Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4256,7 +4412,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  131"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  8"
+[1] "Tool :  scvi-tools Cluster Id:  8"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4325,7 +4481,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  150"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  6"
+[1] "Tool :  scvi-tools Cluster Id:  6"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4372,7 +4528,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  127"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  11"
+[1] "Tool :  scvi-tools Cluster Id:  11"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4412,7 +4568,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  457"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  11"
+[1] "Tool :  scvi-tools Cluster Id:  11"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4452,7 +4608,7 @@ Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
 [1] "Enriched:  0"
-[1] "Tool :  scvi Cluster Id:  4"
+[1] "Tool :  scvi-tools Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4491,7 +4647,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  351"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  4"
+[1] "Tool :  scvi-tools Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4562,7 +4718,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  132"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  1"
+[1] "Tool :  scvi-tools Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4609,7 +4765,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  135"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  3"
+[1] "Tool :  scvi-tools Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4649,7 +4805,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  187"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  3"
+[1] "Tool :  scvi-tools Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4694,7 +4850,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  74"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  2"
+[1] "Tool :  scvi-tools Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4734,7 +4890,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  464"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  2"
+[1] "Tool :  scvi-tools Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4813,7 +4969,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  463"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  7"
+[1] "Tool :  scvi-tools Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4850,7 +5006,7 @@ Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
 [1] "Enriched:  0"
-[1] "Tool :  scvi Cluster Id:  4"
+[1] "Tool :  scvi-tools Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4890,7 +5046,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  208"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  4"
+[1] "Tool :  scvi-tools Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4937,7 +5093,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  85"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  8"
+[1] "Tool :  scvi-tools Cluster Id:  8"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4977,7 +5133,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  365"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  8"
+[1] "Tool :  scvi-tools Cluster Id:  8"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -5040,7 +5196,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  464"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  2"
+[1] "Tool :  scvi-tools Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -5087,7 +5243,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  109"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  5"
+[1] "Tool :  scvi-tools Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -5127,7 +5283,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  422"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  5"
+[1] "Tool :  scvi-tools Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -5174,7 +5330,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  1"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  1"
+[1] "Tool :  scvi-tools Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -5214,7 +5370,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  127"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  1"
+[1] "Tool :  scvi-tools Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -5287,7 +5443,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  455"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  6"
+[1] "Tool :  scvi-tools Cluster Id:  6"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -5334,7 +5490,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  370"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  3"
+[1] "Tool :  scvi-tools Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -5374,7 +5530,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  145"
 Saving 7 x 7 in image
-[1] "Tool :  scvi Cluster Id:  3"
+[1] "Tool :  scvi-tools Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
