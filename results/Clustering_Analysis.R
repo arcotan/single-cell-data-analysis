@@ -10,6 +10,14 @@ source("./libraries/enrichment_lists.R")
 
 TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi-tools', 'COTAN')
 DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'zheng-4', 'zheng-8')
+# DATASET_TAGS= c('zheng-8')
+MAPPING_DATASET_NAMES = list(
+  'tabula-muris-heart'= 'tabula muris heart',
+	'tabula-muris-marrow_P7_3'= 'tabula muris marrow',
+	'peripheal-blood'= 'PBMC TotalSeq',
+	'zheng-4'= 'zheng 4',
+	'zheng-8'= 'zheng 8'
+)
 
 RESULT_DIR = "./results/"
 AGGREGATE_RESULT_DIR = paste(RESULT_DIR, "aggregate/", sep="")
@@ -211,7 +219,7 @@ for (dataset in dataset_found) {
     print(paste("Tool: ", tool, sep=""))
     
     # plot clustering
-    cur_plot <- seurat_clustering_plot(pbmc, global_data[[dataset]]$labels$cell, pi[global_data[[dataset]]$labels[[label]]])
+    cur_plot <- seurat_clustering_plot(pbmc, global_data[[dataset]]$labels$cell, pi[global_data[[dataset]]$labels[[label]]], paste(MAPPING_DATASET_NAMES[[dataset]], tool, sep=" "))
     ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", label, ".png", sep=""), cur_plot)
     ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", label, ".eps", sep=""), cur_plot)
 
@@ -220,7 +228,11 @@ for (dataset in dataset_found) {
   }
   # plot ground truth
   print("True labels")
-  cur_plot <- seurat_clustering_plot(pbmc, global_data[[dataset]]$labels$cell, pi[global_data[[dataset]]$labels$true_labels])
+  cur_plot <- seurat_clustering_plot(pbmc, 
+                                    global_data[[dataset]]$labels$cell, 
+                                    pi[global_data[[dataset]]$labels$true_labels], 
+                                    paste(MAPPING_DATASET_NAMES[[dataset]], "true_labels", sep=" ")
+                                    )
   ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", "true_labels", ".png", sep=""), cur_plot)
   ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", "true_labels", ".eps", sep=""), cur_plot)
   
@@ -229,7 +241,7 @@ for (dataset in dataset_found) {
 
 # Venn diagram
 for (dataset in dataset_found) {
-  plot_venn(global_data[[dataset]]$markers, paste(AGGREGATE_RESULT_DIR, dataset, "/", sep=""))
+  plot_venn(global_data[[dataset]]$markers, paste(AGGREGATE_RESULT_DIR, dataset, "/", sep=""), MAPPING_DATASET_NAMES[[dataset]])
 }
 
 # write enrichment results

@@ -9,16 +9,23 @@ PLOT CHE ABBIAMO:
 - pca (arcobaleno)
 - classificatore curve con feature crescenti
 
+TO ASK:
+5 fold cross val not stratified?
+F1 weighting
+
 TODO:
+- Plot clf scores: rivedere percentage
+- Mettere titoli venn, main="", pca + ggtitle()
+- Mettere tabelle dataset orizzontali e decidere descrizioni (species)
+- analizzare dati e scrivere risultati (caratteristiche dataset influiscono?)
 - titoli ai plot (nomi dei dataset)
 - nomi legende: dataset tag e tools? (venn)
 - colori del Set2
 - Scorriamo notebooks per filtering e pipeline specifiche
 - Citiamo cosa abbiamo fatto per ricavare le labels di peripheral
-- Plot PCA o altro dim reduction?
 - Confrontare plot sito tabula muris?
-- Slide con riferimenti ai tool alla fine
-- Allineamento clustering (limitazioni e assunzioni), definizioni metriche
+- Allineamento clustering (limitazioni e assunzioni), definizioni metriche (formule latex)
+- Descrivere meglio classificatore
 - 5 slides con: un plot PCA del ground truth + 5 sankey per ogni tool, poi decidiamo poi quale tenere
 - Istogrammi con scores
 - Citare plot con DE dei top genes (scorriamoli e vediamo se ci sono cose strane)
