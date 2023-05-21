@@ -9,11 +9,12 @@ from sklearn.metrics import f1_score
 from sklearn.model_selection import cross_val_predict
 import pickle
 
-DATASET_TAGS = ['tabula-muris-heart']#, 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'kumar-4-hard', 'kumar-8-hard']
-N_MARKERS = 5#0
+DATASET_TAGS = ['tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'zheng-4', 'zheng-8']
+# DATASET_TAGS = ['zheng-8']
+N_MARKERS = 50
 
 def apply_classifier(X, y):
-	clf = RandomForestClassifier(n_jobs=2)
+	clf = RandomForestClassifier(n_jobs=4)
 	y_pred = cross_val_predict(clf, X, y, cv=5)
 	f1 = f1_score(y, y_pred)
 	return f1
@@ -101,7 +102,7 @@ for dataset in DATASET_TAGS:
 	
 	# rank genes using recursive feature elimination
 	print("## Ranking genes with RFE and RF")
-	selector = RFE(RandomForestClassifier(), n_features_to_select=N_MARKERS, step=0.5)
+	selector = RFE(RandomForestClassifier(n_jobs=8), n_features_to_select=N_MARKERS, step=0.5)
 	cluster_features = {}
 	for cluster in clusters:
 		selector.fit(X_all, y_ovr[cluster])

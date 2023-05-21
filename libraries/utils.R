@@ -95,12 +95,12 @@ load_data <- function(data_dir, label_dir, channel) {
 } 
 
 # returns clustering plot with pca
-seurat_clustering_plot = function(seurat_obj, cell_col, label_col) {
+seurat_clustering_plot = function(seurat_obj, cell_col, label_col, dataset_name='') {
   pi = order(label_col)
   cell_col = cell_col[pi]
   label_col = label_col[pi]
   seurat_obj <- SetIdent(seurat_obj, cells = cell_col, label_col)
-  return (DimPlot(seurat_obj, reduction = "pca"))
+  return (DimPlot(seurat_obj, reduction = "pca") + ggtitle(dataset_name))
 }
 
 clustering_simple_scores = function(label_df, computed_label, true_label) {

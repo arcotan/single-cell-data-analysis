@@ -72,10 +72,32 @@ plotUMAP(gdumap, colour_by="label", text_by="label", text_color="red")
 ```{r}
 se.averaged = sumCountsAcrossCells(absce, clusters, exprs_values = "logcounts", average = TRUE)
 
+CLIP = 250
+
 library(pheatmap)
 averaged = assay(se.averaged)
-pheatmap(t(averaged - rowMeans(averaged)), breaks = seq(-3, 3, length.out = 101), kmeans_k = NA, cluster_cols = TRUE, cluster_rows = FALSE)
+hmap = pheatmap((averaged - rowMeans(averaged))[,c(2,4,10)], breaks = seq(-CLIP, CLIP, length.out = 101), kmeans_k = NA, cluster_cols = FALSE, cluster_rows = FALSE)
 table(clusters)
+ggsave(paste(outDataDir, "heatmap.png", sep=""), hmap)
+
+
+dir.create(paste(outDataDir, "heatmaps/", sep=""), recursive = TRUE, showWarnings = FALSE)
+comb = combn(1:length(unique(clusters)), 2)
+for(i in 1:ncol(comb)) {
+  ggsave(
+    paste(outDataDir, "heatmaps/hmap_", comb[1, i], "_", comb[2,i], ".png", sep=""),
+    pheatmap((averaged - rowMeans(averaged))[,comb[,i]], breaks = seq(-CLIP, CLIP, length.out = 101), kmeans_k = NA, cluster_cols = FALSE, cluster_rows = FALSE)
+  )
+}
+for(i in 1:length(unique(clusters))) {
+  ggsave(
+    paste(outDataDir, "heatmaps/hmap_", i, ".png", sep=""),
+    pheatmap((averaged - rowMeans(averaged))[,i], breaks = seq(-CLIP, CLIP, length.out = 101), kmeans_k = NA, cluster_cols = FALSE, cluster_rows = FALSE)
+  )
+}
+```
+
+```{r}
 ```
 
 ```{r}

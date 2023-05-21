@@ -83,9 +83,6 @@ if (file.exists(file_pos)){
 It is possible to obtain a cell clusterization based on the concept of uniformity of expression of the genes across the cells. That is the cluster satisfies the null hypothesis of the `COTAN` model: the genes expression is not dependent on the cell in consideration.
 
 ```{r eval=FALSE, include=TRUE}
-# TODO crash numero di dimensioni
-# TODO ppure da l'errore:
-# Error: 'VST.default' is not implemented yet
 # Distance default o distance='euclidean' ?
 if (file.exists(file.path(outDir, '/', "fineClusters.RDS"))){
     fineClusters <- readRDS(file.path(outDir, '/', "fineClusters.RDS"))
