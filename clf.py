@@ -10,6 +10,7 @@ from sklearn.model_selection import cross_val_predict
 import pickle
 
 DATASET_TAGS = ['tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'zheng-4', 'zheng-8']
+# DATASET_TAGS = ['zheng-8']
 N_MARKERS = 50
 
 def apply_classifier(X, y):

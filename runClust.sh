@@ -24,10 +24,16 @@ echo 'Starting Sankey Plots'
 ipython -c "%run sankey.ipynb"
 echo 'End Sankey Plots'
 
+echo 'Starting tabula muris heart markers'
+python3 tabula-muris-heart-markers.py
+end 'End tabula muris heart markers'
+
+echo 'Starting tabula muris heart markers'
+ipython -c "%run tabula-muris-heart-markers-hist.ipynb"
+end 'End tabula muris heart markers'
+
 echo 'Starting Cluster Scores Plots'
 ipython -c "%run cluster_scores_plot.ipynb"
 echo 'End Cluster Scores Plots'
 
-echo 'Starting tabula muris heart markers'
-python3 tabula-muris-heart-markers.py
-end 'End tabula muris heart markers'
+exit

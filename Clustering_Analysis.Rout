@@ -7,11 +7,9 @@ R è un software libero ed è rilasciato SENZA ALCUNA GARANZIA.
 Siamo ben lieti se potrai redistribuirlo, ma sotto certe condizioni.
 Scrivi 'license()' o 'licence()' per maggiori dettagli.
 
-  Natural language support but running in an English locale
-
-R is a collaborative project with many contributors.
-Type 'contributors()' for more information and
-'citation()' on how to cite R or R packages in publications.
+R è un progetto collaborativo con molti contributi esterni.
+Scrivi 'contributors()' per maggiori informazioni e 'citation()'
+per sapere come citare R o i pacchetti nelle pubblicazioni.
 
 Scrivi 'demo()' per una dimostrazione, 'help()' per la guida
 oppure 'help.start()' per la guida nel browser HTML.
@@ -76,6 +74,14 @@ Il seguente oggetto è mascherato da ‘package:dplyr’:
 > 
 > TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi-tools', 'COTAN')
 > DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'zheng-4', 'zheng-8')
+> # DATASET_TAGS= c('zheng-8')
+> MAPPING_DATASET_NAMES = list(
++   'tabula-muris-heart'= 'tabula muris heart',
++ 	'tabula-muris-marrow_P7_3'= 'tabula muris marrow',
++ 	'peripheal-blood'= 'PBMC TotalSeq',
++ 	'zheng-4'= 'zheng 4',
++ 	'zheng-8'= 'zheng 8'
++ )
 > 
 > RESULT_DIR = "./results/"
 > AGGREGATE_RESULT_DIR = paste(RESULT_DIR, "aggregate/", sep="")
@@ -301,30 +307,30 @@ Joining with `by = join_by(accuracy, entropy, purity, silhouette, tool)`
 +   print(colSums(is.na(global_data[[dataset]]$labels[,2:ncol(global_data[[dataset]]$labels)])))
 + }
 [1] "Dataset:  tabula-muris-heart"
-monocle_label  scanpy_label  seurat_label    scvi-tools_label   COTAN_label 
-            0             0             0             0             0 
-  true_labels 
-            0 
+   monocle_label     scanpy_label     seurat_label scvi-tools_label 
+               0                0                0                0 
+     COTAN_label      true_labels 
+               0                0 
 [1] "Dataset:  tabula-muris-marrow_P7_3"
-monocle_label  scanpy_label  seurat_label    scvi-tools_label   COTAN_label 
-            0             0             0             0             0 
-  true_labels 
-            0 
+   monocle_label     scanpy_label     seurat_label scvi-tools_label 
+               0                0                0                0 
+     COTAN_label      true_labels 
+               0                0 
 [1] "Dataset:  peripheal-blood"
-monocle_label  scanpy_label  seurat_label    scvi-tools_label   COTAN_label 
-            0             0             0             0             0 
-  true_labels 
-            0 
+   monocle_label     scanpy_label     seurat_label scvi-tools_label 
+               0                0                0                0 
+     COTAN_label      true_labels 
+               0                0 
 [1] "Dataset:  zheng-4"
-monocle_label  scanpy_label  seurat_label    scvi-tools_label   COTAN_label 
-            0             0             0             0             0 
-  true_labels 
-            0 
+   monocle_label     scanpy_label     seurat_label scvi-tools_label 
+               0                0                0                0 
+     COTAN_label      true_labels 
+               0                0 
 [1] "Dataset:  zheng-8"
-monocle_label  scanpy_label  seurat_label    scvi-tools_label   COTAN_label 
-            0             0             0             0             0 
-  true_labels 
-            0 
+   monocle_label     scanpy_label     seurat_label scvi-tools_label 
+               0                0                0                0 
+     COTAN_label      true_labels 
+               0                0 
 > 
 > # plot clustering and de and save results in eps format
 > for (dataset in dataset_found) {
@@ -348,7 +354,7 @@ monocle_label  scanpy_label  seurat_label    scvi-tools_label   COTAN_label
 +     print(paste("Tool: ", tool, sep=""))
 +     
 +     # plot clustering
-+     cur_plot <- seurat_clustering_plot(pbmc, global_data[[dataset]]$labels$cell, pi[global_data[[dataset]]$labels[[label]]])
++     cur_plot <- seurat_clustering_plot(pbmc, global_data[[dataset]]$labels$cell, pi[global_data[[dataset]]$labels[[label]]], paste(MAPPING_DATASET_NAMES[[dataset]], tool, sep=" "))
 +     ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", label, ".png", sep=""), cur_plot)
 +     ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", label, ".eps", sep=""), cur_plot)
 + 
@@ -357,7 +363,11 @@ monocle_label  scanpy_label  seurat_label    scvi-tools_label   COTAN_label
 +   }
 +   # plot ground truth
 +   print("True labels")
-+   cur_plot <- seurat_clustering_plot(pbmc, global_data[[dataset]]$labels$cell, pi[global_data[[dataset]]$labels$true_labels])
++   cur_plot <- seurat_clustering_plot(pbmc, 
++                                     global_data[[dataset]]$labels$cell, 
++                                     pi[global_data[[dataset]]$labels$true_labels], 
++                                     paste(MAPPING_DATASET_NAMES[[dataset]], "true_labels", sep=" ")
++                                     )
 +   ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", "true_labels", ".png", sep=""), cur_plot)
 +   ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", "true_labels", ".eps", sep=""), cur_plot)
 +   
@@ -378,37 +388,7 @@ Calculating feature variances of standardized and clipped values
 [----|----|----|----|----|----|----|----|----|----|
 **************************************************|
 Centering and scaling data matrix
-
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |=====                                                                 |   7%
-  |                                                                            
-  |==========                                                            |  14%
-  |                                                                            
-  |===============                                                       |  21%
-  |                                                                            
-  |====================                                                  |  29%
-  |                                                                            
-  |=========================                                             |  36%
-  |                                                                            
-  |==============================                                        |  43%
-  |                                                                            
-  |===================================                                   |  50%
-  |                                                                            
-  |========================================                              |  57%
-  |                                                                            
-  |=============================================                         |  64%
-  |                                                                            
-  |==================================================                    |  71%
-  |                                                                            
-  |=======================================================               |  79%
-  |                                                                            
-  |============================================================          |  86%
-  |                                                                            
-  |=================================================================     |  93%
-  |                                                                            
-  |======================================================================| 100%
+  |                                                                              |                                                                      |   0%  |                                                                              |=====                                                                 |   7%  |                                                                              |==========                                                            |  14%  |                                                                              |===============                                                       |  21%  |                                                                              |====================                                                  |  29%  |                                                                              |=========================                                             |  36%  |                                                                              |==============================                                        |  43%  |                                                                              |===================================                                   |  50%  |                                                                              |========================================                              |  57%  |                                                                              |=============================================                         |  64%  |                                                                              |==================================================                    |  71%  |                                                                              |=======================================================               |  79%  |                                                                              |============================================================          |  86%  |                                                                              |=================================================================     |  93%  |                                                                              |======================================================================| 100%
 PC_ 1 
 Positive:  Lyz1, Ctss, Alox5ap, Lyz2, Csf1r, Laptm5, Tyrobp, Fcgr3, Fcer1g, C1qc 
 	   C1qb, Ctsc, Cd68, Lcp1, Aif1, C1qa, Mrc1, Clec4a2, Ly86, Sfpi1 
@@ -565,40 +545,40 @@ Saving 7 x 7 in image
 Saving 7 x 7 in image
 Saving 7 x 7 in image
 [1] "Class: 1"
-        gene cluster rank tool
-851   Laptm5       1    1 scvi-tools
-852     Cd53       1    2 scvi-tools
-853     Cd52       1    3 scvi-tools
-854 Sh3bgrl3       1    4 scvi-tools
-855     Rac2       1    5 scvi-tools
+       gene cluster rank       tool
+851  Laptm5       1    1 scvi-tools
+852    Cd84       1    2 scvi-tools
+853    Cd52       1    3 scvi-tools
+854  Fcer1g       1    4 scvi-tools
+855 Cyp4f18       1    5 scvi-tools
 [1] "Class: 2"
-      gene cluster rank tool
-951 Cox6a2       2    1 scvi-tools
-952  Tnnt2       2    2 scvi-tools
-953   Nppa       2    3 scvi-tools
-954  Tnni3       2    4 scvi-tools
-955   Myl4       2    5 scvi-tools
+      gene cluster rank       tool
+951   Nrap       2    1 scvi-tools
+952  Ckmt2       2    2 scvi-tools
+953  Cox8b       2    3 scvi-tools
+954   Nppb       2    4 scvi-tools
+955 Cox6a2       2    5 scvi-tools
 [1] "Class: 3"
-      gene cluster rank tool
-901   Npr3       3    1 scvi-tools
-902 Tm4sf1       3    2 scvi-tools
-903    Cpe       3    3 scvi-tools
-904  Cgnl1       3    4 scvi-tools
-905    Eng       3    5 scvi-tools
+     gene cluster rank       tool
+901  Npr3       3    1 scvi-tools
+902 Gpm6a       3    2 scvi-tools
+903   H19       3    3 scvi-tools
+904   Vwf       3    4 scvi-tools
+905 Ptgs1       3    5 scvi-tools
 [1] "Class: 4"
-     gene cluster rank tool
-801 Fabp4       4    1 scvi-tools
-802  Cd36       4    2 scvi-tools
-803 Ly6c1       4    3 scvi-tools
-804  Cdh5       4    4 scvi-tools
-805  Cav1       4    5 scvi-tools
+       gene cluster rank       tool
+801 Gpihbp1       4    1 scvi-tools
+802   Timp4       4    2 scvi-tools
+803    Nepn       4    3 scvi-tools
+804   Ly6c1       4    4 scvi-tools
+805    Cdh5       4    5 scvi-tools
 [1] "Class: 5"
-        gene cluster rank tool
-751      Gsn       5    1 scvi-tools
-752    Plac9       5    2 scvi-tools
-753   Col1a2       5    3 scvi-tools
-754 Serping1       5    4 scvi-tools
-755     Lhfp       5    5 scvi-tools
+        gene cluster rank       tool
+751   Clec3b       5    1 scvi-tools
+752   Col3a1       5    2 scvi-tools
+753      Lum       5    3 scvi-tools
+754     Lhfp       5    4 scvi-tools
+755 Serping1       5    5 scvi-tools
 Saving 7 x 7 in image
 [1] "Tool: COTAN"
 Saving 7 x 7 in image
@@ -658,37 +638,7 @@ Calculating feature variances of standardized and clipped values
 [----|----|----|----|----|----|----|----|----|----|
 **************************************************|
 Centering and scaling data matrix
-
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |=====                                                                 |   7%
-  |                                                                            
-  |==========                                                            |  14%
-  |                                                                            
-  |===============                                                       |  21%
-  |                                                                            
-  |====================                                                  |  29%
-  |                                                                            
-  |=========================                                             |  36%
-  |                                                                            
-  |==============================                                        |  43%
-  |                                                                            
-  |===================================                                   |  50%
-  |                                                                            
-  |========================================                              |  57%
-  |                                                                            
-  |=============================================                         |  64%
-  |                                                                            
-  |==================================================                    |  71%
-  |                                                                            
-  |=======================================================               |  79%
-  |                                                                            
-  |============================================================          |  86%
-  |                                                                            
-  |=================================================================     |  93%
-  |                                                                            
-  |======================================================================| 100%
+  |                                                                              |                                                                      |   0%  |                                                                              |=====                                                                 |   7%  |                                                                              |==========                                                            |  14%  |                                                                              |===============                                                       |  21%  |                                                                              |====================                                                  |  29%  |                                                                              |=========================                                             |  36%  |                                                                              |==============================                                        |  43%  |                                                                              |===================================                                   |  50%  |                                                                              |========================================                              |  57%  |                                                                              |=============================================                         |  64%  |                                                                              |==================================================                    |  71%  |                                                                              |=======================================================               |  79%  |                                                                              |============================================================          |  86%  |                                                                              |=================================================================     |  93%  |                                                                              |======================================================================| 100%
 PC_ 1 
 Positive:  Ptma, Hmgb1, Snrpf, Hsp90aa1, Erh, Rps2, Ran, Tubb5, Serbp1, Npm1 
 	   Rpl36a, Rpl10a, Rpl14, Ncl, Ranbp1, Hsp90ab1, Rpl12, Set, Slc25a5, Tuba1b 
@@ -1034,103 +984,103 @@ Saving 7 x 7 in image
 Saving 7 x 7 in image
 Saving 7 x 7 in image
 [1] "Class: 1"
-       gene cluster rank tool
-2701  Mcpt8       1    1 scvi-tools
-2702   Cpa3       1    2 scvi-tools
-2703  Gata2       1    3 scvi-tools
-2704   Cd63       1    4 scvi-tools
-2705 Fcer1a       1    5 scvi-tools
+        gene cluster rank       tool
+2751  Prss34       1    1 scvi-tools
+2752   Mcpt8       1    2 scvi-tools
+2753  Fcer1a       1    3 scvi-tools
+2754   Gata2       1    4 scvi-tools
+2755 Cd200r3       1    5 scvi-tools
 [1] "Class: 2"
-        gene cluster rank tool
-2451  Retnlg       2    1 scvi-tools
-2452 S100a11       2    2 scvi-tools
-2453    Mmp9       2    3 scvi-tools
-2454    Mmp8       2    4 scvi-tools
-2455  S100a6       2    5 scvi-tools
+        gene cluster rank       tool
+2551   Elane       2    1 scvi-tools
+2552   Prtn3       2    2 scvi-tools
+2553 Hsd17b1       2    3 scvi-tools
+2554     Mpo       2    4 scvi-tools
+2555   Ms4a3       2    5 scvi-tools
 [1] "Class: 3"
-       gene cluster rank tool
-2551 Beta-s       3    1 scvi-tools
-2552 Hba-a2       3    2 scvi-tools
-2553 Hbb-b1       3    3 scvi-tools
-2554   Bpgm       3    4 scvi-tools
-2555 Hbb-b2       3    5 scvi-tools
+       gene cluster rank       tool
+2501    Pf4       3    1 scvi-tools
+2502 Hbb-b2       3    2 scvi-tools
+2503   Snca       3    3 scvi-tools
+2504 Hba-a2       3    4 scvi-tools
+2505   Bpgm       3    5 scvi-tools
 [1] "Class: 4"
-       gene cluster rank tool
-2751 Txndc5       4    1 scvi-tools
-2752  Pdia4       4    2 scvi-tools
-2753   Ssr4       4    3 scvi-tools
-2754  Spcs1       4    4 scvi-tools
-2755 Creld2       4    5 scvi-tools
+       gene cluster rank       tool
+2701 Gm5483       4    1 scvi-tools
+2702 Retnlg       4    2 scvi-tools
+2703 Asprv1       4    3 scvi-tools
+2704  Il1f9       4    4 scvi-tools
+2705  Prok2       4    5 scvi-tools
 [1] "Class: 5"
-              gene cluster rank tool
-2201        Ifitm6       5    1 scvi-tools
-2202           Ltf       5    2 scvi-tools
-2203      AA467197       5    3 scvi-tools
-2204 1100001G20Rik       5    4 scvi-tools
-2205        S100a8       5    5 scvi-tools
+              gene cluster rank       tool
+2101           Ltf       5    1 scvi-tools
+2102 1100001G20Rik       5    2 scvi-tools
+2103          Lcn2       5    3 scvi-tools
+2104           Ngp       5    4 scvi-tools
+2105      AA467197       5    5 scvi-tools
 [1] "Class: 6"
-       gene cluster rank tool
-2251  Hmgn2       6    1 scvi-tools
-2252 Chi3l3       6    2 scvi-tools
-2253   Camp       6    3 scvi-tools
-2254    Ngp       6    4 scvi-tools
-2255  Cebpe       6    5 scvi-tools
+       gene cluster rank       tool
+2201    Ngp       6    1 scvi-tools
+2202   Camp       6    2 scvi-tools
+2203 Chi3l3       6    3 scvi-tools
+2204   Orm1       6    4 scvi-tools
+2205   Lcn2       6    5 scvi-tools
 [1] "Class: 7"
-       gene cluster rank tool
-2501  Elane       7    1 scvi-tools
-2502  Ms4a3       7    2 scvi-tools
-2503  Prtn3       7    3 scvi-tools
-2504    Mpo       7    4 scvi-tools
-2505 Prss57       7    5 scvi-tools
+         gene cluster rank       tool
+2401     Bex6       7    1 scvi-tools
+2402     Flt3       7    2 scvi-tools
+2403     Cd34       7    3 scvi-tools
+2404      Mn1       7    4 scvi-tools
+2405 Serpinf1       7    5 scvi-tools
 [1] "Class: 8"
-      gene cluster rank tool
-2651 Cd79a       8    1 scvi-tools
-2652  Cd74       8    2 scvi-tools
-2653 Ms4a1       8    3 scvi-tools
-2654 Faim3       8    4 scvi-tools
-2655  Ly6d       8    5 scvi-tools
+              gene cluster rank       tool
+2601         Faim3       8    1 scvi-tools
+2602         Ms4a1       8    2 scvi-tools
+2603          Cd74       8    3 scvi-tools
+2604 2010001M09Rik       8    4 scvi-tools
+2605         Cd79a       8    5 scvi-tools
 [1] "Class: 9"
-        gene cluster rank tool
-2351 Chchd10       9    1 scvi-tools
-2352  Vpreb3       9    2 scvi-tools
-2353    Ptma       9    3 scvi-tools
-2354 Ptprcap       9    4 scvi-tools
-2355   Cd79a       9    5 scvi-tools
+              gene cluster rank       tool
+2301        Vpreb3       9    1 scvi-tools
+2302          Myl4       9    2 scvi-tools
+2303         Enpep       9    3 scvi-tools
+2304 6030408B16Rik       9    4 scvi-tools
+2305         Igll1       9    5 scvi-tools
 [1] "Class: 10"
-        gene cluster rank tool
-2401    Bst2      10    1 scvi-tools
-2402 Siglech      10    2 scvi-tools
-2403    Tcf4      10    3 scvi-tools
-2404    Irf8      10    4 scvi-tools
-2405   Rpl31      10    5 scvi-tools
+        gene cluster rank       tool
+2451 Siglech      10    1 scvi-tools
+2452    Klk1      10    2 scvi-tools
+2453  Cox6a2      10    3 scvi-tools
+2454    Grm8      10    4 scvi-tools
+2455   Nrxn2      10    5 scvi-tools
 [1] "Class: 11"
-        gene cluster rank tool
-2101    Ctss      11    1 scvi-tools
-2102  Ifitm3      11    2 scvi-tools
-2103 Gm11428      11    3 scvi-tools
-2104    Npc2      11    4 scvi-tools
-2105    Ccr2      11    5 scvi-tools
+             gene cluster rank       tool
+2151 LOC100038947      11    1 scvi-tools
+2152       S100a4      11    2 scvi-tools
+2153         Ccl2      11    3 scvi-tools
+2154     Ccdc109b      11    4 scvi-tools
+2155          Fn1      11    5 scvi-tools
 [1] "Class: 12"
-       gene cluster rank tool
-2301  Prdx2      12    1 scvi-tools
-2302   Car2      12    2 scvi-tools
-2303   Hmbs      12    3 scvi-tools
-2304 Metap2      12    4 scvi-tools
-2305    Rhd      12    5 scvi-tools
+       gene cluster rank       tool
+2251   Car2      12    1 scvi-tools
+2252   Ctse      12    2 scvi-tools
+2253   Gypa      12    3 scvi-tools
+2254 Trim10      12    4 scvi-tools
+2255  Ermap      12    5 scvi-tools
 [1] "Class: 13"
-      gene cluster rank tool
-2151 H2afy      13    1 scvi-tools
-2152 Hint1      13    2 scvi-tools
-2153  Ppia      13    3 scvi-tools
-2154  Ptma      13    4 scvi-tools
-2155 Stmn1      13    5 scvi-tools
+         gene cluster rank       tool
+2351     Nrg1      13    1 scvi-tools
+2352 Ccdc109b      13    2 scvi-tools
+2353   S100a4      13    3 scvi-tools
+2354    F13a1      13    4 scvi-tools
+2355   Ms4a6c      13    5 scvi-tools
 [1] "Class: 14"
-         gene cluster rank tool
-2601 AW112010      14    1 scvi-tools
-2602    Rplp1      14    2 scvi-tools
-2603   Rps15a      14    3 scvi-tools
-2604    Uba52      14    4 scvi-tools
-2605    Rps24      14    5 scvi-tools
+       gene cluster rank       tool
+2651   Ccl5      14    1 scvi-tools
+2652   Cd3g      14    2 scvi-tools
+2653   Cd3e      14    3 scvi-tools
+2654 Gm4956      14    4 scvi-tools
+2655   Tcf7      14    5 scvi-tools
 Saving 7 x 7 in image
 [1] "Tool: COTAN"
 Saving 7 x 7 in image
@@ -1253,47 +1203,7 @@ Calculating feature variances of standardized and clipped values
 [----|----|----|----|----|----|----|----|----|----|
 **************************************************|
 Centering and scaling data matrix
-
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |====                                                                  |   5%
-  |                                                                            
-  |=======                                                               |  11%
-  |                                                                            
-  |===========                                                           |  16%
-  |                                                                            
-  |===============                                                       |  21%
-  |                                                                            
-  |==================                                                    |  26%
-  |                                                                            
-  |======================                                                |  32%
-  |                                                                            
-  |==========================                                            |  37%
-  |                                                                            
-  |=============================                                         |  42%
-  |                                                                            
-  |=================================                                     |  47%
-  |                                                                            
-  |=====================================                                 |  53%
-  |                                                                            
-  |=========================================                             |  58%
-  |                                                                            
-  |============================================                          |  63%
-  |                                                                            
-  |================================================                      |  68%
-  |                                                                            
-  |====================================================                  |  74%
-  |                                                                            
-  |=======================================================               |  79%
-  |                                                                            
-  |===========================================================           |  84%
-  |                                                                            
-  |===============================================================       |  89%
-  |                                                                            
-  |==================================================================    |  95%
-  |                                                                            
-  |======================================================================| 100%
+  |                                                                              |                                                                      |   0%  |                                                                              |====                                                                  |   5%  |                                                                              |=======                                                               |  11%  |                                                                              |===========                                                           |  16%  |                                                                              |===============                                                       |  21%  |                                                                              |==================                                                    |  26%  |                                                                              |======================                                                |  32%  |                                                                              |==========================                                            |  37%  |                                                                              |=============================                                         |  42%  |                                                                              |=================================                                     |  47%  |                                                                              |=====================================                                 |  53%  |                                                                              |=========================================                             |  58%  |                                                                              |============================================                          |  63%  |                                                                              |================================================                      |  68%  |                                                                              |====================================================                  |  74%  |                                                                              |=======================================================               |  79%  |                                                                              |===========================================================           |  84%  |                                                                              |===============================================================       |  89%  |                                                                              |==================================================================    |  95%  |                                                                              |======================================================================| 100%
 PC_ 1 
 Positive:  MALAT1, TRBC2, CD3D, TRAC, LTB, CD3G, IL32, IL7R, CD69, TCF7 
 	   CD7, CD247, CD2, TRBC1, CD27, BCL11B, SPOCK2, SYNE2, ISG20, RASGRP1 
@@ -1576,82 +1486,82 @@ Saving 7 x 7 in image
 Saving 7 x 7 in image
 Saving 7 x 7 in image
 [1] "Class: 1"
-      gene cluster rank tool
-1651 RPS3A       1    1 scvi-tools
-1652 RPL32       1    2 scvi-tools
-1653 RPL30       1    3 scvi-tools
-1654 RPS13       1    4 scvi-tools
-1655  RPS6       1    5 scvi-tools
+        gene cluster rank       tool
+1651     NOG       1    1 scvi-tools
+1652   LRRN3       1    2 scvi-tools
+1653  CD40LG       1    3 scvi-tools
+1654 TRABD2A       1    4 scvi-tools
+1655    CCR7       1    5 scvi-tools
 [1] "Class: 2"
-     gene cluster rank tool
-1901 CCL5       2    1 scvi-tools
-1902 NKG7       2    2 scvi-tools
-1903 CST7       2    3 scvi-tools
-1904 GZMA       2    4 scvi-tools
-1905  B2M       2    5 scvi-tools
+      gene cluster rank       tool
+1901  NKG7       2    1 scvi-tools
+1902  CD8A       2    2 scvi-tools
+1903 DTHD1       2    3 scvi-tools
+1904  GZMH       2    4 scvi-tools
+1905  CCL5       2    5 scvi-tools
 [1] "Class: 3"
-     gene cluster rank tool
-1751 IL32       3    1 scvi-tools
-1752 IL7R       3    2 scvi-tools
-1753 TRAC       3    3 scvi-tools
-1754  LTB       3    4 scvi-tools
-1755  B2M       3    5 scvi-tools
+      gene cluster rank       tool
+1751  GZMK       3    1 scvi-tools
+1752  IL32       3    2 scvi-tools
+1753  IL7R       3    3 scvi-tools
+1754 KLRB1       3    4 scvi-tools
+1755  TRAC       3    5 scvi-tools
 [1] "Class: 4"
-       gene cluster rank tool
-2151 CLEC9A       4    1 scvi-tools
-2152   IDO1       4    2 scvi-tools
-2153  RAB7B       4    3 scvi-tools
-2154   SNX3       4    4 scvi-tools
-2155   CD74       4    5 scvi-tools
+       gene cluster rank       tool
+2151  LAMP5       4    1 scvi-tools
+2152  EPHA2       4    2 scvi-tools
+2153 SCARA5       4    3 scvi-tools
+2154 LILRA4       4    4 scvi-tools
+2155 KCNK10       4    5 scvi-tools
 [1] "Class: 5"
-         gene cluster rank tool
-2051     CD74       5    1 scvi-tools
-2052   FCER1A       5    2 scvi-tools
-2053 HLA-DPA1       5    3 scvi-tools
-2054 HLA-DRB1       5    4 scvi-tools
-2055 HLA-DPB1       5    5 scvi-tools
+       gene cluster rank       tool
+2001   EREG       5    1 scvi-tools
+2002  VSIG4       5    2 scvi-tools
+2003   ENHO       5    3 scvi-tools
+2004 FCER1A       5    4 scvi-tools
+2005   PKIB       5    5 scvi-tools
 [1] "Class: 6"
-         gene cluster rank tool
-1951    MS4A1       6    1 scvi-tools
-1952    CD79A       6    2 scvi-tools
-1953    BANK1       6    3 scvi-tools
-1954    CD79B       6    4 scvi-tools
-1955 HLA-DQA1       6    5 scvi-tools
+          gene cluster rank       tool
+1801     IGLC3       6    1 scvi-tools
+1802     IGLC2       6    2 scvi-tools
+1803      IGKC       6    3 scvi-tools
+1804     CD79A       6    4 scvi-tools
+1805 LINC01857       6    5 scvi-tools
 [1] "Class: 7"
-      gene cluster rank tool
-1701 NEAT1       7    1 scvi-tools
-1702  PSAP       7    2 scvi-tools
-1703  CPVL       7    3 scvi-tools
-1704  FGL2       7    4 scvi-tools
-1705  FTH1       7    5 scvi-tools
+        gene cluster rank       tool
+1701  S100A9       7    1 scvi-tools
+1702  S100A8       7    2 scvi-tools
+1703     LYZ       7    3 scvi-tools
+1704 S100A12       7    4 scvi-tools
+1705    FCN1       7    5 scvi-tools
 [1] "Class: 8"
-     gene cluster rank tool
-1851 GNLY       8    1 scvi-tools
-1852 NKG7       8    2 scvi-tools
-1853 PRF1       8    3 scvi-tools
-1854 CTSW       8    4 scvi-tools
-1855 CST7       8    5 scvi-tools
+       gene cluster rank       tool
+1851   GNLY       8    1 scvi-tools
+1852   NKG7       8    2 scvi-tools
+1853 FGFBP2       8    3 scvi-tools
+1854  KLRC2       8    4 scvi-tools
+1855   PRF1       8    5 scvi-tools
 [1] "Class: 9"
-        gene cluster rank tool
-1801  S100A8       9    1 scvi-tools
-1802  S100A9       9    2 scvi-tools
-1803  S100A6       9    3 scvi-tools
-1804 S100A12       9    4 scvi-tools
-1805    MNDA       9    5 scvi-tools
+       gene cluster rank       tool
+2051 S100A9       9    1 scvi-tools
+2052    LYZ       9    2 scvi-tools
+2053 S100A8       9    3 scvi-tools
+2054   FCN1       9    4 scvi-tools
+2055   CD14       9    5 scvi-tools
 [1] "Class: 10"
-      gene cluster rank tool
-2001  IGHM      10    1 scvi-tools
-2002  IGHD      10    2 scvi-tools
-2003  CD37      10    3 scvi-tools
-2004 CD79A      10    4 scvi-tools
-2005 CD79B      10    5 scvi-tools
+       gene cluster rank       tool
+2101   CD8A      10    1 scvi-tools
+2102   CD8B      10    2 scvi-tools
+2103   TRDC      10    3 scvi-tools
+2104 SPINK2      10    4 scvi-tools
+2105  NELL2      10    5 scvi-tools
 [1] "Class: 11"
-       gene cluster rank tool
-2101   LST1      11    1 scvi-tools
-2102 FCGR3A      11    2 scvi-tools
-2103  COTL1      11    3 scvi-tools
-2104 SMIM25      11    4 scvi-tools
-2105 FCER1G      11    5 scvi-tools
+       gene cluster rank       tool
+1951   C1QA      11    1 scvi-tools
+1952  LYPD2      11    2 scvi-tools
+1953 KCNMA1      11    3 scvi-tools
+1954   FCN1      11    4 scvi-tools
+1955   CST3      11    5 scvi-tools
 Saving 7 x 7 in image
 [1] "Tool: COTAN"
 Saving 7 x 7 in image
@@ -1753,35 +1663,7 @@ Calculating feature variances of standardized and clipped values
 [----|----|----|----|----|----|----|----|----|----|
 **************************************************|
 Centering and scaling data matrix
-
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |=====                                                                 |   8%
-  |                                                                            
-  |===========                                                           |  15%
-  |                                                                            
-  |================                                                      |  23%
-  |                                                                            
-  |======================                                                |  31%
-  |                                                                            
-  |===========================                                           |  38%
-  |                                                                            
-  |================================                                      |  46%
-  |                                                                            
-  |======================================                                |  54%
-  |                                                                            
-  |===========================================                           |  62%
-  |                                                                            
-  |================================================                      |  69%
-  |                                                                            
-  |======================================================                |  77%
-  |                                                                            
-  |===========================================================           |  85%
-  |                                                                            
-  |=================================================================     |  92%
-  |                                                                            
-  |======================================================================| 100%
+  |                                                                              |                                                                      |   0%  |                                                                              |=====                                                                 |   8%  |                                                                              |===========                                                           |  15%  |                                                                              |================                                                      |  23%  |                                                                              |======================                                                |  31%  |                                                                              |===========================                                           |  38%  |                                                                              |================================                                      |  46%  |                                                                              |======================================                                |  54%  |                                                                              |===========================================                           |  62%  |                                                                              |================================================                      |  69%  |                                                                              |======================================================                |  77%  |                                                                              |===========================================================           |  85%  |                                                                              |=================================================================     |  92%  |                                                                              |======================================================================| 100%
 PC_ 1 
 Positive:  LTB, CD52, RPS18, CD3E, CD3D, MALAT1, ARHGDIB, LDHB, B2M, IL32 
 	   CD7, CD27, CD8B, NOSIP, JUNB, CD79A, CD37, CTSW, CD79B, FLT3LG 
@@ -1917,33 +1799,33 @@ Saving 7 x 7 in image
 Saving 7 x 7 in image
 Saving 7 x 7 in image
 [1] "Class: 1"
-        gene cluster rank tool
-651     CD74       1    1 scvi-tools
-652    CD79A       1    2 scvi-tools
-653    CD79B       1    3 scvi-tools
-654  HLA-DRA       1    4 scvi-tools
-655 HLA-DPA1       1    5 scvi-tools
+        gene cluster rank       tool
+651     CD19       1    1 scvi-tools
+652    FCRLA       1    2 scvi-tools
+653 PPP1R14A       1    3 scvi-tools
+654    IGLL5       1    4 scvi-tools
+655   VPREB3       1    5 scvi-tools
 [1] "Class: 2"
-      gene cluster rank tool
-701    FTL       2    1 scvi-tools
-702 S100A9       2    2 scvi-tools
-703 TYROBP       2    3 scvi-tools
-704 S100A4       2    4 scvi-tools
-705 S100A8       2    5 scvi-tools
+             gene cluster rank       tool
+751          FPR1       2    1 scvi-tools
+752          FCN1       2    2 scvi-tools
+753        MS4A6A       2    3 scvi-tools
+754 RP11-290F20.3       2    4 scvi-tools
+755          CST3       2    5 scvi-tools
 [1] "Class: 3"
-    gene cluster rank tool
-601  B2M       3    1 scvi-tools
-602 CD3E       3    2 scvi-tools
-603 CD3D       3    3 scvi-tools
-604 IL32       3    4 scvi-tools
-605 LDHB       3    5 scvi-tools
+             gene cluster rank       tool
+601 RP11-291B21.2       3    1 scvi-tools
+602          CD8B       3    2 scvi-tools
+603         S100B       3    3 scvi-tools
+604          CD8A       3    4 scvi-tools
+605          CPA5       3    5 scvi-tools
 [1] "Class: 4"
-        gene cluster rank tool
-751 HLA-DPA1       4    1 scvi-tools
-752 HLA-DPB1       4    2 scvi-tools
-753  HLA-DRA       4    3 scvi-tools
-754     CST3       4    4 scvi-tools
-755     CPVL       4    5 scvi-tools
+       gene cluster rank       tool
+701   TIGIT       4    1 scvi-tools
+702 TNFRSF4       4    2 scvi-tools
+703   GATA3       4    3 scvi-tools
+704    IL32       4    4 scvi-tools
+705     MAL       4    5 scvi-tools
 Saving 7 x 7 in image
 [1] "Tool: COTAN"
 Saving 7 x 7 in image
@@ -1996,35 +1878,7 @@ Calculating feature variances of standardized and clipped values
 [----|----|----|----|----|----|----|----|----|----|
 **************************************************|
 Centering and scaling data matrix
-
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |=====                                                                 |   8%
-  |                                                                            
-  |===========                                                           |  15%
-  |                                                                            
-  |================                                                      |  23%
-  |                                                                            
-  |======================                                                |  31%
-  |                                                                            
-  |===========================                                           |  38%
-  |                                                                            
-  |================================                                      |  46%
-  |                                                                            
-  |======================================                                |  54%
-  |                                                                            
-  |===========================================                           |  62%
-  |                                                                            
-  |================================================                      |  69%
-  |                                                                            
-  |======================================================                |  77%
-  |                                                                            
-  |===========================================================           |  85%
-  |                                                                            
-  |=================================================================     |  92%
-  |                                                                            
-  |======================================================================| 100%
+  |                                                                              |                                                                      |   0%  |                                                                              |=====                                                                 |   8%  |                                                                              |===========                                                           |  15%  |                                                                              |================                                                      |  23%  |                                                                              |======================                                                |  31%  |                                                                              |===========================                                           |  38%  |                                                                              |================================                                      |  46%  |                                                                              |======================================                                |  54%  |                                                                              |===========================================                           |  62%  |                                                                              |================================================                      |  69%  |                                                                              |======================================================                |  77%  |                                                                              |===========================================================           |  85%  |                                                                              |=================================================================     |  92%  |                                                                              |======================================================================| 100%
 PC_ 1 
 Positive:  CST3, S100A9, LYZ, S100A8, FCN1, HLA-DRB1, AIF1, LST1, TYMP, HLA-DRB5 
 	   CFD, GPX1, FTL, TMEM176B, CD14, HLA-DRA, PSAP, FTH1, LGALS2, CD74 
@@ -2244,61 +2098,61 @@ Saving 7 x 7 in image
 Saving 7 x 7 in image
 Saving 7 x 7 in image
 [1] "Class: 1"
-         gene cluster rank tool
-1401     CD74       1    1 scvi-tools
-1402  HLA-DRA       1    2 scvi-tools
-1403    CD79A       1    3 scvi-tools
-1404 HLA-DPA1       1    4 scvi-tools
-1405    CD79B       1    5 scvi-tools
+          gene cluster rank       tool
+1401      BLNK       1    1 scvi-tools
+1402     FCER2       1    2 scvi-tools
+1403    VPREB3       1    3 scvi-tools
+1404 LINC00926       1    4 scvi-tools
+1405       BLK       1    5 scvi-tools
 [1] "Class: 2"
-       gene cluster rank tool
-1351    FTL       2    1 scvi-tools
-1352 S100A8       2    2 scvi-tools
-1353 S100A9       2    3 scvi-tools
-1354   FTH1       2    4 scvi-tools
-1355   CST3       2    5 scvi-tools
+       gene cluster rank       tool
+1301 S100A8       2    1 scvi-tools
+1302  RAB32       2    2 scvi-tools
+1303   FCN1       2    3 scvi-tools
+1304    CDA       2    4 scvi-tools
+1305  IGSF6       2    5 scvi-tools
 [1] "Class: 3"
-         gene cluster rank tool
-1551   CLEC9A       3    1 scvi-tools
-1552 HLA-DPA1       3    2 scvi-tools
-1553 HLA-DPB1       3    3 scvi-tools
-1554  HLA-DRA       3    4 scvi-tools
-1555 HLA-DQA1       3    5 scvi-tools
+      gene cluster rank       tool
+1501 SIRPG       3    1 scvi-tools
+1502  CCR7       3    2 scvi-tools
+1503  LEF1       3    3 scvi-tools
+1504   MAL       3    4 scvi-tools
+1505 CAMK4       3    5 scvi-tools
 [1] "Class: 4"
-       gene cluster rank tool
-1301   GNLY       4    1 scvi-tools
-1302   NKG7       4    2 scvi-tools
-1303   CST7       4    3 scvi-tools
-1304   GZMA       4    4 scvi-tools
-1305 MALAT1       4    5 scvi-tools
+       gene cluster rank       tool
+1251  KLRC1       4    1 scvi-tools
+1252   GZMB       4    2 scvi-tools
+1253  FCRL6       4    3 scvi-tools
+1254 PRSS23       4    4 scvi-tools
+1255   GZMH       4    5 scvi-tools
 [1] "Class: 5"
-     gene cluster rank tool
-1251 IL32       5    1 scvi-tools
-1252  LTB       5    2 scvi-tools
-1253 IL7R       5    3 scvi-tools
-1254  B2M       5    4 scvi-tools
-1255  VIM       5    5 scvi-tools
+              gene cluster rank       tool
+1201 RP11-403A21.2       5    1 scvi-tools
+1202       TNFRSF4       5    2 scvi-tools
+1203          CCL5       5    3 scvi-tools
+1204          CISH       5    4 scvi-tools
+1205          FUT7       5    5 scvi-tools
 [1] "Class: 6"
-       gene cluster rank tool
-1451   CD8B       6    1 scvi-tools
-1452  RPL32       6    2 scvi-tools
-1453  RPS12       6    3 scvi-tools
-1454  RPL31       6    4 scvi-tools
-1455 RPS15A       6    5 scvi-tools
+              gene cluster rank       tool
+1451          CD8A       6    1 scvi-tools
+1452 RP11-291B21.2       6    2 scvi-tools
+1453          CD8B       6    3 scvi-tools
+1454         S100B       6    4 scvi-tools
+1455          CPA5       6    5 scvi-tools
 [1] "Class: 7"
-       gene cluster rank tool
-1201   RPL3       7    1 scvi-tools
-1202   RPS6       7    2 scvi-tools
-1203   RPL4       7    3 scvi-tools
-1204  RPL10       7    4 scvi-tools
-1205 EEF1A1       7    5 scvi-tools
+             gene cluster rank       tool
+1351         LEF1       7    1 scvi-tools
+1352         CCR7       7    2 scvi-tools
+1353          MAL       7    3 scvi-tools
+1354        EPHX2       7    4 scvi-tools
+1355 RP11-18H21.1       7    5 scvi-tools
 [1] "Class: 8"
-        gene cluster rank tool
-1501    IL32       8    1 scvi-tools
-1502     B2M       8    2 scvi-tools
-1503   HLA-A       8    3 scvi-tools
-1504    ACTB       8    4 scvi-tools
-1505 ARHGDIB       8    5 scvi-tools
+               gene cluster rank       tool
+1551          FANK1       8    1 scvi-tools
+1552          CCR10       8    2 scvi-tools
+1553 RP11-1399P15.1       8    3 scvi-tools
+1554          IL2RA       8    4 scvi-tools
+1555          TIGIT       8    5 scvi-tools
 Saving 7 x 7 in image
 [1] "Tool: COTAN"
 Saving 7 x 7 in image
@@ -2367,7 +2221,7 @@ Saving 7 x 7 in image
 > 
 > # Venn diagram
 > for (dataset in dataset_found) {
-+   plot_venn(global_data[[dataset]]$markers, paste(AGGREGATE_RESULT_DIR, dataset, "/", sep=""))
++   plot_venn(global_data[[dataset]]$markers, paste(AGGREGATE_RESULT_DIR, dataset, "/", sep=""), MAPPING_DATASET_NAMES[[dataset]])
 + }
 > 
 > # write enrichment results
@@ -2385,12 +2239,20 @@ Saving 7 x 7 in image
 +     write_enrichment_result(global_data[[dataset]]$markers, DATASET_TAG_TO_ENRICHER_DIR[[dataset]], cur_enrichr_db)
 +   }
 + }
-[1] "Cluster Id:  5 Len:  26"
+[1] "Cluster Id:  5 Len:  19"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
+Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  5"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  12"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2400,13 +2262,21 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  12"
 Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  5"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  15"
+Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  19"
+[1] "Enriched:  17"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2438,7 +2308,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  35"
+[1] "Enriched:  23"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2448,7 +2318,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  28"
 Saving 7 x 7 in image
-[1] "Cluster Id:  4 Len:  23"
+[1] "Cluster Id:  4 Len:  22"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -2463,13 +2333,29 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  3"
 Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  4"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  19"
+Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  3"
+[1] "Enriched:  2"
+Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  4"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  13"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2509,7 +2395,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  30"
+[1] "Enriched:  29"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2519,12 +2405,20 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  27"
 Saving 7 x 7 in image
-[1] "Cluster Id:  1 Len:  12"
+[1] "Cluster Id:  1 Len:  8"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
+Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  1"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  18"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2532,7 +2426,15 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  27"
+[1] "Enriched:  24"
+Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  1"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  38"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2540,7 +2442,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  39"
+[1] "Enriched:  34"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2572,7 +2474,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  45"
+[1] "Enriched:  41"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2582,7 +2484,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  50"
 Saving 7 x 7 in image
-[1] "Cluster Id:  3 Len:  22"
+[1] "Cluster Id:  3 Len:  19"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -2597,13 +2499,29 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  6"
 Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  3"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  2"
+Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  6"
+[1] "Enriched:  2"
+Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  3"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  17"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2611,7 +2529,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  16"
+[1] "Enriched:  8"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2643,7 +2561,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  39"
+[1] "Enriched:  49"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2660,7 +2578,23 @@ Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
 Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  2"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  2"
+Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  2"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  6"
+Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -2674,7 +2608,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  10"
+[1] "Enriched:  8"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2706,7 +2640,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  23"
+[1] "Enriched:  15"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2716,12 +2650,20 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  22"
 Saving 7 x 7 in image
-[1] "Cluster Id:  11 Len:  12"
+[1] "Cluster Id:  11 Len:  11"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
+Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  11"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  22"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  11"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2737,7 +2679,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  13"
+[1] "Enriched:  16"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  11"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2745,7 +2687,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  23"
+[1] "Enriched:  16"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  11"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2777,7 +2719,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  45"
+[1] "Enriched:  46"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  11"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2801,6 +2743,13 @@ Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
 [1] "Enriched:  0"
+[1] "Tool :  scanpy Cluster Id:  3"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  0"
 [1] "Tool :  seurat Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
@@ -2814,15 +2763,14 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  1"
-Saving 7 x 7 in image
+[1] "Enriched:  0"
 [1] "Tool :  COTAN Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  1"
+[1] "Enriched:  5"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2838,7 +2786,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  6"
+[1] "Enriched:  10"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2854,7 +2802,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  6"
+[1] "Enriched:  15"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2877,7 +2825,15 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  4"
+[1] "Enriched:  24"
+Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  14"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  2"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  14"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2885,7 +2841,15 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  12"
+[1] "Enriched:  5"
+Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  14"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  11"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  14"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2893,7 +2857,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  18"
+[1] "Enriched:  16"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  14"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2925,7 +2889,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  29"
+[1] "Enriched:  34"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  14"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2935,7 +2899,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  36"
 Saving 7 x 7 in image
-[1] "Cluster Id:  8 Len:  8"
+[1] "Cluster Id:  8 Len:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -2948,7 +2912,15 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  12"
+[1] "Enriched:  11"
+Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  8"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  2"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  8"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2956,7 +2928,15 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  12"
+[1] "Enriched:  1"
+Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  8"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  21"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  8"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2964,7 +2944,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  29"
+[1] "Enriched:  16"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  8"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -2996,7 +2976,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  26"
+[1] "Enriched:  45"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  8"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3019,7 +2999,16 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  0"
+[1] "Enriched:  19"
+Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  1"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  13"
+Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
@@ -3028,13 +3017,21 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  10"
 Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  1"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  19"
+Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  37"
+[1] "Enriched:  32"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3042,7 +3039,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  37"
+[1] "Enriched:  49"
 Saving 7 x 7 in image
 [1] "Tool :  scanpy Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3066,7 +3063,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  60"
+[1] "Enriched:  50"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3085,13 +3082,29 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  7"
 Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  4"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  14"
+Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  43"
+[1] "Enriched:  24"
+Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  4"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  29"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3131,7 +3144,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  29"
+[1] "Enriched:  46"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3154,13 +3167,29 @@ Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
 [1] "Enriched:  0"
+[1] "Tool :  scanpy Cluster Id:  13"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  3"
+Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  13"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  9"
+[1] "Enriched:  4"
+Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  13"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  29"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  13"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3168,7 +3197,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  35"
+[1] "Enriched:  30"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  13"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3200,7 +3229,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  17"
+[1] "Enriched:  42"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  13"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3210,7 +3239,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  36"
 Saving 7 x 7 in image
-[1] "Cluster Id:  5 Len:  14"
+[1] "Cluster Id:  5 Len:  10"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3223,7 +3252,15 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  14"
+[1] "Enriched:  12"
+Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  5"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  5"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3233,13 +3270,21 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  5"
 Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  5"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  8"
+Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  35"
+[1] "Enriched:  31"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3271,7 +3316,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  43"
+[1] "Enriched:  35"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3296,7 +3341,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  2"
+[1] "Enriched:  28"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3304,7 +3349,15 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  47"
+[1] "Enriched:  46"
+Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  2"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  36"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3344,7 +3397,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  44"
+[1] "Enriched:  37"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3354,7 +3407,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  29"
 Saving 7 x 7 in image
-[1] "Cluster Id:  12 Len:  11"
+[1] "Cluster Id:  12 Len:  9"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3362,6 +3415,14 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  12"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  1"
+Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  12"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3377,13 +3438,21 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  3"
 Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  12"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  2"
+Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  12"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  7"
+[1] "Enriched:  4"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  12"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3415,7 +3484,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  20"
+[1] "Enriched:  17"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  12"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3440,13 +3509,21 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  3"
 Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  6"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  1"
+Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  6"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  21"
+[1] "Enriched:  22"
 Saving 7 x 7 in image
 [1] "Tool :  scvi-tools Cluster Id:  6"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3454,14 +3531,16 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  0"
+[1] "Enriched:  9"
+Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  6"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  0"
+[1] "Enriched:  22"
+Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  6"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
@@ -3523,7 +3602,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  8"
+[1] "Enriched:  16"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  9"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3539,14 +3618,16 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  0"
+[1] "Enriched:  16"
+Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  9"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  0"
+[1] "Enriched:  9"
+Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  9"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
@@ -3577,7 +3658,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  30"
+[1] "Enriched:  51"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  9"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3587,7 +3668,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  41"
 Saving 7 x 7 in image
-[1] "Cluster Id:  10 Len:  11"
+[1] "Cluster Id:  10 Len:  8"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3600,7 +3681,15 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  23"
+[1] "Enriched:  4"
+Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  10"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  27"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  10"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3610,13 +3699,21 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  14"
 Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  10"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Muris... Done.
+Parsing results... Done.
+[1] "Enriched:  20"
+Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  10"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  14"
+[1] "Enriched:  19"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  10"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3648,7 +3745,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  59"
+[1] "Enriched:  61"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  10"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3665,7 +3762,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  13"
+[1] "Enriched:  14"
 Saving 7 x 7 in image
 [1] "Tool :  scanpy Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3673,7 +3770,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  2"
+[1] "Enriched:  14"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3689,7 +3786,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  1"
+[1] "Enriched:  30"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3697,7 +3794,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  45"
+[1] "Enriched:  23"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3729,7 +3826,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Muris... Done.
 Parsing results... Done.
-[1] "Enriched:  40"
+[1] "Enriched:  54"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3739,7 +3836,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  45"
 Saving 7 x 7 in image
-[1] "Cluster Id:  7 Len:  14"
+[1] "Cluster Id:  7 Len:  9"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3752,7 +3849,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  41"
+[1] "Enriched:  4"
 Saving 7 x 7 in image
 [1] "Tool :  scanpy Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3760,7 +3857,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  344"
+[1] "Enriched:  356"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3768,7 +3865,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  129"
+[1] "Enriched:  113"
 Saving 7 x 7 in image
 [1] "Tool :  scvi-tools Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3776,7 +3873,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  3"
+[1] "Enriched:  45"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3784,7 +3881,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  18"
+[1] "Enriched:  5"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3816,7 +3913,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  449"
+[1] "Enriched:  190"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3826,7 +3923,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  203"
 Saving 7 x 7 in image
-[1] "Cluster Id:  5 Len:  5"
+[1] "Cluster Id:  5 Len:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -3847,7 +3944,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  1"
+[1] "Enriched:  29"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3855,7 +3952,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  222"
+[1] "Enriched:  177"
 Saving 7 x 7 in image
 [1] "Tool :  scvi-tools Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3863,14 +3960,16 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  0"
+[1] "Enriched:  42"
+Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  0"
+[1] "Enriched:  5"
+Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
@@ -3901,7 +4000,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  319"
+[1] "Enriched:  197"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3932,7 +4031,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  102"
+[1] "Enriched:  86"
 Saving 7 x 7 in image
 [1] "Tool :  scvi-tools Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3940,7 +4039,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  102"
+[1] "Enriched:  18"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -3980,7 +4079,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  446"
+[1] "Enriched:  93"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4003,15 +4102,23 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  45"
+[1] "Enriched:  2"
 Saving 7 x 7 in image
-[1] "Tool :  seurat Cluster Id:  1"
+[1] "Tool :  scanpy Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  45"
+[1] "Enriched:  469"
+Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  1"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Sapiens... Done.
+Parsing results... Done.
+[1] "Enriched:  129"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4051,7 +4158,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  469"
+[1] "Enriched:  189"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4061,7 +4168,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  326"
 Saving 7 x 7 in image
-[1] "Cluster Id:  3 Len:  14"
+[1] "Cluster Id:  3 Len:  12"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4074,7 +4181,15 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  95"
+[1] "Enriched:  451"
+Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  3"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Sapiens... Done.
+Parsing results... Done.
+[1] "Enriched:  467"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4082,7 +4197,15 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  13"
+[1] "Enriched:  7"
+Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  3"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Sapiens... Done.
+Parsing results... Done.
+[1] "Enriched:  16"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4122,7 +4245,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  469"
+[1] "Enriched:  121"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4139,37 +4262,37 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  0"
+[1] "Enriched:  4"
+Saving 7 x 7 in image
 [1] "Tool :  scanpy Cluster Id:  9"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  0"
+[1] "Enriched:  79"
+Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  9"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  36"
-Saving 7 x 7 in image
+[1] "Enriched:  0"
 [1] "Tool :  scvi-tools Cluster Id:  9"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  457"
-Saving 7 x 7 in image
+[1] "Enriched:  0"
 [1] "Tool :  COTAN Cluster Id:  9"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  457"
+[1] "Enriched:  66"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  9"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4201,7 +4324,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  467"
+[1] "Enriched:  266"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  9"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4234,21 +4357,23 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  0"
+[1] "Enriched:  198"
+Saving 7 x 7 in image
 [1] "Tool :  scvi-tools Cluster Id:  10"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  0"
+[1] "Enriched:  109"
+Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  10"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  265"
+[1] "Enriched:  203"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  10"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4280,7 +4405,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  439"
+[1] "Enriched:  169"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  10"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4290,7 +4415,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  305"
 Saving 7 x 7 in image
-[1] "Cluster Id:  2 Len:  16"
+[1] "Cluster Id:  2 Len:  10"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4305,6 +4430,14 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  199"
 Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  2"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Sapiens... Done.
+Parsing results... Done.
+[1] "Enriched:  202"
+Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
@@ -4313,14 +4446,21 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  5"
 Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  2"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Sapiens... Done.
+Parsing results... Done.
+[1] "Enriched:  42"
+Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  5"
-Saving 7 x 7 in image
+[1] "Enriched:  0"
 [1] "Tool :  monocle Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
@@ -4343,7 +4483,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  79"
+[1] "Enriched:  78"
 Saving 7 x 7 in image
 [1] "Tool :  scvi-tools Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4351,7 +4491,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  421"
+[1] "Enriched:  113"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4361,7 +4501,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  104"
 Saving 7 x 7 in image
-[1] "Cluster Id:  8 Len:  26"
+[1] "Cluster Id:  8 Len:  24"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4375,13 +4515,29 @@ Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
 [1] "Enriched:  0"
-[1] "Tool :  seurat Cluster Id:  8"
+[1] "Tool :  scanpy Cluster Id:  8"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
 [1] "Enriched:  0"
+[1] "Tool :  seurat Cluster Id:  8"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Sapiens... Done.
+Parsing results... Done.
+[1] "Enriched:  4"
+Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  8"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Sapiens... Done.
+Parsing results... Done.
+[1] "Enriched:  83"
+Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  8"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
@@ -4418,7 +4574,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  426"
+[1] "Enriched:  185"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  8"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4428,7 +4584,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  97"
 Saving 7 x 7 in image
-[1] "Cluster Id:  6 Len:  22"
+[1] "Cluster Id:  6 Len:  17"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4443,6 +4599,14 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  43"
 Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  6"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Sapiens... Done.
+Parsing results... Done.
+[1] "Enriched:  457"
+Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  6"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
@@ -4450,13 +4614,22 @@ Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
 [1] "Enriched:  0"
+[1] "Tool :  scvi-tools Cluster Id:  6"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Sapiens... Done.
+Parsing results... Done.
+[1] "Enriched:  9"
+Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  6"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  0"
+[1] "Enriched:  13"
+Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  6"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
@@ -4487,7 +4660,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  459"
+[1] "Enriched:  38"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  6"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4497,7 +4670,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  67"
 Saving 7 x 7 in image
-[1] "Cluster Id:  11 Len:  15"
+[1] "Cluster Id:  11 Len:  12"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4510,7 +4683,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  112"
+[1] "Enriched:  15"
 Saving 7 x 7 in image
 [1] "Tool :  scanpy Cluster Id:  11"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4518,7 +4691,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  20"
+[1] "Enriched:  100"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  11"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4526,7 +4699,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  127"
+[1] "Enriched:  76"
 Saving 7 x 7 in image
 [1] "Tool :  scvi-tools Cluster Id:  11"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4534,7 +4707,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  13"
+[1] "Enriched:  111"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  11"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4542,7 +4715,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  27"
+[1] "Enriched:  21"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  11"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4574,7 +4747,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  457"
+[1] "Enriched:  261"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  11"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4607,21 +4780,23 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  0"
+[1] "Enriched:  255"
+Saving 7 x 7 in image
 [1] "Tool :  scvi-tools Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  0"
+[1] "Enriched:  223"
+Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  65"
+[1] "Enriched:  104"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4629,7 +4804,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  65"
+[1] "Enriched:  469"
 Saving 7 x 7 in image
 [1] "Tool :  scanpy Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4653,7 +4828,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  443"
+[1] "Enriched:  233"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4663,7 +4838,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  163"
 Saving 7 x 7 in image
-[1] "Cluster Id:  1 Len:  14"
+[1] "Cluster Id:  1 Len:  13"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4678,13 +4853,27 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  454"
 Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  1"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Sapiens... Done.
+Parsing results... Done.
+[1] "Enriched:  0"
 [1] "Tool :  seurat Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  454"
+[1] "Enriched:  0"
+[1] "Tool :  scvi-tools Cluster Id:  1"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Sapiens... Done.
+Parsing results... Done.
+[1] "Enriched:  16"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4724,7 +4913,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  454"
+[1] "Enriched:  146"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4755,7 +4944,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  441"
+[1] "Enriched:  446"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4763,7 +4952,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  135"
+[1] "Enriched:  99"
 Saving 7 x 7 in image
 [1] "Tool :  scvi-tools Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4771,7 +4960,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  467"
+[1] "Enriched:  282"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4811,7 +5000,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  469"
+[1] "Enriched:  465"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4821,7 +5010,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  326"
 Saving 7 x 7 in image
-[1] "Cluster Id:  2 Len:  32"
+[1] "Cluster Id:  2 Len:  16"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4848,7 +5037,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  74"
+[1] "Enriched:  63"
 Saving 7 x 7 in image
 [1] "Tool :  scvi-tools Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4856,7 +5045,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  74"
+[1] "Enriched:  60"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4864,7 +5053,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  327"
+[1] "Enriched:  313"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4880,7 +5069,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  468"
+[1] "Enriched:  469"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4896,7 +5085,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  468"
+[1] "Enriched:  216"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4906,7 +5095,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  459"
 Saving 7 x 7 in image
-[1] "Cluster Id:  7 Len:  6"
+[1] "Cluster Id:  7 Len:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4919,7 +5108,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  451"
+[1] "Enriched:  458"
 Saving 7 x 7 in image
 [1] "Tool :  scanpy Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4927,7 +5116,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  7"
+[1] "Enriched:  149"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4936,6 +5125,14 @@ Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
 [1] "Enriched:  11"
+Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  7"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Sapiens... Done.
+Parsing results... Done.
+[1] "Enriched:  277"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4975,7 +5172,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  469"
+[1] "Enriched:  453"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  7"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -4985,7 +5182,7 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  404"
 Saving 7 x 7 in image
-[1] "Cluster Id:  4 Len:  26"
+[1] "Cluster Id:  4 Len:  21"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
@@ -4999,29 +5196,35 @@ Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
 [1] "Enriched:  0"
-[1] "Tool :  seurat Cluster Id:  4"
+[1] "Tool :  scanpy Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
 [1] "Enriched:  0"
+[1] "Tool :  seurat Cluster Id:  4"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Sapiens... Done.
+Parsing results... Done.
+[1] "Enriched:  2"
+Saving 7 x 7 in image
 [1] "Tool :  scvi-tools Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  346"
-Saving 7 x 7 in image
+[1] "Enriched:  0"
 [1] "Tool :  COTAN Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  346"
-Saving 7 x 7 in image
+[1] "Enriched:  0"
 [1] "Tool :  monocle Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
@@ -5052,7 +5255,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  469"
+[1] "Enriched:  204"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  4"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5083,7 +5286,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  468"
+[1] "Enriched:  417"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  8"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5091,7 +5294,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  85"
+[1] "Enriched:  33"
 Saving 7 x 7 in image
 [1] "Tool :  scvi-tools Cluster Id:  8"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5099,7 +5302,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  376"
+[1] "Enriched:  98"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  8"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5139,7 +5342,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  467"
+[1] "Enriched:  251"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  8"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5149,12 +5352,20 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  112"
 Saving 7 x 7 in image
-[1] "Cluster Id:  2 Len:  27"
+[1] "Cluster Id:  2 Len:  14"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
+Saving 7 x 7 in image
+[1] "Tool :  scanpy Cluster Id:  2"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Sapiens... Done.
+Parsing results... Done.
+[1] "Enriched:  293"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5162,7 +5373,15 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  43"
+[1] "Enriched:  40"
+Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  2"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Sapiens... Done.
+Parsing results... Done.
+[1] "Enriched:  64"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5170,7 +5389,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  326"
+[1] "Enriched:  310"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5202,7 +5421,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  469"
+[1] "Enriched:  213"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  2"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5225,7 +5444,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  456"
+[1] "Enriched:  468"
 Saving 7 x 7 in image
 [1] "Tool :  scanpy Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5233,7 +5452,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  239"
+[1] "Enriched:  255"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5241,7 +5460,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  109"
+[1] "Enriched:  260"
 Saving 7 x 7 in image
 [1] "Tool :  scvi-tools Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5249,7 +5468,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  465"
+[1] "Enriched:  247"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5289,7 +5508,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  469"
+[1] "Enriched:  427"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  5"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5312,7 +5531,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  443"
+[1] "Enriched:  116"
 Saving 7 x 7 in image
 [1] "Tool :  scanpy Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5320,7 +5539,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  443"
+[1] "Enriched:  437"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5328,15 +5547,14 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  1"
-Saving 7 x 7 in image
+[1] "Enriched:  0"
 [1] "Tool :  scvi-tools Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  5"
+[1] "Enriched:  58"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5376,7 +5594,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  454"
+[1] "Enriched:  167"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  1"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5393,7 +5611,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  443"
+[1] "Enriched:  444"
 Saving 7 x 7 in image
 [1] "Tool :  scanpy Cluster Id:  6"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5401,7 +5619,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  406"
+[1] "Enriched:  450"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  6"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5409,7 +5627,15 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  71"
+[1] "Enriched:  62"
+Saving 7 x 7 in image
+[1] "Tool :  scvi-tools Cluster Id:  6"
+Connection changed to https://maayanlab.cloud/Enrichr/
+Connection is Live!
+Uploading data to Enrichr... Done.
+  Querying Tabula_Sapiens... Done.
+Parsing results... Done.
+[1] "Enriched:  426"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  6"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5417,7 +5643,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  235"
+[1] "Enriched:  233"
 Saving 7 x 7 in image
 [1] "Tool :  monocle Cluster Id:  6"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5449,7 +5675,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  456"
+[1] "Enriched:  458"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  6"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5459,20 +5685,14 @@ Uploading data to Enrichr... Done.
 Parsing results... Done.
 [1] "Enriched:  235"
 Saving 7 x 7 in image
-[1] "Cluster Id:  3 Len:  5"
-Connection changed to https://maayanlab.cloud/Enrichr/
-Connection is Live!
-Uploading data to Enrichr... Done.
-  Querying Tabula_Sapiens... Done.
-Parsing results... Done.
-Saving 7 x 7 in image
+[1] "Cluster Id:  3 Len:  0"
 [1] "Tool :  monocle Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
 Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  76"
+[1] "Enriched:  398"
 Saving 7 x 7 in image
 [1] "Tool :  scanpy Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5480,7 +5700,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  370"
+[1] "Enriched:  369"
 Saving 7 x 7 in image
 [1] "Tool :  seurat Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5488,7 +5708,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  370"
+[1] "Enriched:  22"
 Saving 7 x 7 in image
 [1] "Tool :  scvi-tools Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5496,7 +5716,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  440"
+[1] "Enriched:  444"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5536,7 +5756,7 @@ Connection is Live!
 Uploading data to Enrichr... Done.
   Querying Tabula_Sapiens... Done.
 Parsing results... Done.
-[1] "Enriched:  464"
+[1] "Enriched:  444"
 Saving 7 x 7 in image
 [1] "Tool :  COTAN Cluster Id:  3"
 Connection changed to https://maayanlab.cloud/Enrichr/
@@ -5550,4 +5770,4 @@ Saving 7 x 7 in image
 > 
 > proc.time()
    utente   sistema trascorso 
-22503.150   612.296  3810.321 
+22289.220   963.052  3881.757 
