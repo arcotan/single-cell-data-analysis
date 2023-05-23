@@ -1,0 +1,57 @@
+tabula-muris-heart # cells 13646 # genes 617
+fibroblast             36.466775
+endothelial cell       27.876823
+unknown cluster        15.883306
+endocardial cell       10.048622
+cardiac muscle cell     9.724473
+
+
+tabula-muris-marrow_P7_3 # cells 13387 # genes 1870
+granulocyte                     19.893048
+monocyte                        14.598930
+granulocytopoietic cell         10.855615
+hematopoietic precursor cell     8.983957
+proerythroblast                  8.609626
+promonocyte                      7.326203
+macrophage                       6.631016
+late pro-B cell                  5.882353
+erythroblast                     4.759358
+T cell                           3.850267
+immature B cell                  3.582888
+basophil                         1.818182
+Fraction A pre-pro B cell        1.764706
+early pro-B cell                 1.443850
+
+
+
+peripheal-blood # cells 18306 # genes 3658
+Monocyte                     29.961728
+CD28- Helper T-Cell          21.733188
+CD28+ Helper T-Cell          17.468562
+Follicular B Cell             8.064516
+Natural Killer Cell           7.189721
+Memory Cytotoxic T cell       5.194095
+HLA-DR+                       3.253144
+Naive Cytotoxic T Cell        2.679060
+Effector Cytotoxic T cell     2.022963
+CD4+ Monocyte                 1.312192
+Macrophage M2b Activation     1.120831
+
+
+zheng-4 # cells 12871 # genes 3959
+naive.cytotoxic    25.183127
+b.cells            25.056833
+regulatory.t       25.031574
+cd14.monocytes     24.728467
+
+
+
+zheng-8 # cells 12990 # genes 3934
+cd56.nk            14.844942
+cd14.monocytes     14.768683
+naive.t            12.608033
+memory.t           12.582613
+regulatory.t       12.506355
+b.cells            12.455516
+cd4.t.helper       10.142349
+naive.cytotoxic    10.091510
