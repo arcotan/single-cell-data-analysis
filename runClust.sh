@@ -1,5 +1,4 @@
 echo 'Starting Clustering Analysis'
-
 (R CMD BATCH ./analysis.R; (sleep 2 && code ./analysis.Rout)) &
 echo 'End Clustering Analysis'
 
