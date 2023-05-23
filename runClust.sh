@@ -1,7 +1,6 @@
 echo 'Starting Clustering Analysis'
-chmod +x coderun.sh
-./coderun.sh
-R CMD BATCH ./analysis.R
+
+(R CMD BATCH ./analysis.R; (sleep 2 && code ./analysis.Rout)) &
 echo 'End Clustering Analysis'
 
 echo 'Starting Num of Cells Genes Check'
