@@ -73,9 +73,11 @@ file_pos = paste(outDir, '/', dataset_name, '.cotan.RDS', sep = "")
 if (file.exists(file_pos)){
     obj <- readRDS(file.path(file_pos))
 } else {
+    start <- Sys.time()
     # ActOnCells True ?
     obj <- calculateCoex(obj, actOnCells = TRUE)
     saveRDS(obj, file = file.path(file_pos))
+    print(Sys.time() - start)
 }
 ```
 
@@ -88,9 +90,11 @@ It is possible to obtain a cell clusterization based on the concept of uniformit
 if (file.exists(file.path(outDir, '/', "fineClusters.RDS"))){
     fineClusters <- readRDS(file.path(outDir, '/', "fineClusters.RDS"))
 } else {
+    start <- Sys.time()
     print("Computing clusters")
     fineClusters <- cellsUniformClustering(obj, GDIThreshold = 2.0, cores = 8,
                                   saveObj = TRUE, outDir = outDir)
+    print(Sys.time() - start)
     saveRDS(fineClusters, file.path(outDir, '/', "fineClusters.RDS"))
 }
 ```
@@ -116,8 +120,10 @@ if (file.exists(file.path(outDir, '/', "mergedClusters.RDS")) ||
     pValueDF <- readRDS(file.path(outDir, '/', "mergedpValues.RDS"))
 
 } else {
+    start <- Sys.time()
     c(mergedClusters, coexDF, pValueDF) %<-%
       mergeUniformCellsClusters(obj, clusters=fineClusters, GDIThreshold = 1.4, cores = 8, outDir = outDir)
+    print(Sys.time() - start)
     saveRDS(mergedClusters, file.path(outDir, '/', "mergedClusters.RDS"))
     saveRDS(coexDF, file.path(outDir, '/', "mergedCoex.RDS"))
     saveRDS(pValueDF, file.path(outDir, '/', "mergedpValues.RDS"))
@@ -161,7 +167,7 @@ write_clustering(OUT_RES_DIR, cluster, "cell", "cluster")
 
 TOP_MARKER_NUM = 50
 
-write_COTAN_markers(OUT_RES_DIR, mergedClusters, pValueDF, TOP_MARKER_NUM)
+write_COTAN_markers(OUT_RES_DIR, mergedClusters, coexDF, TOP_MARKER_NUM)
 
 ```
 
