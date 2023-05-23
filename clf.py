@@ -10,7 +10,6 @@ from sklearn.model_selection import cross_val_predict
 import pickle
 
 DATASET_TAGS = ['tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'zheng-4', 'zheng-8']
-# DATASET_TAGS = ['zheng-8']
 N_MARKERS = 50
 
 def apply_classifier(X, y):
@@ -119,10 +118,3 @@ for dataset in DATASET_TAGS:
 		scores_to_write[tool] = score
 	with open(scores_path, 'wb') as fp:
 		pickle.dump(scores_to_write, fp, protocol=pickle.HIGHEST_PROTOCOL)
-
-# multi-class?
-
-# for cluster in clusters:
-# 	rfe = RFECV(estimator=RandomForestClassifier())
-# 	rfe.fit(X_all, y_ovr[cluster])
-# 	rfe.show()

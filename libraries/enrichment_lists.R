@@ -29,7 +29,7 @@ get_specific_markers = function(markers, cluster_id) {
 
 # takes the path to the csv with aggregated markers and the cluster id
 get_not_fully_intersected_markers = function(markers, cluster_id) {
-  intersection = get_specific_markers(markers, cluster_id)
+  intersection = get_common_markers(markers, cluster_id)
   cluster_markers = markers[markers$cluster == cluster_id,]
   tools = unique(cluster_markers$tool)
   tools_markers = split(cluster_markers$gene, cluster_markers$tool)
@@ -37,6 +37,21 @@ get_not_fully_intersected_markers = function(markers, cluster_id) {
   for (t1 in tools) {
     t1_markers = tools_markers[[t1]]
     t1_markers = setdiff(t1_markers, intersect(t1_markers, intersection))
+    if (length(t1_markers) != 0) {
+      specific_markers[[t1]] <- t1_markers
+    }
+  }
+  return (specific_markers)
+}
+
+# takes the path to the csv with aggregated markers and the cluster id
+get_markers = function(markers, cluster_id) {
+  cluster_markers = markers[markers$cluster == cluster_id,]
+  tools = unique(cluster_markers$tool)
+  tools_markers = split(cluster_markers$gene, cluster_markers$tool)
+  specific_markers <- list()
+  for (t1 in tools) {
+    t1_markers = tools_markers[[t1]]
     if (length(t1_markers) != 0) {
       specific_markers[[t1]] <- t1_markers
     }
@@ -60,16 +75,16 @@ write_markers_to_enrich = function(markers, out_dir) {
     for (tool in names(specific_markers)) {
       write.table(
         specific_markers[[tool]],
-        paste(out_dir,"cluster",cid,"_",tool,"_to_enrich.txt",sep=""),
+        paste(out_dir,"cluster",cid,"_",tool,"_lone_to_enrich.txt",sep=""),
         row.names=FALSE,
         quote=FALSE,
         col.names=FALSE)
     }
-    specific_markers = get_not_fully_intersected_markers(markers, cid)
+    specific_markers = get_markers(markers, cid)
     for (tool in names(specific_markers)) {
       write.table(
         specific_markers[[tool]],
-        paste(out_dir,"cluster",cid,"_",tool,"_lone_to_enrich.txt",sep=""),
+        paste(out_dir,"cluster",cid,"_",tool,"_to_enrich.txt",sep=""),
         row.names=FALSE,
         quote=FALSE,
         col.names=FALSE)
@@ -107,7 +122,6 @@ write_enrichment_result = function(markers, out_dir, enrichr_database) {
       }
     }
     specific_markers = get_specific_markers(markers, cid)
-    # View(specific_markers[['scanpy', drop=FALSE]])
     for (tool in names(specific_markers)) {
       print(paste("Tool : ", tool, "Cluster Id: ", cid)) 
       enriched <- get_enriched_cell_type(specific_markers[[tool, drop=FALSE]], enrichr_database)
@@ -124,7 +138,7 @@ write_enrichment_result = function(markers, out_dir, enrichr_database) {
     }
     
     # venn on tool markers minus global intersection
-    specific_markers = get_not_fully_intersected_markers(markers, cid)
+    specific_markers = get_markers(markers, cid)
     for (tool in names(specific_markers)) {
       print(paste("Tool : ", tool, "Cluster Id: ", cid)) 
       enriched <- get_enriched_cell_type(specific_markers[[tool, drop=FALSE]], enrichr_database)
