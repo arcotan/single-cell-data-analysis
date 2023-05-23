@@ -1,3 +1,5 @@
+# Searches for known markers in the top markers found by each tool
+
 import pandas as pd
 
 markers_lists = {
