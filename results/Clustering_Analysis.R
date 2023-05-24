@@ -10,7 +10,7 @@ source("./libraries/enrichment_lists.R")
 
 TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi-tools', 'COTAN')
 DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'zheng-4', 'zheng-8')
-# DATASET_TAGS= c('zheng-8')
+
 MAPPING_DATASET_NAMES = list(
   'tabula-muris-heart'= 'tabula muris heart',
 	'tabula-muris-marrow_P7_3'= 'tabula muris marrow',
