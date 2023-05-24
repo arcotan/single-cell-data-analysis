@@ -29,6 +29,7 @@ rm results.zip
 ```
 
 (All the results are precomputed)
+
 You can still run all the analysis code, executing the following command:
 ```bash 
 chmod +x run.sh &&
