@@ -3,7 +3,7 @@ library(monocle3)
 
 source("./libraries/utils.R")
 
-dataset_name = 'peripheal-blood'
+dataset_name = 'peripheral-blood'
 
 DATASET_PATH = "./dataset/"
 

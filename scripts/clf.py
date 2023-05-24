@@ -9,7 +9,7 @@ from sklearn.metrics import f1_score
 from sklearn.model_selection import cross_val_predict
 import pickle
 
-DATASET_TAGS = ['tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'zheng-4', 'zheng-8']
+DATASET_TAGS = ['tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheral-blood', 'zheng-4', 'zheng-8']
 N_MARKERS = 50
 
 def apply_classifier(X, y):
