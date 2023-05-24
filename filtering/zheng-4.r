@@ -59,7 +59,6 @@ pbmc <- subset(pbmc, subset = percent.mt < 7 & nFeature_RNA < 1500)
 
 # Write pre-processed data
 data_to_write = GetAssayData(object = pbmc, assay = "RNA", slot = "data")
-write.csv(data_to_write, paste(outDataDir, "data.csv", sep=""))
 Dir10X = paste(outDataDir, "10X", sep="")
 if (!dir.exists(Dir10X)) {
   write10xCounts(Dir10X, data_to_write)
