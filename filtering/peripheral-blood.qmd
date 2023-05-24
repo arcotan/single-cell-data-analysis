@@ -8,7 +8,7 @@ library(DropletUtils)
 source("./libraries/utils.R")
 
 DATASETS_FOLDER = './dataset/'
-NAME = 'peripheal-blood'
+NAME = 'peripheral-blood'
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDataDir = paste(DATASETS_FOLDER, NAME, '-filtered/', sep='')

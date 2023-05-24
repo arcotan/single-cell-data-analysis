@@ -7,7 +7,7 @@ source("./libraries/utils.R")
 ```
 
 ```{r}
-dataset_name = "peripheal-blood"
+dataset_name = "peripheral-blood"
 dataset_path = './dataset/'
 
 DATA_DIR = paste(dataset_path, dataset_name, '-filtered/10X', sep='')

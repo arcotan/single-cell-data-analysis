@@ -11,7 +11,7 @@ source("./libraries/utils.R")
 ```
 
 ```{r}
-dataset_name = 'peripheal-blood'
+dataset_name = 'peripheral-blood'
 dataset_path = './dataset/'
 
 outDir = paste('./COTAN/', dataset_name, sep="")

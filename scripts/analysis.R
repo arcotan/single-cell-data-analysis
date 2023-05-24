@@ -9,11 +9,11 @@ source("./libraries/venn.R")
 source("./libraries/enrichment_lists.R")
 
 TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi-tools', 'COTAN')
-DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheal-blood', 'zheng-4', 'zheng-8')
+DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheral-blood', 'zheng-4', 'zheng-8')
 MAPPING_DATASET_NAMES = list(
   'tabula-muris-heart'= 'Tabula Muris Heart',
 	'tabula-muris-marrow_P7_3'= 'Tabula Muris Marrow',
-	'peripheal-blood'= 'PBMC TotalSeq',
+	'peripheral-blood'= 'PBMC TotalSeq',
 	'zheng-4'= 'Zheng 4',
 	'zheng-8'= 'Zheng 8'
 )
@@ -34,7 +34,7 @@ DATASET_TAG_TO_TRUE_LABEL_DIR = DATASET_TAG_TO_MAPPING_DIR
 
 DATASET_TAG_TO_ENRICHR_DB = list("tabula-muris-heart" = "Tabula_Muris",
                                  "tabula-muris-marrow_P7_3" = "Tabula_Muris",
-                                 "peripheal-blood" = "Tabula_Sapiens",
+                                 "peripheral-blood" = "Tabula_Sapiens",
                                  "zheng-4" = "Tabula_Sapiens",
                                  "zheng-8" = "Tabula_Sapiens")
 

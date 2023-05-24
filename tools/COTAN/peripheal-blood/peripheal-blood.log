@@ -35,7 +35,7 @@ In iteration 0
 the number of cells to re-cluster is 3658 cells belonging to 0 clusters
 Creating Seurat object: START
 Used resolution for Seurat clusterization is: 0.5
-Creating PDF UMAP in file:./COTAN/peripheal-blood/peripheal-blood/reclustering_0/pdf_umap.pdf
+Creating PDF UMAP in file:./COTAN/peripheral-blood/peripheral-blood/reclustering_0/pdf_umap.pdf
 Creating Seurat object: DONE
 *
  checking uniformity of cluster '0' of 11 clusters
@@ -992,7 +992,7 @@ In iteration 0
 the number of cells to re-cluster is 3658 cells belonging to 0 clusters
 Creating Seurat object: START
 Used resolution for Seurat clusterization is: 0.5
-Creating PDF UMAP in file:./COTAN/peripheal-blood/peripheal-blood/reclustering_0/pdf_umap.pdf
+Creating PDF UMAP in file:./COTAN/peripheral-blood/peripheral-blood/reclustering_0/pdf_umap.pdf
 Creating Seurat object: DONE
 *
  checking uniformity of cluster '0' of 11 clusters
@@ -1462,7 +1462,7 @@ In iteration 1
 the number of cells to re-cluster is 3023 cells belonging to 6 clusters
 Creating Seurat object: START
 Used resolution for Seurat clusterization is: 0.5
-Creating PDF UMAP in file:./COTAN/peripheal-blood/peripheal-blood/reclustering_1/pdf_umap.pdf
+Creating PDF UMAP in file:./COTAN/peripheral-blood/peripheral-blood/reclustering_1/pdf_umap.pdf
 Creating Seurat object: DONE
 *
  checking uniformity of cluster '0' of 9 clusters
@@ -1849,7 +1849,7 @@ the number of cells to re-cluster is 2719 cells belonging to 7 clusters
 Creating Seurat object: START
 Number of clusters is too small. Reclustering at higher resolution: 0.5
 Used resolution for Seurat clusterization is: 1
-Creating PDF UMAP in file:./COTAN/peripheal-blood/peripheal-blood/reclustering_2/pdf_umap.pdf
+Creating PDF UMAP in file:./COTAN/peripheral-blood/peripheral-blood/reclustering_2/pdf_umap.pdf
 Creating Seurat object: DONE
 *
  checking uniformity of cluster '0' of 11 clusters
@@ -2321,7 +2321,7 @@ Creating Seurat object: START
 Number of clusters is too small. Reclustering at higher resolution: 0.5
 Number of clusters is too small. Reclustering at higher resolution: 1
 Used resolution for Seurat clusterization is: 1.5
-Creating PDF UMAP in file:./COTAN/peripheal-blood/peripheal-blood/reclustering_3/pdf_umap.pdf
+Creating PDF UMAP in file:./COTAN/peripheral-blood/peripheral-blood/reclustering_3/pdf_umap.pdf
 Creating Seurat object: DONE
 *
  checking uniformity of cluster '0' of 10 clusters
@@ -2751,7 +2751,7 @@ Creating Seurat object: START
 Number of clusters is too small. Reclustering at higher resolution: 0.5
 Number of clusters is too small. Reclustering at higher resolution: 1
 Used resolution for Seurat clusterization is: 1.5
-Creating PDF UMAP in file:./COTAN/peripheal-blood/peripheal-blood/reclustering_4/pdf_umap.pdf
+Creating PDF UMAP in file:./COTAN/peripheral-blood/peripheral-blood/reclustering_4/pdf_umap.pdf
 Creating Seurat object: DONE
 *
  checking uniformity of cluster '0' of 7 clusters
@@ -3056,7 +3056,7 @@ Number of clusters is too small. Reclustering at higher resolution: 0.5
 Number of clusters is too small. Reclustering at higher resolution: 1
 Number of clusters is too small. Reclustering at higher resolution: 1.5
 Used resolution for Seurat clusterization is: 2
-Creating PDF UMAP in file:./COTAN/peripheal-blood/peripheal-blood/reclustering_5/pdf_umap.pdf
+Creating PDF UMAP in file:./COTAN/peripheral-blood/peripheral-blood/reclustering_5/pdf_umap.pdf
 Creating Seurat object: DONE
 *
  checking uniformity of cluster '0' of 9 clusters
@@ -3446,7 +3446,7 @@ Number of clusters is too small. Reclustering at higher resolution: 1
 Number of clusters is too small. Reclustering at higher resolution: 1.5
 Number of clusters is too small. Reclustering at higher resolution: 2
 Used resolution for Seurat clusterization is: 2.5
-Creating PDF UMAP in file:./COTAN/peripheal-blood/peripheal-blood/reclustering_6/pdf_umap.pdf
+Creating PDF UMAP in file:./COTAN/peripheral-blood/peripheral-blood/reclustering_6/pdf_umap.pdf
 Creating Seurat object: DONE
 *
  checking uniformity of cluster '0' of 6 clusters
@@ -3710,7 +3710,7 @@ Number of clusters is too small. Reclustering at higher resolution: 1
 Number of clusters is too small. Reclustering at higher resolution: 1.5
 Number of clusters is too small. Reclustering at higher resolution: 2
 Used resolution for Seurat clusterization is: 2.5
-Creating PDF UMAP in file:./COTAN/peripheal-blood/peripheal-blood/reclustering_7/pdf_umap.pdf
+Creating PDF UMAP in file:./COTAN/peripheral-blood/peripheral-blood/reclustering_7/pdf_umap.pdf
 Creating Seurat object: DONE
 *
  checking uniformity of cluster '0' of 4 clusters
