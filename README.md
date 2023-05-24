@@ -3,15 +3,33 @@
 
 This repository contains the scripts used to perform the data analysis presented in the report [“Comparison between COTAN and state of the art libraries for the analysis of scRNA-seq data”](link) for the “Computational Health Laboratory” course at the University of Pisa (a.y. 2022/2023). 
 
-The comprehensive analysis results can be downloaded clicking [here](https://unipiit-my.sharepoint.com/:u:/g/personal/m_tolloso_studenti_unipi_it/EShSnnL2HqNFvcE7C1o8udsBjEgV4At697OPhslVnpVUkw?e=4f3v9b&download=1).
-
 ## How to run
-To download the datasets execute the following command:
+
+We assume you are working on unix-like systems (Linux, MacOS, Windows Subsystem for Linux).
+
+Colone the repository
+```bash
+git clone https://github.com/arcotan/single-cell-data-analysis.git
+```
+Move to the repository folder
+```bash
+cd single-cell-data-analysis
+```
+Download the datasets with the following command:
 ```bash 
-wget "https://unipiit-my.sharepoint.com/:u:/g/personal/m_tolloso_studenti_unipi_it/EeWsopowdGZDtKqFKDmLE80BOyvfPCG30xdqlkiUljRQxw?e=76jXHO&download=1" -O dataset.zip && unzip dataset.zip
+wget "https://unipiit-my.sharepoint.com/:u:/g/personal/m_tolloso_studenti_unipi_it/ESX8nFEDsHdMo5_mBAiAgBIB6aDBPwyVSNqgqnDsB2__RQ?e=LhIna1&download=1" -O dataset.zip &&
+wget "https://unipiit-my.sharepoint.com/:u:/g/personal/m_tolloso_studenti_unipi_it/ERFzNbWhOq1EkDz5ntlopOIB0VZ8kxKBssaYZTxwVmPqMA?e=mU5RE6&download=1" -O filtered.zip &&
+wget "https://unipiit-my.sharepoint.com/:u:/g/personal/m_tolloso_studenti_unipi_it/EQsfW6bi7QNLtVt5oUaxelQBCOqQa95gMk5nG1GwoYcAuA?e=lLKn46&download=1" -O results.zip && 
+unzip dataset.zip &&
+unzip filtered.zip &&
+unzip results.zip &&
+rm dataset.zip &&
+rm filtered.zip &&
+rm results.zip
 ```
 
- To run all the code execute the following command:
+To run all the code execute the following command:
 ```bash 
+chmod +x run.sh &&
 ./run.sh
 ```

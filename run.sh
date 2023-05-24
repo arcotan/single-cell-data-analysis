@@ -42,7 +42,6 @@ echo 'End tabula muris heart markers'
 
 echo 'Starting Cluster Scores Plots'
 ipython -c "%run ./cluster_scores_plot.ipynb False"
-cd ..
 echo 'End Cluster Scores Plots'
 
 echo 'Starting Enrichment Scores Hist'
