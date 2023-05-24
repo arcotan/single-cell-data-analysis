@@ -7,6 +7,8 @@ library(factoextra)
 library(DropletUtils)
 source("./libraries/utils.R")
 
+NUM_CLUSTERS = 11
+plotHeatMaps = FALSE
 DATASETS_FOLDER = './dataset/'
 NAME = 'peripheral-blood'
 
@@ -79,24 +81,22 @@ hmap = pheatmap((averaged - rowMeans(averaged))[,c(2,4,10)], breaks = seq(-CLIP,
 table(clusters)
 ggsave(paste(outDataDir, "heatmap.png", sep=""), hmap)
 
-
-dir.create(paste(outDataDir, "heatmaps/", sep=""), recursive = TRUE, showWarnings = FALSE)
-comb = combn(1:length(unique(clusters)), 2)
-for(i in 1:ncol(comb)) {
-  ggsave(
-    paste(outDataDir, "heatmaps/hmap_", comb[1, i], "_", comb[2,i], ".png", sep=""),
-    pheatmap((averaged - rowMeans(averaged))[,comb[,i]], breaks = seq(-CLIP, CLIP, length.out = 101), kmeans_k = NA, cluster_cols = FALSE, cluster_rows = FALSE)
-  )
+if (plotHeatMaps){
+  dir.create(paste(outDataDir, "heatmaps/", sep=""), recursive = TRUE, showWarnings = FALSE)
+  comb = combn(1:length(unique(clusters)), 2)
+  for(i in 1:ncol(comb)) {
+    ggsave(
+      paste(outDataDir, "heatmaps/hmap_", comb[1, i], "_", comb[2,i], ".png", sep=""),
+      pheatmap((averaged - rowMeans(averaged))[,comb[,i]], breaks = seq(-CLIP, CLIP, length.out = 101), kmeans_k = NA, cluster_cols = FALSE, cluster_rows = FALSE)
+    )
+  }
+  for(i in 1:length(unique(clusters))) {
+    ggsave(
+      paste(outDataDir, "heatmaps/hmap_", i, ".png", sep=""),
+      pheatmap((averaged - rowMeans(averaged))[,i], breaks = seq(-CLIP, CLIP, length.out = 101), kmeans_k = NA, cluster_cols = FALSE, cluster_rows = FALSE)
+    )
+  }
 }
-for(i in 1:length(unique(clusters))) {
-  ggsave(
-    paste(outDataDir, "heatmaps/hmap_", i, ".png", sep=""),
-    pheatmap((averaged - rowMeans(averaged))[,i], breaks = seq(-CLIP, CLIP, length.out = 101), kmeans_k = NA, cluster_cols = FALSE, cluster_rows = FALSE)
-  )
-}
-```
-
-```{r}
 ```
 
 ```{r}
@@ -112,6 +112,11 @@ write.csv(labels, paste(outDataDir, "labels.csv", sep=""), row.names = FALSE)
 
 
 uclust = sort(unique(clusters))
-mapping = data.frame("go" = paste("Cluster-", uclust, sep=""), "id" = uclust)
-write.csv(mapping, paste(outDataDir, "mapping.csv", sep=""), row.names = FALSE)
+if (len(uclust) != NUM_CLUSTERS){
+  print(paste("Clusters number is not right ", len(uclust), " instead of ", NUM_CLUSTERS, sep=""))
+  mapping = data.frame("go" = paste("Cluster-", uclust, sep=""), "id" = uclust)
+  write.csv(mapping, paste(outDataDir, "mapping_filtering.csv", sep=""), row.names = FALSE)
+}else{
+  file.copy(paste(DATASETS_FOLDER, NAME, '/mapping.csv', sep=''), outDataDir)
+}
 ```
