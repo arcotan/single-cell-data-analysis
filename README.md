@@ -1,7 +1,7 @@
 # scRNA-seq data analysis 🧫
 #### Alberti A., Ianniciello S., Magos P.M., Testa I., Tolloso M.
 
-This repository contains the scripts used to perform the data analysis presented in the report [“Comparison between COTAN and state of the art libraries for the analysis of scRNA-seq data”](link) for the “Computational Health Laboratory” course at the University of Pisa (a.y. 2022/2023). 
+This repository contains the scripts used to perform the data analysis presented in the report [“Comparison between COTAN and state of the art libraries for the analysis of scRNA-seq data”](https://github.com/arcotan/single-cell-data-analysis/blob/main/Comparison%20between%20COTAN%20and%20state%20of%20the%20art%20libraries%20for%20the%20analysis%20of%20scRNA-seq%20data%20-%20Report.pdf) for the “Computational Health Laboratory” course at the University of Pisa (a.y. 2022/2023). 
 
 ## How to run
 
