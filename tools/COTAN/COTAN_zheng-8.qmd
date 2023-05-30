@@ -61,7 +61,7 @@ obj = estimateDispersionBisection(obj, cores = 7)
 ```
 
 ```{r}
-outDir = paste('./COTAN/', dataset_name, sep="")
+outDir = paste('./tools/COTAN/', dataset_name, sep="")
 dir.create(outDir, showWarnings = FALSE, recursive = TRUE)
 file_pos = paste(outDir, '/', dataset_name, '.cotan.RDS', sep = "")
 ```
