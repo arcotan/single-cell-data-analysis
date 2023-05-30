@@ -14,7 +14,7 @@ source("./libraries/utils.R")
 dataset_name = 'peripheral-blood'
 dataset_path = './dataset/'
 
-outDir = paste('./COTAN/', dataset_name, sep="")
+outDir = paste('./tools/COTAN/', dataset_name, sep="")
 dir.create(outDir, showWarnings = FALSE, recursive = TRUE)
 
 IN_DATA_DIR = paste(dataset_path, dataset_name, '-filtered/', sep="")
