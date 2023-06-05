@@ -148,6 +148,7 @@ collect_dataset_data = function(tool_tag_list, dataset_tag, compute_missing_scor
           score_data[i, "accuracy"] <- scores_to_add$accuracy
           score_data[i, "entropy"] <- scores_to_add$entropy
           score_data[i, "purity"] <- scores_to_add$purity
+          score_data[i, "NMI"] <- scores_to_add$NMI
         }
         if (is.na(cur_info$silhouette) && !is.null(filtered_datasets_dir_map)) {
           ge = Read10X(DATASET_TAG_TO_FILTERED_GE_DIR[[dataset_tag]], strip.suffix = TRUE)

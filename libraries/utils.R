@@ -9,6 +9,7 @@ library(RcppArmadillo)
 # RcppXPtrUtils is used for simple handling of C++ external pointers
 library(RcppXPtrUtils)
 library(parallelDist)
+library(aricode)
 
 # In input: a dataframe with two cluster id columns
 # labels of the computed ids column will be renamed in order to get the best match between clusters.
@@ -109,7 +110,8 @@ clustering_simple_scores = function(label_df, computed_label, true_label) {
   res_overlap = sum(diag(confusion_matrix)) / sum(confusion_matrix)
   res_entropy = entropy(confusion_matrix)
   res_purity = purity(confusion_matrix)
-  return (data.frame("entropy" = res_entropy, "purity" = res_purity, "accuracy" = res_overlap))
+  res_NMI = NMI(label_df[[computed_label]], label_df[[true_label]], variant="sum")
+  return (data.frame("entropy" = res_entropy, "purity" = res_purity, "accuracy" = res_overlap, "NMI" = res_NMI))
 }
 
 clustering_complex_scores = function(label_df, cell_col, computed_label, gene_expression_matrix, threads = 8) {
