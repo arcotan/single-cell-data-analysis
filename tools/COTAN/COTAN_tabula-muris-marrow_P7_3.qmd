@@ -83,8 +83,10 @@ if (file.exists(file.path(outDir, '/', "fineClusters.RDS"))){
     fineClusters <- readRDS(file.path(outDir, '/', "fineClusters.RDS"))
 } else {
     print("Computing clusters")
+    start <- Sys.time()
     fineClusters <- cellsUniformClustering(obj, GDIThreshold = 2.3, cores = 8,
                                   saveObj = TRUE, outDir = outDir)
+    print(Sys.time() - start)
     saveRDS(fineClusters, file.path(outDir, '/', "fineClusters.RDS"))
 }
 ```

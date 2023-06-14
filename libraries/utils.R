@@ -105,10 +105,11 @@ seurat_clustering_plot = function(seurat_obj, cell_col, label_col, dataset_name=
 }
 
 clustering_simple_scores = function(label_df, computed_label, true_label) {
+
   label_df = label_df[!rowAny(is.na(label_df[[computed_label]])), ]
   confusion_matrix = table(label_df[[computed_label]], label_df[[true_label]])
   res_overlap = sum(diag(confusion_matrix)) / sum(confusion_matrix)
-  res_entropy = entropy(confusion_matrix)
+  res_entropy = NMF::entropy(confusion_matrix)
   res_purity = purity(confusion_matrix)
   res_NMI = NMI(label_df[[computed_label]], label_df[[true_label]], variant="sum")
   return (data.frame("entropy" = res_entropy, "purity" = res_purity, "accuracy" = res_overlap, "NMI" = res_NMI))
