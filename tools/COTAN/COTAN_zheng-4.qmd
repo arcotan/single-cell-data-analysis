@@ -110,7 +110,7 @@ if (file.exists(file.path(outDir, '/', "mergedClusters.RDS")) ||
 
 } else {
     c(mergedClusters, coexDF, pValueDF) %<-%
-      mergeUniformCellsClusters(obj, clusters=fineClusters, GDIThreshold = 2.3, cores = 8)
+      mergeUniformCellsClusters(obj, clusters=fineClusters, GDIThreshold = 2.15, cores = 8)
     saveRDS(mergedClusters, file.path(outDir, '/', "mergedClusters.RDS"))
     saveRDS(coexDF, file.path(outDir, '/', "mergedCoex.RDS"))
     saveRDS(pValueDF, file.path(outDir, '/', "mergedpValues.RDS"))

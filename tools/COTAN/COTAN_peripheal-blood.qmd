@@ -74,8 +74,8 @@ if (file.exists(file_pos)){
 } else {
     start <- Sys.time()
     obj <- calculateCoex(obj, actOnCells = TRUE)
-    saveRDS(obj, file = file.path(file_pos))
     print(Sys.time() - start)
+    saveRDS(obj, file = file.path(file_pos))
 }
 ```
 
@@ -163,7 +163,7 @@ write_clustering(OUT_RES_DIR, cluster, "cell", "cluster")
 
 TOP_MARKER_NUM = 50
 
-write_COTAN_markers(OUT_RES_DIR, mergedClusters, coexDF, TOP_MARKER_NUM)
+write_COTAN_markers(OUT_RES_DIR, mergedClusters, pValueDF, TOP_MARKER_NUM)
 
 ```
 
