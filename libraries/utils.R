@@ -10,6 +10,7 @@ library(RcppArmadillo)
 library(RcppXPtrUtils)
 library(parallelDist)
 library(aricode)
+library(fossil)
 
 # In input: a dataframe with two cluster id columns
 # labels of the computed ids column will be renamed in order to get the best match between clusters.
@@ -112,7 +113,8 @@ clustering_simple_scores = function(label_df, computed_label, true_label) {
   res_entropy = NMF::entropy(confusion_matrix)
   res_purity = purity(confusion_matrix)
   res_NMI = NMI(label_df[[computed_label]], label_df[[true_label]], variant="sum")
-  return (data.frame("entropy" = res_entropy, "purity" = res_purity, "accuracy" = res_overlap, "NMI" = res_NMI))
+  res_Adj_Rand_Index = adj.rand.index(label_df[[computed_label]], label_df[[true_label]])
+  return (data.frame("entropy" = res_entropy, "purity" = res_purity, "accuracy" = res_overlap, "NMI" = res_NMI, "Adj_Rand_Index" = res_Adj_Rand_Index))
 }
 
 clustering_complex_scores = function(label_df, cell_col, computed_label, gene_expression_matrix, threads = 8) {

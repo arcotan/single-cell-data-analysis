@@ -67,10 +67,16 @@ read_single_data = function(tool_tag, dataset_tag) {
     if (is.null(temp_scores$silhouette)) {
       temp_scores$silhouette = NA
     }
+    if (is.null(temp_scores$NMI)) {
+      temp_scores$silhouette = NA
+    }
+    if (is.null(temp_scores$Adj_Rand_Index)) {
+      temp_scores$silhouette = NA
+    }
     res$scores = temp_scores
   }
   else {
-    res$scores = data.frame("accuracy" = NA, "entropy" = NA, "purity" = NA, "silhouette" = NA)
+    res$scores = data.frame("accuracy" = NA, "entropy" = NA, "purity" = NA, "silhouette" = NA, "NMI" = NA, "Adj_Rand_Index" = NA)
   }
   if (file.exists(marker_file)) {
     res$markers = read.csv(marker_file)
@@ -96,7 +102,7 @@ collect_dataset_data = function(tool_tag_list, dataset_tag, compute_missing_scor
           score_data$tool = tool
         }
         else {
-          score_data = data.frame("tool" = tool, "accuracy" = NA, "entropy" = NA, "purity" = NA)
+          score_data = data.frame("tool" = tool, "accuracy" = NA, "entropy" = NA, "purity" = NA, "silhouette" = NA, "NMI" = NA, "Adj_Rand_Index" = NA)
         }
         marker_data = cur_tool_data$markers
         marker_data$tool = tool
@@ -114,7 +120,7 @@ collect_dataset_data = function(tool_tag_list, dataset_tag, compute_missing_scor
           score_data = full_join(score_data, scores_to_add)
         }
         else {
-          score_data = rbind(score_data, data.frame("tool" = tool, "accuracy" = NA, "entropy" = NA, "purity" = NA))
+          score_data = rbind(score_data, data.frame("tool" = tool, "accuracy" = NA, "entropy" = NA, "purity" = NA, "silhouette" = NA, "NMI" = NA, "Adj_Rand_Index" = NA))
         }
         # merge markers
         markers_to_add = cur_tool_data$markers
@@ -143,12 +149,13 @@ collect_dataset_data = function(tool_tag_list, dataset_tag, compute_missing_scor
       # compute missing clustering scores (for scanpy and scvi-tools only silhouette should not have NA at this point)
       for (i in 1:nrow(score_data)) {
         cur_info = score_data[i, ]
-        if (is.na(cur_info$accuracy) || is.na(cur_info$entropy) || is.na(cur_info$purity)) {
+        if (is.na(cur_info$accuracy) || is.na(cur_info$entropy) || is.na(cur_info$purity) || is.na(cur_info$NMI) || is.na(cur_info$Adj_Rand_Index)) {
           scores_to_add = clustering_simple_scores(label_data, paste(cur_info$tool, "_label", sep=""), "true_labels")
           score_data[i, "accuracy"] <- scores_to_add$accuracy
           score_data[i, "entropy"] <- scores_to_add$entropy
           score_data[i, "purity"] <- scores_to_add$purity
           score_data[i, "NMI"] <- scores_to_add$NMI
+          score_data[i, "Adj_Rand_Index"] <- scores_to_add$Adj_Rand_Index
         }
         if (is.na(cur_info$silhouette) && !is.null(filtered_datasets_dir_map)) {
           ge = Read10X(DATASET_TAG_TO_FILTERED_GE_DIR[[dataset_tag]], strip.suffix = TRUE)
