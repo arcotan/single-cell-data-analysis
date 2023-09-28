@@ -9,17 +9,16 @@ source("./libraries/venn.R")
 source("./libraries/enrichment_lists.R")
 
 TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi-tools', 'COTAN')
-DATASET_TAGS= c('tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheral-blood', 'zheng-4', 'zheng-8')
+DATASET_TAGS= c('PBMC1', 'PBMC2', 'PBMC3', 'PBMC4')
 MAPPING_DATASET_NAMES = list(
-  'tabula-muris-heart'= 'Tabula Muris Heart',
-	'tabula-muris-marrow_P7_3'= 'Tabula Muris Marrow',
-	'peripheral-blood'= 'PBMC TotalSeq',
-	'zheng-4'= 'Zheng 4',
-	'zheng-8'= 'Zheng 8'
+  'PBMC1' = 'PBMC1',
+  'PBMC2' = 'PBMC2',
+  'PBMC3' = 'PBMC3',
+  'PBMC4' = 'PBMC4'
 )
 
 RESULT_DIR = "./results/"
-AGGREGATE_RESULT_DIR = paste(RESULT_DIR, "aggregate/", sep="")
+AGGREGATE_RESULT_DIR = paste(RESULT_DIR, "aggregate_new_pbmcs/", sep="")
 DATASET_DIR = "./dataset/"
 
 DATASET_TAG_TO_TRUE_LABEL_DIR = list()
@@ -30,15 +29,14 @@ for (tag in DATASET_TAGS) {
   DATASET_TAG_TO_FILTERED_GE_DIR[[tag]] = paste(DATASET_DIR, tag, "-filtered/10X/", sep="")
 }
 
-LABEL_FILENAME = "labels.csv"
-MAPPING_FILENAME = "mapping.csv"
+LABEL_FILENAME = "celltypist_labels.csv"
+MAPPING_FILENAME = "celltypist_mapping.csv"
 DATASET_TAG_TO_TRUE_LABEL_DIR = DATASET_TAG_TO_MAPPING_DIR
 
-DATASET_TAG_TO_ENRICHR_DB = list("tabula-muris-heart" = "Tabula_Muris",
-                                 "tabula-muris-marrow_P7_3" = "Tabula_Muris",
-                                 "peripheral-blood" = "Tabula_Sapiens",
-                                 "zheng-4" = "Tabula_Sapiens",
-                                 "zheng-8" = "Tabula_Sapiens")
+DATASET_TAG_TO_ENRICHR_DB = list("PBMC1" = "Tabula_Sapiens",
+                                 "PBMC2" = "Tabula_Sapiens",
+                                 "PBMC3" = "Tabula_Sapiens",
+                                 "PBMC4" = "Tabula_Sapiens")
 
 DATASET_TAG_TO_GENES_TO_ENRICH_DIR = list()
 DATASET_TAG_TO_ENRICHER_DIR = list()
