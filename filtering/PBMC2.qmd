@@ -6,82 +6,82 @@ library(ggplot2)
 library(zeallot)
 options(parallelly.fork.enable = TRUE)
 
-NAME = 'PBMC1'
+NAME = 'PBMC2'
 DATASETS_FOLDER = './dataset/'
 
-inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
+sinDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDir = paste(DATASETS_FOLDER, NAME, '-Filtered/', sep='')
 dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
 
 setLoggingLevel(2)
-setLoggingFile(file.path(outDir, "PBMC1_analysis.log"))
+setLoggingFile(file.path(outDir, "PBMC2_analysis.log"))
 ```
 
 ```{r}
 dataset = Read10X(data.dir = inDataDir, strip.suffix = TRUE)
 dataset = dataset[[1]]
 
-sampleCondition <- "PBMC1_Monocytes"
-PBMC1 <- COTAN(raw = dataset)
+sampleCondition <- "PBMC2_Monocytes"
+PBMC2 <- COTAN(raw = dataset)
 # Necessario MetaDataset ?
-PBMC1 <- initializeMetaDataset(PBMC1,
-                                 GEO = "10X PBMC1",
+PBMC2 <- initializeMetaDataset(PBMC2,
+                                 GEO = "10X PBMC2",
                                  sequencingMethod = "10X",
                                  sampleCondition = sampleCondition)
 
 
-cellSizePlot(PBMC1)
-# cellSizePlot(PBMC1, splitPattern = "-", numCol = 2)
+cellSizePlot(PBMC2)
+# cellSizePlot(PBMC2, splitPattern = "-", numCol = 2)
 ```
 
 ```{r}
-cellsSizeThr <- 25000
-PBMC1 <- addElementToMetaDataset(PBMC1, "Cells size threshold", cellsSizeThr)
+cellsSizeThr <- 2000
+PBMC2 <- addElementToMetaDataset(PBMC2, "Cells size threshold", cellsSizeThr)
 
-cells_to_rem <- getCells(PBMC1)[getCellsSize(PBMC1) > cellsSizeThr]
-PBMC1 <- dropGenesCells(PBMC1, cells = cells_to_rem)
+cells_to_rem <- getCells(PBMC2)[getCellsSize(PBMC2) > cellsSizeThr]
+PBMC2 <- dropGenesCells(PBMC2, cells = cells_to_rem)
 
-cellSizePlot(PBMC1, splitPattern = "-", numCol = 2)
+cellSizePlot(PBMC2, splitPattern = "-", numCol = 2)
 ```
 
 ```{r}
-genesSizePlot(PBMC1, splitPattern = "-", numCol = 2)
+genesSizePlot(PBMC2, splitPattern = "-", numCol = 2)
 ```
 
 ```{r}
-genesSizeThr <- 4500
-PBMC1 <- addElementToMetaDataset(PBMC1, "Num genes threshold", genesSizeThr)
+genesSizeThr <- 300
+PBMC2 <- addElementToMetaDataset(PBMC2, "Num genes threshold", genesSizeThr)
 
-numExprGenes <- getNumExpressedGenes(PBMC1)
+numExprGenes <- getNumExpressedGenes(PBMC2)
 cells_to_rem <- names(numExprGenes)[numExprGenes > genesSizeThr]
-PBMC1 <- dropGenesCells(PBMC1, cells = cells_to_rem)
+PBMC2 <- dropGenesCells(PBMC2, cells = cells_to_rem)
 
-genesSizePlot(PBMC1, splitPattern = "-", numCol = 2)
+genesSizePlot(PBMC2, splitPattern = "-", numCol = 2)
 ```
 
 ```{r}
 mitGenesPattern <- "^[Mm][Tt]-"
-getGenes(PBMC1)[grep(mitGenesPattern, getGenes(PBMC1))]
+getGenes(PBMC2)[grep(mitGenesPattern, getGenes(PBMC2))]
 ```
 
 ```{r}
 c(mitPlot, mitSizes) %<-%
-  mitochondrialPercentagePlot(PBMC1, genePrefix = mitGenesPattern,
+  mitochondrialPercentagePlot(PBMC2, genePrefix = mitGenesPattern,
                               splitPattern = "-", numCol = 2)
 
 plot(mitPlot)
 ```
 
 ```{r}
-mitPercThr <- 10
-PBMC1 <- addElementToMetaDataset(PBMC1, "Mitoc. perc. threshold", mitPercThr)
+mitPercThr <- 15
+PBMC2 <- addElementToMetaDataset(PBMC2, "Mitoc. perc. threshold", mitPercThr)
 
 cells_to_rem <- rownames(mitSizes)[mitSizes[["mit.percentage"]] > mitPercThr]
 
-PBMC1 <- dropGenesCells(PBMC1, cells = cells_to_rem)
+PBMC2 <- dropGenesCells(PBMC2, cells = cells_to_rem)
 
 c(mitPlot, mitSizes) %<-%
-  mitochondrialPercentagePlot(PBMC1, genePrefix = mitGenesPattern,
+  mitochondrialPercentagePlot(PBMC2, genePrefix = mitGenesPattern,
                               splitPattern = "-", numCol = 2)
 
 plot(mitPlot)
@@ -89,29 +89,29 @@ plot(mitPlot)
 
 ```{r}
 ribGenesPattern <- "^RP[SL]\\d+"
-getGenes(PBMC1)[grep(ribGenesPattern, getGenes(PBMC1))]
+getGenes(PBMC2)[grep(ribGenesPattern, getGenes(PBMC2))]
 ```
 
 ```{r}
 c(ribPlot, ribSizes) %<-%
-  mitochondrialPercentagePlot(PBMC1, genePrefix = mitGenesPattern,
+  mitochondrialPercentagePlot(PBMC2, genePrefix = mitGenesPattern,
                               splitPattern = "-", numCol = 2)
 
 plot(ribPlot)
 ```
 
 ```{r}
-cellSizePlot(PBMC1, splitPattern = "-", numCol = 2)
+cellSizePlot(PBMC2, splitPattern = "-", numCol = 2)
 ```
 
 ```{r}
-genesSizePlot(PBMC1, splitPattern = "-", numCol = 2)
+genesSizePlot(PBMC2, splitPattern = "-", numCol = 2)
 ```
 
 ```{r}
-PBMC1 <- clean(PBMC1)
+PBMC2 <- clean(PBMC2)
 
-c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot, zoomedNuPlot) %<-% cleanPlots(PBMC1)
+c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot, zoomedNuPlot) %<-% cleanPlots(PBMC2)
 
 plot(pcaCellsPlot)
 ```
@@ -121,7 +121,7 @@ plot(genesPlot)
 ```
 
 ```{r}
-PBMC1 <- addElementToMetaDataset(PBMC1, "Num drop B group", 0)
+PBMC2 <- addElementToMetaDataset(PBMC2, "Num drop B group", 0)
 ```
 
 ```{r}
@@ -138,16 +138,16 @@ plot(zoomedNuPlot)
 
 ```{r}
 yset=0.16
-nuDf <- data.frame("nu" = sort(getNu(PBMC1)), "n" = seq_along(getNu(PBMC1)))
-PBMC1 <- addElementToMetaDataset(PBMC1, "Threshold low UDE cells:", yset)
+nuDf <- data.frame("nu" = sort(getNu(PBMC2)), "n" = seq_along(getNu(PBMC2)))
+PBMC2 <- addElementToMetaDataset(PBMC2, "Threshold low UDE cells:", yset)
 cells_to_rem <-rownames(nuDf)[nuDf[["nu"]] < yset]
-PBMC1 <- dropGenesCells(PBMC1, cells = cells_to_rem)
+PBMC2 <- dropGenesCells(PBMC2, cells = cells_to_rem)
 ```
 
 ```{r}
-PBMC1 <- clean(PBMC1)
+PBMC2 <- clean(PBMC2)
 
-c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot, zoomedNuPlot) %<-% cleanPlots(PBMC1)
+c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot, zoomedNuPlot) %<-% cleanPlots(PBMC2)
 
 plot(pcaCellsPlot)
 ```
@@ -174,17 +174,17 @@ plot(zoomedNuPlot)
 
 
 ```{r}
-plot(cellSizePlot(PBMC1, splitPattern = "-", numCol = 2))
+plot(cellSizePlot(PBMC2, splitPattern = "-", numCol = 2))
 ```
 
 ```{r}
-plot(genesSizePlot(PBMC1, splitPattern = "-", numCol = 2))
+plot(genesSizePlot(PBMC2, splitPattern = "-", numCol = 2))
 ```
 
 ```{r}
 Sys.time()
 
-PBMC1 <- proceedToCoex(PBMC1, calcCoex = TRUE, cores = 10,
+PBMC2 <- proceedToCoex(PBMC2, calcCoex = TRUE, cores = 10,
                          saveObj = TRUE, outDir = outDir)
 ```
 
