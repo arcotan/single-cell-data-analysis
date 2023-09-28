@@ -9,7 +9,7 @@ options(parallelly.fork.enable = TRUE)
 NAME = 'PBMC2'
 DATASETS_FOLDER = './dataset/'
 
-sinDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
+inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDir = paste(DATASETS_FOLDER, NAME, '-Filtered/', sep='')
 dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
 
@@ -35,7 +35,7 @@ cellSizePlot(PBMC2)
 ```
 
 ```{r}
-cellsSizeThr <- 2000
+cellsSizeThr <- 10000
 PBMC2 <- addElementToMetaDataset(PBMC2, "Cells size threshold", cellsSizeThr)
 
 cells_to_rem <- getCells(PBMC2)[getCellsSize(PBMC2) > cellsSizeThr]
@@ -49,7 +49,7 @@ genesSizePlot(PBMC2, splitPattern = "-", numCol = 2)
 ```
 
 ```{r}
-genesSizeThr <- 300
+genesSizeThr <- 2500
 PBMC2 <- addElementToMetaDataset(PBMC2, "Num genes threshold", genesSizeThr)
 
 numExprGenes <- getNumExpressedGenes(PBMC2)
@@ -182,92 +182,5 @@ plot(genesSizePlot(PBMC2, splitPattern = "-", numCol = 2))
 ```
 
 ```{r}
-Sys.time()
-
-PBMC2 <- proceedToCoex(PBMC2, calcCoex = TRUE, cores = 10,
-                         saveObj = TRUE, outDir = outDir)
-```
-
-<!-- NOT DONE -->
-```{r}
-cd14Obj <- saveRDS(file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
-```
-
-```{r}
-gdiData <- calculateGDI(cd14Obj)
-
-genesToLabel <- head(rownames(gdiData[order(gdiData[["GDI"]],
-                                            decreasing = TRUE), ]), n = 50L)
-
-sort(genesToLabel)
-```
-
-```{r}
-gdiData[genesToLabel[[50L]], "GDI"]
-```
-
-```{r}
-gdiPlot <- GDIPlot(cd14Obj, GDIIn = gdiData, GDIThreshold = 1.4,
-                   genes = list("Top 10 GDI genes" = genesToLabel[1L:10L]))
-
-plot(gdiPlot)
-```
-
-```{r}
-Sys.time()
-```
-
-```{r}
-saveRDS(cd14Obj, file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
-```
-
-```{r}
-cd14Obj <- readRDS(file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
-```
-
-```{r}
-c(splitClusters, splitCoexDF) %<-%
-  cellsUniformClustering(cd14Obj, GDIThreshold = 1.4, cores = 13,
-                         saveObj = TRUE, outDir = outDir)
-
-cd14Obj <- addClusterization(cd14Obj, clName = "split",
-                             clusters = splitClusters,
-                             coexDF = splitCoexDF, override = TRUE)
-```
-
-```{r}
-splitClusters <- getClusterizationData(cd14Obj, clName = "split")[[1]]
-
-table(splitClusters)
-```
-
-```{r}
-saveRDS(cd14Obj, file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
-```
-
-
-```{r}
-c(mergedClusters, mergedCoexDF) %<-%
-  mergeUniformCellsClusters(cd14Obj, clusters = splitClusters,
-                            GDIThreshold = 1.4, cores = 13,
-                            saveObj = TRUE, outDir = outDir)
-
-cd14Obj <- addClusterization(cd14Obj, clName = "merge",
-                             clusters = mergedClusters,
-                             coexDF = mergedCoexDF,
-                             override = TRUE)
-```
-
-```{r}
-mergedClusters <- getClusterizationData(cd14Obj, clName = "merge")[[1]]
-
-table(mergedClusters)
-```
-
-```{r}
-saveRDS(cd14Obj, file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
-```
-
-```{r}
-sessionInfo()
+saveRDS(PBMC2, file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
 ```

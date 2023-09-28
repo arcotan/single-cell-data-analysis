@@ -1,0 +1,113 @@
+```{r}
+library(COTAN)
+library(Seurat)
+library(tibble)
+library(ggplot2)
+library(zeallot)
+options(parallelly.fork.enable = TRUE)
+
+NAME = 'PBMC3'
+DATASETS_FOLDER = './dataset/'
+
+sinDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
+outDir = paste(DATASETS_FOLDER, NAME, '-Filtered/', sep='')
+dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
+
+setLoggingLevel(2)
+setLoggingFile(file.path(outDir, "PBMC3_analysis.log"))
+```
+
+```{r}
+PBMC3 <- readRDS(file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
+```
+```{r}
+Sys.time()
+
+PBMC3 <- proceedToCoex(PBMC3, calcCoex = TRUE, cores = 10,
+                         saveObj = TRUE, outDir = outDir)
+```
+
+<!-- NOT DONE -->
+```{r}
+PBMC3 <- saveRDS(file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
+```
+
+```{r}
+gdiData <- calculateGDI(PBMC3)
+
+genesToLabel <- head(rownames(gdiData[order(gdiData[["GDI"]],
+                                            decreasing = TRUE), ]), n = 50L)
+
+sort(genesToLabel)
+```
+
+```{r}
+gdiData[genesToLabel[[50L]], "GDI"]
+```
+
+```{r}
+gdiPlot <- GDIPlot(PBMC3, GDIIn = gdiData, GDIThreshold = 1.4,
+                   genes = list("Top 10 GDI genes" = genesToLabel[1L:10L]))
+
+plot(gdiPlot)
+```
+
+```{r}
+Sys.time()
+```
+
+```{r}
+saveRDS(PBMC3, file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
+```
+
+```{r}
+PBMC3 <- readRDS(file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
+```
+
+```{r}
+c(splitClusters, splitCoexDF) %<-%
+  cellsUniformClustering(PBMC3, GDIThreshold = 1.4, cores = 13,
+                         saveObj = TRUE, outDir = outDir)
+
+PBMC3 <- addClusterization(PBMC3, clName = "split",
+                             clusters = splitClusters,
+                             coexDF = splitCoexDF, override = TRUE)
+```
+
+```{r}
+splitClusters <- getClusterizationData(PBMC3, clName = "split")[[1]]
+
+table(splitClusters)
+```
+
+```{r}
+saveRDS(PBMC3, file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
+```
+
+
+```{r}
+c(mergedClusters, mergedCoexDF) %<-%
+  mergeUniformCellsClusters(PBMC3, clusters = splitClusters,
+                            GDIThreshold = 1.4, cores = 13,
+                            saveObj = TRUE, outDir = outDir)
+
+PBMC3 <- addClusterization(PBMC3, clName = "merge",
+                             clusters = mergedClusters,
+                             coexDF = mergedCoexDF,
+                             override = TRUE)
+```
+
+```{r}
+mergedClusters <- getClusterizationData(PBMC3, clName = "merge")[[1]]
+
+table(mergedClusters)
+```
+
+
+```{r}
+saveRDS(PBMC3, file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
+```
+
+```{r}
+sessionInfo()
+```
