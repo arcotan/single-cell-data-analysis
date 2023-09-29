@@ -1,0 +1,186 @@
+```{r}
+library(COTAN)
+library(Seurat)
+library(tibble)
+library(ggplot2)
+library(zeallot)
+options(parallelly.fork.enable = TRUE)
+
+NAME = 'PBMC4'
+DATASETS_FOLDER = './dataset/'
+
+inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
+outDir = paste(DATASETS_FOLDER, NAME, '-Filtered/', sep='')
+dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
+
+setLoggingLevel(2)
+setLoggingFile(file.path(outDir, "PBMC4_analysis.log"))
+```
+
+```{r}
+dataset = Read10X(data.dir = inDataDir, strip.suffix = TRUE)
+dataset = dataset[[1]]
+
+sampleCondition <- "PBMC4_Monocytes"
+PBMC4 <- COTAN(raw = dataset)
+# Necessario MetaDataset ?
+PBMC4 <- initializeMetaDataset(PBMC4,
+                                 GEO = "10X PBMC4",
+                                 sequencingMethod = "10X",
+                                 sampleCondition = sampleCondition)
+
+
+cellSizePlot(PBMC4)
+# cellSizePlot(PBMC4, splitPattern = "-", numCol = 2)
+```
+
+```{r}
+cellsSizeThr <- 2000
+PBMC4 <- addElementToMetaDataset(PBMC4, "Cells size threshold", cellsSizeThr)
+
+cells_to_rem <- getCells(PBMC4)[getCellsSize(PBMC4) > cellsSizeThr]
+PBMC4 <- dropGenesCells(PBMC4, cells = cells_to_rem)
+
+cellSizePlot(PBMC4, splitPattern = "-", numCol = 2)
+```
+
+```{r}
+genesSizePlot(PBMC4, splitPattern = "-", numCol = 2)
+```
+
+```{r}
+genesSizeThr <- 300
+PBMC4 <- addElementToMetaDataset(PBMC4, "Num genes threshold", genesSizeThr)
+
+numExprGenes <- getNumExpressedGenes(PBMC4)
+cells_to_rem <- names(numExprGenes)[numExprGenes > genesSizeThr]
+PBMC4 <- dropGenesCells(PBMC4, cells = cells_to_rem)
+
+genesSizePlot(PBMC4, splitPattern = "-", numCol = 2)
+```
+
+```{r}
+mitGenesPattern <- "^[Mm][Tt]-"
+getGenes(PBMC4)[grep(mitGenesPattern, getGenes(PBMC4))]
+```
+
+```{r}
+c(mitPlot, mitSizes) %<-%
+  mitochondrialPercentagePlot(PBMC4, genePrefix = mitGenesPattern,
+                              splitPattern = "-", numCol = 2)
+
+plot(mitPlot)
+```
+
+```{r}
+mitPercThr <- 15
+PBMC4 <- addElementToMetaDataset(PBMC4, "Mitoc. perc. threshold", mitPercThr)
+
+cells_to_rem <- rownames(mitSizes)[mitSizes[["mit.percentage"]] > mitPercThr]
+
+PBMC4 <- dropGenesCells(PBMC4, cells = cells_to_rem)
+
+c(mitPlot, mitSizes) %<-%
+  mitochondrialPercentagePlot(PBMC4, genePrefix = mitGenesPattern,
+                              splitPattern = "-", numCol = 2)
+
+plot(mitPlot)
+```
+
+```{r}
+ribGenesPattern <- "^RP[SL]\\d+"
+getGenes(PBMC4)[grep(ribGenesPattern, getGenes(PBMC4))]
+```
+
+```{r}
+c(ribPlot, ribSizes) %<-%
+  mitochondrialPercentagePlot(PBMC4, genePrefix = mitGenesPattern,
+                              splitPattern = "-", numCol = 2)
+
+plot(ribPlot)
+```
+
+```{r}
+cellSizePlot(PBMC4, splitPattern = "-", numCol = 2)
+```
+
+```{r}
+genesSizePlot(PBMC4, splitPattern = "-", numCol = 2)
+```
+
+```{r}
+PBMC4 <- clean(PBMC4)
+
+c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot, zoomedNuPlot) %<-% cleanPlots(PBMC4)
+
+plot(pcaCellsPlot)
+```
+
+```{r}
+plot(genesPlot)
+```
+
+```{r}
+PBMC4 <- addElementToMetaDataset(PBMC4, "Num drop B group", 0)
+```
+
+```{r}
+plot(UDEPlot)
+```
+
+```{r}
+plot(nuPlot)
+```
+
+```{r}
+plot(zoomedNuPlot)  
+```
+
+```{r}
+yset=0.16
+nuDf <- data.frame("nu" = sort(getNu(PBMC4)), "n" = seq_along(getNu(PBMC4)))
+PBMC4 <- addElementToMetaDataset(PBMC4, "Threshold low UDE cells:", yset)
+cells_to_rem <-rownames(nuDf)[nuDf[["nu"]] < yset]
+PBMC4 <- dropGenesCells(PBMC4, cells = cells_to_rem)
+```
+
+```{r}
+PBMC4 <- clean(PBMC4)
+
+c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot, zoomedNuPlot) %<-% cleanPlots(PBMC4)
+
+plot(pcaCellsPlot)
+```
+
+```{r}
+plot(pcaCellsData)
+```
+
+```{r}
+plot(genesPlot)
+```
+
+```{r}
+plot(UDEPlot)
+```
+
+```{r}
+plot(nuPlot)
+```
+
+```{r}
+plot(zoomedNuPlot)
+```
+
+
+```{r}
+plot(cellSizePlot(PBMC4, splitPattern = "-", numCol = 2))
+```
+
+```{r}
+plot(genesSizePlot(PBMC4, splitPattern = "-", numCol = 2))
+```
+
+```{r}
+saveRDS(PBMC4, file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
+```
