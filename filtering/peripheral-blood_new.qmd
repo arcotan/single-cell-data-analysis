@@ -123,9 +123,6 @@ c(pcaCellsPlot, pcaCellsData, genesPlot, UDEPlot, nuPlot, zoomedNuPlot) %<-% cle
 plot(pcaCellsPlot)
 ```
 
-```{text}
-19312 genes dropped?
-```
 
 ```{r}
 plot(genesPlot)

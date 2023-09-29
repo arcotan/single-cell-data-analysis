@@ -1,17 +1,22 @@
 ```{r}
+library(dplyr)
 library(COTAN)
 library(Seurat)
 library(tibble)
 library(ggplot2)
 library(zeallot)
+library(DropletUtils)
 options(parallelly.fork.enable = TRUE)
 
-NAME = 'PBMC2'
+NAME = 'PBMC3'
 DATASETS_FOLDER = './dataset/'
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDir = paste(DATASETS_FOLDER, NAME, '-Filtered/', sep='')
-dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
+out_10x_dir = paste(outDir, '10x/', sep='')
+if (!dir.exists(outDir)) {
+  dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
+}
 
 setLoggingLevel(2)
 setLoggingFile(file.path(outDir, "PBMC2_analysis.log"))
@@ -180,6 +185,13 @@ plot(cellSizePlot(PBMC3, splitPattern = "-", numCol = 2))
 ```{r}
 plot(genesSizePlot(PBMC3, splitPattern = "-", numCol = 2))
 ```
+
+```{r}
+if (!dir.exists(out_10x_dir)) {
+  write10xCounts(out_10x_dir, getRawData(PBMC3))
+}
+```
+
 ```{r}
 saveRDS(PBMC3, file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
 ```

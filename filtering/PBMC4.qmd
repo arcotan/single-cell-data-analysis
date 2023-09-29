@@ -1,4 +1,5 @@
 ```{r}
+library(dplyr)
 library(COTAN)
 library(Seurat)
 library(tibble)
@@ -11,7 +12,10 @@ DATASETS_FOLDER = './dataset/'
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDir = paste(DATASETS_FOLDER, NAME, '-Filtered/', sep='')
-dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
+out_10x_dir = paste(outDir, '10x/', sep='')
+if (!dir.exists(outDir)) {
+  dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
+}
 
 setLoggingLevel(2)
 setLoggingFile(file.path(outDir, "PBMC4_analysis.log"))
@@ -179,6 +183,12 @@ plot(cellSizePlot(PBMC4, splitPattern = "-", numCol = 2))
 
 ```{r}
 plot(genesSizePlot(PBMC4, splitPattern = "-", numCol = 2))
+```
+
+```{r}
+if (!dir.exists(out_10x_dir)) {
+  write10xCounts(out_10x_dir, getRawData(PBMC4))
+}
 ```
 
 ```{r}
