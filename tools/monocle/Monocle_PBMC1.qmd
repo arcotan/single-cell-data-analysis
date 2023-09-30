@@ -3,15 +3,14 @@ library(monocle3)
 
 source("./libraries/utils.R")
 
-dataset_name = 'peripheral-blood'
+dataset_name = 'PBMC1'
 
 DATASET_PATH = "./dataset/"
 
-DATA_DIR = paste(DATASET_PATH, dataset_name, '-filtered/10X', sep='')#TODO nuova cartella per nuovo filtering
-LABEL_DIR = paste(DATASET_PATH, dataset_name, '-filtered', sep='')
+DATA_DIR = paste(DATASET_PATH, dataset_name, '-Filtered/10X', sep='')
+LABEL_DIR = paste(DATASET_PATH, dataset_name, '-Filtered', sep='')
 OUT_RES_DIR = paste("./results/", dataset_name, '/monocle/', sep='')
-TOP_MARKER_NUM = 50
-num_of_clusters = 11
+TOP_MARKER_NUM = 500
 ```
 
 ```{r}
@@ -22,12 +21,12 @@ cds <- load_mm_data(
 )
 ```
 ```{r}
-cds <- preprocess_cds(cds, num_dim = 10, method = "PCA")
+cds <- preprocess_cds(cds, num_dim = 12, method = "PCA")
 plot_pc_variance_explained(cds)
 ```
 
 ```{r}
-cds <- cluster_cells(cds, resolution=0.015, reduction_method = "PCA")
+cds <- cluster_cells(cds, resolution=0.009, reduction_method = "PCA")
 print(paste("Clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
 ```
 
@@ -42,7 +41,7 @@ label_df$computed_id <- as.numeric(label_df$computed_id)
 ```{r}
 marker_test_res <- top_markers(cds,
                                group_cells_by="cluster",
-                               genes_to_test_per_group = 1000,
+                               genes_to_test_per_group = 3000,
                                reduction_method='PCA',
                                cores=10)
 ```
@@ -54,17 +53,4 @@ if (!dir.exists(OUT_RES_DIR)) {
 
 write_clustering(OUT_RES_DIR, label_df, "cell", "computed_id", dist(t(exprs(cds))))
 write_markers(OUT_RES_DIR, marker_test_res, "gene_id", "cell_group", "marker_test_p_value", FALSE, TOP_MARKER_NUM)
-```
-
-```{r}
-marker_p_val = marker_test_res[c("gene_id", "marker_test_p_value")]
-marker_p_val = marker_p_val[order(marker_p_val$marker_test_p_value),]
-nrow(marker_p_val)
-```
-
-```{r}
-nrow(marker_p_val[marker_p_val$marker_test_p_value < 0.000000001,])
-```
-
-```{r}
 ```

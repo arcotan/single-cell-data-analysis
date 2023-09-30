@@ -142,10 +142,13 @@ write_clustering = function(outdir, label_df, cell_col, cluster_col, distance_ma
 }
 
 write_markers = function(outdir, marker_df, gene_col, cluster_col, order_by_col, is_higher_better, top_k) {
-  is_higher_better = is_higher_better*1
+  order_coef = -1
+  if (is_higher_better) {
+    order_coef = 1
+  }
   marker_df = marker_df %>%
     group_by(get(cluster_col)) %>%
-    slice_max(n = top_k, order_by = (is_higher_better*get(order_by_col))) %>% 
+    slice_max(n = top_k, order_by = (order_coef*get(order_by_col))) %>% 
     mutate(rank = row_number(), ties.method = "first")
   marker_df = data.frame(marker_df)
   to_write = marker_df[c(gene_col, cluster_col, "rank")]
