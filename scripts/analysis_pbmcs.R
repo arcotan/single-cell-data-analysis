@@ -25,8 +25,8 @@ DATASET_TAG_TO_TRUE_LABEL_DIR = list()
 DATASET_TAG_TO_MAPPING_DIR = list()
 DATASET_TAG_TO_FILTERED_GE_DIR = list()
 for (tag in DATASET_TAGS) {
-  DATASET_TAG_TO_MAPPING_DIR[[tag]] = paste(DATASET_DIR, tag, "-filtered/", sep="")
-  DATASET_TAG_TO_FILTERED_GE_DIR[[tag]] = paste(DATASET_DIR, tag, "-filtered/10X/", sep="")
+  DATASET_TAG_TO_MAPPING_DIR[[tag]] = paste(DATASET_DIR, tag, "-Filtered/", sep="")
+  DATASET_TAG_TO_FILTERED_GE_DIR[[tag]] = paste(DATASET_DIR, tag, "-Filtered/10X/", sep="")
 }
 
 LABEL_FILENAME = "celltypist_labels.csv"
@@ -44,6 +44,8 @@ for (tag in DATASET_TAGS) {
   DATASET_TAG_TO_GENES_TO_ENRICH_DIR[[tag]] = paste(AGGREGATE_RESULT_DIR, "/", tag, "/genes_to_enrich/", sep="")
   DATASET_TAG_TO_ENRICHER_DIR[[tag]] = paste(AGGREGATE_RESULT_DIR, "/", tag, "/enrichr_data/", sep="")
 }
+
+SCORES_FEATURES_ON_ROWS = FALSE
 
 read_single_data = function(tool_tag, dataset_tag) {
   label_file = paste(RESULT_DIR, dataset_tag, "/", tool_tag, "/clustering_labels", ".csv", sep="")
@@ -166,7 +168,7 @@ collect_dataset_data = function(tool_tag_list, dataset_tag, compute_missing_scor
           geSeurat <- ScaleData(geSeurat, features = rownames(geSeurat))
           geSeurat <- RunPCA(geSeurat, features = VariableFeatures(object = geSeurat))
           PCAge <- Embeddings(object = geSeurat, reduction = "pca")#TODO verificare che funzioni
-          score_data[i, "silhouette"] <- clustering_complex_scores(label_data, "cell", paste(cur_info$tool, "_label", sep=""), PCAge)$silhouette
+          score_data[i, "silhouette"] <- clustering_complex_scores(label_data, "cell", paste(cur_info$tool, "_label", sep=""), PCAge, features_on_rows = SCORES_FEATURES_ON_ROWS)$silhouette
         }
       }
     }

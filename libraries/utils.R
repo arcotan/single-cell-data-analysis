@@ -117,9 +117,11 @@ clustering_simple_scores = function(label_df, computed_label, true_label) {
   return (data.frame("entropy" = res_entropy, "purity" = res_purity, "accuracy" = res_overlap, "NMI" = res_NMI, "Adj_Rand_Index" = res_Adj_Rand_Index))
 }
 
-clustering_complex_scores = function(label_df, cell_col, computed_label, gene_expression_matrix, threads = 8) {
+clustering_complex_scores = function(label_df, cell_col, computed_label, gene_expression_matrix, threads = 8, features_on_rows = TRUE) {
   label_df = label_df[!rowAny(is.na(label_df[[computed_label]])), ]
-  gene_expression_matrix = t(gene_expression_matrix)
+  if (features_on_rows) {
+    gene_expression_matrix = t(gene_expression_matrix)
+  }
   gene_expression_matrix = gene_expression_matrix[rownames(gene_expression_matrix) %in% label_df[[cell_col]],]
   distance_matrix <- parDist(as.matrix(gene_expression_matrix), threads = threads)
   return (data.frame("silhouette" = mean(silhouette(label_df[[computed_label]], distance_matrix)[,3])))
