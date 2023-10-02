@@ -12,6 +12,7 @@ import pickle
 # DATASET_TAGS = ['tabula-muris-heart', 'tabula-muris-marrow_P7_3', 'peripheral-blood', 'zheng-4', 'zheng-8']
 DATASET_TAGS = ['PBMC1', 'PBMC2']
 N_MARKERS = 500
+NULL_MODEL_ATTEMPTS = 50
 
 def apply_classifier(X, y):
 	clf = RandomForestClassifier(n_jobs=4)
@@ -112,14 +113,19 @@ for dataset in DATASET_TAGS:
 	
 	# train binary classifiers for each cluster using all genes and compute f1
 	print(f"## Training 1 vs Rest RF on a random subset of {N_MARKERS} features")
+	f1_sample_std = []
 	f1_sample = []
-	X_sample = adata[:, np.random.choice(adata.shape[1], N_MARKERS, replace=False)].X.toarray()
-	for cluster in clusters:
-		f1 = apply_classifier(X_sample, y_ovr[cluster])
-		f1_sample.append(f1)
-		print("Cluster {} done".format(cluster))
-	f1_markers['sample'] = round((weights*np.array(f1_sample)).sum()/weights.sum(), 5)
-	f1_std['sample'] = weighted_std(f1_sample, weights)
+	for i in range(NULL_MODEL_ATTEMPTS):
+		f1_sample_attempt = []
+		X_sample = adata[:, np.random.choice(adata.shape[1], N_MARKERS, replace=False)].X.toarray()
+		for cluster in clusters:
+			f1 = apply_classifier(X_sample, y_ovr[cluster])
+			f1_sample_attempt.append(f1)
+			print("Cluster {} done".format(cluster))
+		f1_sample_std.append(weighted_std(f1_sample_attempt, weights))
+		f1_sample.append(round((weights*np.array(f1_sample_attempt)).sum()/weights.sum(), 5))
+	f1_markers['sample'] = round(np.mean(f1_sample), 5)
+	f1_std['sample'] = round(np.mean(f1_sample_std), 5)
 	pd.DataFrame.from_dict(
 		data=f1_markers,
 		orient='index').to_csv(out_path+"clf_f1_sample.csv", header=['f1'])
