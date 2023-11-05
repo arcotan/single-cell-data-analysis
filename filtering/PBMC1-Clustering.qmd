@@ -15,6 +15,7 @@ dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
 
 setLoggingLevel(2)
 setLoggingFile(file.path(outDir, "PBMC1_analysis.log"))
+sampleCondition <- "PBMC1_Monocytes"
 ```
 
 ```{r}
