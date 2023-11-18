@@ -9,7 +9,7 @@ library(DropletUtils)
 options(parallelly.fork.enable = TRUE)
 
 NAME = 'PBMC3'
-DATASETS_FOLDER = './dataset/'
+DATASETS_FOLDER = '../dataset/'
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDir = paste(DATASETS_FOLDER, NAME, '-Filtered/', sep='')
@@ -19,28 +19,27 @@ if (!dir.exists(outDir)) {
 }
 
 setLoggingLevel(2)
-setLoggingFile(file.path(outDir, "PBMC2_analysis.log"))
+setLoggingFile(file.path(outDir, "PBMC3_analysis.log"))
 ```
 
 ```{r}
 dataset = Read10X(data.dir = inDataDir, strip.suffix = TRUE)
 dataset = dataset[[1]]
 
-sampleCondition <- "PBMC2_Monocytes"
+sampleCondition <- "PBMC3"
 PBMC3 <- COTAN(raw = dataset)
-# Necessario MetaDataset ?
-PBMC3 <- initializeMetaDataset(PBMC3,
-                                 GEO = "10X PBMC2",
-                                 sequencingMethod = "10X",
-                                 sampleCondition = sampleCondition)
-
+PBMC3 <- initializeMetaDataset(
+  PBMC3,
+  GEO = "10X PBMC3",
+  sequencingMethod = "10X",
+  sampleCondition = sampleCondition
+)
 
 cellSizePlot(PBMC3)
-# cellSizePlot(PBMC3, splitPattern = "-", numCol = 2)
 ```
 
 ```{r}
-cellsSizeThr <- 2000
+cellsSizeThr <- 20000
 PBMC3 <- addElementToMetaDataset(PBMC3, "Cells size threshold", cellsSizeThr)
 
 cells_to_rem <- getCells(PBMC3)[getCellsSize(PBMC3) > cellsSizeThr]
@@ -54,7 +53,7 @@ genesSizePlot(PBMC3, splitPattern = "-", numCol = 2)
 ```
 
 ```{r}
-genesSizeThr <- 300
+genesSizeThr <- 3500
 PBMC3 <- addElementToMetaDataset(PBMC3, "Num genes threshold", genesSizeThr)
 
 numExprGenes <- getNumExpressedGenes(PBMC3)
@@ -78,7 +77,7 @@ plot(mitPlot)
 ```
 
 ```{r}
-mitPercThr <- 15
+mitPercThr <- 10
 PBMC3 <- addElementToMetaDataset(PBMC3, "Mitoc. perc. threshold", mitPercThr)
 
 cells_to_rem <- rownames(mitSizes)[mitSizes[["mit.percentage"]] > mitPercThr]
@@ -99,7 +98,7 @@ getGenes(PBMC3)[grep(ribGenesPattern, getGenes(PBMC3))]
 
 ```{r}
 c(ribPlot, ribSizes) %<-%
-  mitochondrialPercentagePlot(PBMC3, genePrefix = mitGenesPattern,
+  mitochondrialPercentagePlot(PBMC3, genePrefix = ribGenesPattern,
                               splitPattern = "-", numCol = 2)
 
 plot(ribPlot)
@@ -141,13 +140,6 @@ plot(nuPlot)
 plot(zoomedNuPlot)  
 ```
 
-```{r}
-yset=0.16
-nuDf <- data.frame("nu" = sort(getNu(PBMC3)), "n" = seq_along(getNu(PBMC3)))
-PBMC3 <- addElementToMetaDataset(PBMC3, "Threshold low UDE cells:", yset)
-cells_to_rem <-rownames(nuDf)[nuDf[["nu"]] < yset]
-PBMC3 <- dropGenesCells(PBMC3, cells = cells_to_rem)
-```
 
 ```{r}
 PBMC3 <- clean(PBMC3)

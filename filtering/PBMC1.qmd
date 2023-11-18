@@ -9,7 +9,7 @@ library(DropletUtils)
 options(parallelly.fork.enable = TRUE)
 
 NAME = 'PBMC1'
-DATASETS_FOLDER = './dataset/'
+DATASETS_FOLDER = '../dataset/'
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDir = paste(DATASETS_FOLDER, NAME, '-Filtered/', sep='')
@@ -26,17 +26,16 @@ setLoggingFile(file.path(outDir, "PBMC1_analysis.log"))
 dataset = Read10X(data.dir = inDataDir, strip.suffix = TRUE)
 dataset = dataset[[1]]
 
-sampleCondition <- "PBMC1_Monocytes"
+sampleCondition <- "PBMC1"
 PBMC1 <- COTAN(raw = dataset)
-# Necessario MetaDataset ?
-PBMC1 <- initializeMetaDataset(PBMC1,
-                                 GEO = "10X PBMC1",
-                                 sequencingMethod = "10X",
-                                 sampleCondition = sampleCondition)
-
+PBMC1 <- initializeMetaDataset(
+  PBMC1,
+  GEO = "10X PBMC1",
+  sequencingMethod = "10X",
+  sampleCondition = sampleCondition
+)
 
 cellSizePlot(PBMC1)
-# cellSizePlot(PBMC1, splitPattern = "-", numCol = 2)
 ```
 
 ```{r}
@@ -99,7 +98,7 @@ getGenes(PBMC1)[grep(ribGenesPattern, getGenes(PBMC1))]
 
 ```{r}
 c(ribPlot, ribSizes) %<-%
-  mitochondrialPercentagePlot(PBMC1, genePrefix = mitGenesPattern,
+  mitochondrialPercentagePlot(PBMC1, genePrefix = ribGenesPattern,
                               splitPattern = "-", numCol = 2)
 
 plot(ribPlot)
