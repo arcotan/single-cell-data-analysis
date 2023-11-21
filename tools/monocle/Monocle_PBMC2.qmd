@@ -40,7 +40,7 @@ plot_pc_variance_explained(cds)
 Clustering
 
 ```{r}
-cds <- cluster_cells(cds, resolution=0.007, reduction_method = "PCA") # should be 16 for PBMC2
+cds <- cluster_cells(cds, resolution=0.008, reduction_method = "PCA") # should be 16 for PBMC2
 print(paste("Number of clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
 ```
 

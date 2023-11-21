@@ -63,13 +63,13 @@ Plot pca explained variance ratio to choose number of components
 
 ```{r}
 pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
-ElbowPlot(object = pbmc, ndims = 50)
+ElbowPlot(object = pbmc, ndims = 20)
 ```
 
 Perform the clustering
 
 ```{r}
-pbmc <- FindNeighbors(pbmc, dims = 1:16) # chosen based on elbow plot above
+pbmc <- FindNeighbors(pbmc, dims = 1:20) # chosen based on elbow plot above
 pbmc <- FindClusters(pbmc, resolution = 0.98) # should be 16 for PBMC2
 ```
 

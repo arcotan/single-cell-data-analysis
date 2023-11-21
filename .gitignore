@@ -69,11 +69,6 @@ rsconnect/
 # scvitools TEMP DATA
 .scviTools/data
 
-# eps data
-/results/**/*.eps
-
-# txt data
-/results/**/*.txt
 
 # VSCode data
 .vscode/
