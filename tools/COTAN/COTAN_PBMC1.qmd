@@ -1,3 +1,8 @@
+---
+title: Clustering and differential expression analysis of PBMC1 using COTAN
+---
+
+
 ```{r}
 library(COTAN)
 library(Seurat)
@@ -5,6 +10,7 @@ library(tibble)
 library(ggplot2)
 library(zeallot)
 options(parallelly.fork.enable = TRUE)
+source("../../libraries/utils.R")
 
 NAME = 'PBMC1'
 DATASETS_FOLDER = '../../dataset/'
@@ -17,9 +23,13 @@ setLoggingLevel(2)
 setLoggingFile(file.path(outDir, "PBMC1_analysis.log"))
 ```
 
+Data loading
+
 ```{r}
-PBMC1 <- readRDS(file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
+PBMC1 <- readRDS(file = file.path(outDir, paste0(NAME, ".cotan.RDS")))
 ```
+
+Calculate genes’ COEX
 
 ```{r}
 PBMC1 <- proceedToCoex(
@@ -59,18 +69,20 @@ plot(gdiPlot)
 ```
 
 ```{r}
-saveRDS(PBMC1, file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
+saveRDS(PBMC1, file = file.path(outDir, paste0(NAME, ".cotan.RDS")))
 ```
 
 ```{r}
-PBMC1 <- readRDS(file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
+PBMC1 <- readRDS(file = file.path(outDir, paste0(NAME, ".cotan.RDS")))
 ```
+
+Clustering
 
 ```{r}
 c(splitClusters, splitCoexDF) %<-%
   cellsUniformClustering(
     PBMC1,
-    GDIThreshold = 1.55,
+    GDIThreshold = 1.6,
     cores = 13,
     saveObj = TRUE,
     outDir = outDir
@@ -83,19 +95,22 @@ PBMC1 <- addClusterization(
   coexDF = splitCoexDF,
   override = TRUE
 )
-```
 
-```{r}
 splitClusters <- getClusterizationData(PBMC1, clName = "split")[[1]]
 table(splitClusters)
 ```
 
+
 ```{r}
-saveRDS(PBMC1, file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
+saveRDS(PBMC1, file = file.path(outDir, paste0(NAME, ".cotan.RDS")))
 ```
 
-
 ```{r}
+# in case repeat changing threshold
+```
+
+```{r} 
+# if needed
 c(mergedClusters, mergedCoexDF) %<-%
   mergeUniformCellsClusters(
     PBMC1,
@@ -113,15 +128,58 @@ PBMC1 <- addClusterization(
   coexDF = mergedCoexDF,
   override = TRUE
 )
-```
 
-```{r}
 mergedClusters <- getClusterizationData(PBMC1, clName = "merge")[[1]]
 table(mergedClusters)
 ```
 
+Save the clustering result
+
 ```{r}
-saveRDS(PBMC1, file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
+final_clusters = splitClusters # or mergedClusters
+final_clusters_name = "split" # or merge
+
+saveRDS(PBMC1, file = file.path(outDir, paste0(NAME, ".cotan.RDS")))
+cluster = as.data.frame(final_clusters)
+colnames(cluster)[colnames(cluster) == deparse(substitute(final_clusters))] <- "cluster"
+cluster$cluster = match(cluster$cluster, levels(final_clusters))
+cluster$cell = rownames(cluster)
+rownames(cluster) = c(1:nrow(cluster))
+write_clustering(outDir, cluster, "cell", "cluster")
+```
+
+Differential expression
+
+```{r}
+coexDF %<-% DEAOnClusters(PBMC1, clusters = final_clusters) # pvals?
+PBMC1 <- addClusterizationCoex(PBMC1, clName = final_clusters_name,
+                             coexDF = coexDF)
+```
+
+Save markers
+
+```{r}
+write_COTAN_markers = function(OUT_RES_DIR, clusters, pValues, TOP_MARKER_NUM) {
+    markers = data.frame()
+
+    for (cluster_id in (levels(clusters))) {
+        cluster_markers = data.frame()
+        pv = pValues[, cluster_id]
+        names(pv) = rownames(pValues)
+        sorted_pv = sort(pv, decreasing = FALSE)
+        cluster_markers = data.frame(gene = names(sorted_pv)[1:TOP_MARKER_NUM],
+                                    cluster = match(cluster_id, levels(clusters)),
+                                    rank = 1:TOP_MARKER_NUM)
+
+        markers = rbind(markers, cluster_markers)
+    }
+    colnames(markers) = c("gene","cluster","rank")
+
+    write.csv(markers, paste(OUT_RES_DIR, "/markers.csv", sep=""), row.names = FALSE)
+}
+
+TOP_MARKER_NUM = 500
+write_COTAN_markers(outDir, final_clusters, coexDF, TOP_MARKER_NUM)
 ```
 
 ```{r}
