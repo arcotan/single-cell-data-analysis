@@ -1,3 +1,7 @@
+---
+title: Filtering of PBMC3 using COTAN
+---
+
 ```{r}
 library(dplyr)
 library(COTAN)
@@ -22,6 +26,8 @@ setLoggingLevel(2)
 setLoggingFile(file.path(outDir, "PBMC3_analysis.log"))
 ```
 
+Data loading
+
 ```{r}
 dataset = Read10X(data.dir = inDataDir, strip.suffix = TRUE)
 dataset = dataset[[1]]
@@ -34,9 +40,14 @@ PBMC3 <- initializeMetaDataset(
   sequencingMethod = "10X",
   sampleCondition = sampleCondition
 )
+```
 
+Inspect cells’ sizes
+```{r}
 cellSizePlot(PBMC3)
 ```
+
+Drop cells with too many ritz reads as they are probably doublets
 
 ```{r}
 cellsSizeThr <- 20000
@@ -48,9 +59,13 @@ PBMC3 <- dropGenesCells(PBMC3, cells = cells_to_rem)
 cellSizePlot(PBMC3, splitPattern = "-", numCol = 2)
 ```
 
+Inspect the number of expressed genes per cell
+
 ```{r}
 genesSizePlot(PBMC3, splitPattern = "-", numCol = 2)
 ```
+
+Drop cells with too high genes expession as they are probably doublets
 
 ```{r}
 genesSizeThr <- 3500
@@ -62,6 +77,8 @@ PBMC3 <- dropGenesCells(PBMC3, cells = cells_to_rem)
 
 genesSizePlot(PBMC3, splitPattern = "-", numCol = 2)
 ```
+
+Check number of mithocondrial genes expressed in each cell
 
 ```{r}
 mitGenesPattern <- "^[Mm][Tt]-"
@@ -75,6 +92,8 @@ c(mitPlot, mitSizes) %<-%
 
 plot(mitPlot)
 ```
+
+We drop cells with a too high percentage of mitocondrial genes (are likely dead)
 
 ```{r}
 mitPercThr <- 10
@@ -91,6 +110,8 @@ c(mitPlot, mitSizes) %<-%
 plot(mitPlot)
 ```
 
+Check number of ribosomial genes expressed in each cell
+
 ```{r}
 ribGenesPattern <- "^RP[SL]\\d+"
 getGenes(PBMC3)[grep(ribGenesPattern, getGenes(PBMC3))]
@@ -104,6 +125,8 @@ c(ribPlot, ribSizes) %<-%
 plot(ribPlot)
 ```
 
+Check no further outliers after all the culling
+
 ```{r}
 cellSizePlot(PBMC3, splitPattern = "-", numCol = 2)
 ```
@@ -111,6 +134,8 @@ cellSizePlot(PBMC3, splitPattern = "-", numCol = 2)
 ```{r}
 genesSizePlot(PBMC3, splitPattern = "-", numCol = 2)
 ```
+
+Cleaning, round 1
 
 ```{r}
 PBMC3 <- clean(PBMC3)
@@ -140,6 +165,7 @@ plot(nuPlot)
 plot(zoomedNuPlot)  
 ```
 
+Cleaning, round 2
 
 ```{r}
 PBMC3 <- clean(PBMC3)
@@ -177,6 +203,8 @@ plot(cellSizePlot(PBMC3, splitPattern = "-", numCol = 2))
 ```{r}
 plot(genesSizePlot(PBMC3, splitPattern = "-", numCol = 2))
 ```
+
+Save the filtered dataset
 
 ```{r}
 if (!dir.exists(out_10x_dir)) {
