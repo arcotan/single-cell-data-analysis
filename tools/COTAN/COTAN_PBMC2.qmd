@@ -1,0 +1,187 @@
+---
+title: Clustering and differential expression analysis of PBMC2 using COTAN
+---
+
+
+```{r}
+library(COTAN)
+library(Seurat)
+library(tibble)
+library(ggplot2)
+library(zeallot)
+options(parallelly.fork.enable = TRUE)
+source("../../libraries/utils.R")
+
+NAME = 'PBMC2'
+DATASETS_FOLDER = '../../dataset/'
+
+inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
+outDir = paste(DATASETS_FOLDER, NAME, '-Filtered/', sep='')
+dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
+
+setLoggingLevel(2)
+setLoggingFile(file.path(outDir, "PBMC2_analysis.log"))
+```
+
+Data loading
+
+```{r}
+PBMC2 <- readRDS(file = file.path(outDir, paste0(NAME, ".cotan.RDS")))
+```
+
+Calculate genes’ COEX
+
+```{r}
+PBMC2 <- proceedToCoex(
+  PBMC2,
+  calcCoex = TRUE,
+  cores = 10,
+  saveObj = TRUE,
+  outDir = outDir
+)
+```
+
+```{r}
+PBMC2 <- saveRDS(file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
+```
+
+```{r}
+gdiData <- calculateGDI(PBMC2)
+genesToLabel <- head(
+  rownames(gdiData[order(gdiData[["GDI"]], decreasing = TRUE), ]),
+  n = 50L
+)
+sort(genesToLabel)
+```
+
+```{r}
+gdiData[genesToLabel[[50L]], "GDI"]
+```
+
+```{r}
+gdiPlot <- GDIPlot(
+  PBMC2,
+  GDIIn = gdiData,
+  GDIThreshold = 1.4,
+  genes = list("Top 10 GDI genes" = genesToLabel[1L:10L])
+)
+plot(gdiPlot)
+```
+
+```{r}
+saveRDS(PBMC2, file = file.path(outDir, paste0(NAME, ".cotan.RDS")))
+```
+
+```{r}
+PBMC2 <- readRDS(file = file.path(outDir, paste0(NAME, ".cotan.RDS")))
+```
+
+Clustering
+
+```{r}
+c(splitClusters, splitCoexDF) %<-%
+  cellsUniformClustering(
+    PBMC2,
+    GDIThreshold = 1.6,
+    cores = 13,
+    saveObj = TRUE,
+    outDir = outDir
+  )
+
+PBMC2 <- addClusterization(
+  PBMC2,
+  clName = "split",
+  clusters = splitClusters,
+  coexDF = splitCoexDF,
+  override = TRUE
+)
+
+splitClusters <- getClusterizationData(PBMC2, clName = "split")[[1]]
+table(splitClusters)
+```
+
+
+```{r}
+saveRDS(PBMC2, file = file.path(outDir, paste0(NAME, ".cotan.RDS")))
+```
+
+```{r}
+# in case repeat changing threshold
+```
+
+```{r} 
+# if needed
+c(mergedClusters, mergedCoexDF) %<-%
+  mergeUniformCellsClusters(
+    PBMC2,
+    clusters = splitClusters,
+    GDIThreshold = 1.4,
+    cores = 13,
+    saveObj = TRUE,
+    outDir = outDir
+  )
+
+PBMC2 <- addClusterization(
+  PBMC2,
+  clName = "merge",
+  clusters = mergedClusters,
+  coexDF = mergedCoexDF,
+  override = TRUE
+)
+
+mergedClusters <- getClusterizationData(PBMC2, clName = "merge")[[1]]
+table(mergedClusters)
+```
+
+Save the clustering result
+
+```{r}
+final_clusters = splitClusters # or mergedClusters
+final_clusters_name = "split" # or merge
+
+saveRDS(PBMC2, file = file.path(outDir, paste0(NAME, ".cotan.RDS")))
+cluster = as.data.frame(final_clusters)
+colnames(cluster)[colnames(cluster) == deparse(substitute(final_clusters))] <- "cluster"
+cluster$cluster = match(cluster$cluster, levels(final_clusters))
+cluster$cell = rownames(cluster)
+rownames(cluster) = c(1:nrow(cluster))
+write_clustering(outDir, cluster, "cell", "cluster")
+```
+
+Differential expression
+
+```{r}
+coexDF %<-% DEAOnClusters(PBMC2, clusters = final_clusters) # pvals?
+PBMC2 <- addClusterizationCoex(PBMC2, clName = final_clusters_name,
+                             coexDF = coexDF)
+```
+
+Save markers
+
+```{r}
+write_COTAN_markers = function(OUT_RES_DIR, clusters, pValues, TOP_MARKER_NUM) {
+    markers = data.frame()
+
+    for (cluster_id in (levels(clusters))) {
+        cluster_markers = data.frame()
+        pv = pValues[, cluster_id]
+        names(pv) = rownames(pValues)
+        sorted_pv = sort(pv, decreasing = FALSE)
+        cluster_markers = data.frame(gene = names(sorted_pv)[1:TOP_MARKER_NUM],
+                                    cluster = match(cluster_id, levels(clusters)),
+                                    rank = 1:TOP_MARKER_NUM)
+
+        markers = rbind(markers, cluster_markers)
+    }
+    colnames(markers) = c("gene","cluster","rank")
+
+    write.csv(markers, paste(OUT_RES_DIR, "/markers.csv", sep=""), row.names = FALSE)
+}
+
+TOP_MARKER_NUM = 500
+write_COTAN_markers(outDir, final_clusters, coexDF, TOP_MARKER_NUM)
+```
+
+```{r}
+sessionInfo()
+```
