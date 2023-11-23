@@ -4,9 +4,9 @@ library(enrichR)
 library(ggplot2)
 
 
-source("./libraries/utils.R")
-source("./libraries/venn.R")
-source("./libraries/enrichment_lists.R")
+source("../libraries/utils.R")
+source("../libraries/venn.R")
+source("../libraries/enrichment_lists.R")
 
 TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi-tools', 'COTAN')
 DATASET_TAGS= c('PBMC1', 'PBMC2', 'PBMC3', 'PBMC4')
@@ -17,9 +17,9 @@ MAPPING_DATASET_NAMES = list(
   'PBMC4' = 'PBMC4'
 )
 
-RESULT_DIR = "./results/"
+RESULT_DIR = "../results/"
 AGGREGATE_RESULT_DIR = paste(RESULT_DIR, "aggregate_new_pbmcs/", sep="")
-DATASET_DIR = "./dataset/"
+DATASET_DIR = "../dataset/"
 
 DATASET_TAG_TO_TRUE_LABEL_DIR = list()
 DATASET_TAG_TO_MAPPING_DIR = list()

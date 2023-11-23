@@ -16,7 +16,7 @@ NAME = 'PBMC1'
 DATASETS_FOLDER = '../../dataset/'
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
-outDir = paste(DATASETS_FOLDER, NAME, '-Filtered/', sep='')
+ourDir = paste("../../results/", NAME, '/COTAN/', sep='')
 dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
 
 setLoggingLevel(2)
@@ -82,7 +82,7 @@ Clustering
 c(splitClusters, splitCoexDF) %<-%
   cellsUniformClustering(
     PBMC1,
-    GDIThreshold = 1.6,
+    GDIThreshold = 1.5,
     cores = 13,
     saveObj = TRUE,
     outDir = outDir
@@ -115,7 +115,7 @@ c(mergedClusters, mergedCoexDF) %<-%
   mergeUniformCellsClusters(
     PBMC1,
     clusters = splitClusters,
-    GDIThreshold = 1.4,
+    GDIThreshold = 1.5,
     cores = 13,
     saveObj = TRUE,
     outDir = outDir
@@ -151,7 +151,7 @@ write_clustering(outDir, cluster, "cell", "cluster")
 Differential expression
 
 ```{r}
-coexDF %<-% DEAOnClusters(PBMC1, clusters = final_clusters) # pvals?
+coexDF %<-% DEAOnClusters(PBMC1, clusters = final_clusters)
 PBMC1 <- addClusterizationCoex(PBMC1, clName = final_clusters_name,
                              coexDF = coexDF)
 ```
@@ -159,14 +159,14 @@ PBMC1 <- addClusterizationCoex(PBMC1, clName = final_clusters_name,
 Save markers
 
 ```{r}
-write_COTAN_markers = function(OUT_RES_DIR, clusters, pValues, TOP_MARKER_NUM) {
+write_markers = function(ourDir, clusters, coex, TOP_MARKER_NUM, decreasing) {
     markers = data.frame()
 
     for (cluster_id in (levels(clusters))) {
         cluster_markers = data.frame()
-        pv = pValues[, cluster_id]
-        names(pv) = rownames(pValues)
-        sorted_pv = sort(pv, decreasing = FALSE)
+        pv = coex[, cluster_id]
+        names(pv) = rownames(coex)
+        sorted_pv = sort(pv, decreasing = decreasing)
         cluster_markers = data.frame(gene = names(sorted_pv)[1:TOP_MARKER_NUM],
                                     cluster = match(cluster_id, levels(clusters)),
                                     rank = 1:TOP_MARKER_NUM)
@@ -175,11 +175,11 @@ write_COTAN_markers = function(OUT_RES_DIR, clusters, pValues, TOP_MARKER_NUM) {
     }
     colnames(markers) = c("gene","cluster","rank")
 
-    write.csv(markers, paste(OUT_RES_DIR, "/markers.csv", sep=""), row.names = FALSE)
+    write.csv(markers, paste(outDir, "/decr", decreasing, "markers.csv", sep=""), row.names = FALSE)
 }
 
 TOP_MARKER_NUM = 500
-write_COTAN_markers(outDir, final_clusters, coexDF, TOP_MARKER_NUM)
+write_markers(outDir, final_clusters, coexDF, TOP_MARKER_NUM, FALSE)
 ```
 
 ```{r}
