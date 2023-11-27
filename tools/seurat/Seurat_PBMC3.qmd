@@ -40,7 +40,7 @@ plot(log(sort(apply(pbmc.data,1,var), decreasing=TRUE)))
 Data normalization
 
 ```{r}
-pbmc <- NormalizeData(pbmc, normalization.method = "LogNormalize", scale.factor = 10000) # default params
+pbmc <- NormalizeData(pbmc, normalization.method = "LogNormalize", scale.factor = 10000)
 ```
 
 Feature selection
@@ -69,8 +69,8 @@ ElbowPlot(object = pbmc, ndims = 50)
 Perform the clustering
 
 ```{r}
-pbmc <- FindNeighbors(pbmc, dims = 1:11) # chosen based on elbow plot above
-pbmc <- FindClusters(pbmc, resolution = 0.90)
+pbmc <- FindNeighbors(pbmc, dims = 1:16) # chosen based on elbow plot above
+pbmc <- FindClusters(pbmc)
 ```
 
 Save the clustering results
@@ -87,7 +87,7 @@ write_clustering(OUT_RES_DIR, label_df, "cell", "computed_id")
 Differential expression
 
 ```{r}
-pbmc.markers <- FindAllMarkers(pbmc, min.pct = 0.1, logfc.threshold = 0.25) # FIXME: how to choose params? default min.pct is 0.01, default logfc.threshold is 0.1
+pbmc.markers <- FindAllMarkers(pbmc)
 ```
 
 Save markers
@@ -95,4 +95,8 @@ Save markers
 ```{r}
 pbmc.markers$cluster <- as.numeric(pbmc.markers$cluster)
 write_markers(OUT_RES_DIR, pbmc.markers, "gene", "cluster", "p_val_adj", FALSE, TOP_MARKER_NUM)
+```
+
+```{r}
+sessionInfo()
 ```
