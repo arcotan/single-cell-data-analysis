@@ -1,15 +1,24 @@
+---
+title: Clustering and differential expression analysis of PBMC2 using Monocle
+---
+
 ```{r}
 library(monocle3)
+source("../../libraries/utils.R")
+```
 
-source("./libraries/utils.R")
+Data loading and preparation
 
+```{r}
 dataset_name = 'PBMC2'
-
-DATASET_PATH = "./dataset/"
-
+DATASET_PATH = "../../dataset/"
 DATA_DIR = paste(DATASET_PATH, dataset_name, '-Filtered/10X', sep='')
 LABEL_DIR = paste(DATASET_PATH, dataset_name, '-Filtered', sep='')
-OUT_RES_DIR = paste("./results/", dataset_name, '/monocle/', sep='')
+OUT_RES_DIR = paste("../../results/", dataset_name, '/monocle/', sep='')
+if (!dir.exists(OUT_RES_DIR)) {
+  dir.create(OUT_RES_DIR, recursive = TRUE)
+}
+
 TOP_MARKER_NUM = 500
 ```
 
@@ -20,15 +29,22 @@ cds <- load_mm_data(
   cell_anno_path = paste(DATA_DIR, "barcodes.tsv", sep = "/")
 )
 ```
+
+Studying feature variance
+
 ```{r}
-cds <- preprocess_cds(cds, num_dim = 10, method = "PCA")
+cds <- preprocess_cds(cds, num_dim = 10, method = "PCA") # normalization
 plot_pc_variance_explained(cds)
 ```
 
+Clustering
+
 ```{r}
-cds <- cluster_cells(cds, resolution=0.006, reduction_method = "PCA")
-print(paste("Clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
+cds <- cluster_cells(cds, reduction_method = "PCA")
+print(paste("Number of clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
 ```
+
+Save the clustering results
 
 ```{r}
 label_df = data.frame(clusters(cds, reduction_method = "PCA"))
@@ -36,21 +52,27 @@ label_df$cell <- rownames(label_df)
 rownames(label_df) <- 1:nrow(label_df)
 colnames(label_df)[1] <- "computed_id"
 label_df$computed_id <- as.numeric(label_df$computed_id)
-```
-
-```{r}
-marker_test_res <- top_markers(cds,
-                               group_cells_by="cluster",
-                               genes_to_test_per_group = 3000,
-                               reduction_method='PCA',
-                               cores=10)
-```
-
-```{r}
-if (!dir.exists(OUT_RES_DIR)) {
-  dir.create(OUT_RES_DIR, recursive = TRUE)
-}
-
 write_clustering(OUT_RES_DIR, label_df, "cell", "computed_id", dist(t(exprs(cds))))
+```
+
+Differential expression
+
+```{r}
+marker_test_res <- top_markers(
+  cds,
+  group_cells_by="cluster",
+  genes_to_test_per_group = 3000,
+  reduction_method='PCA',
+  cores=10
+)
+```
+
+Save markers
+
+```{r}
 write_markers(OUT_RES_DIR, marker_test_res, "gene_id", "cell_group", "marker_test_p_value", FALSE, TOP_MARKER_NUM)
+```
+
+```{r}
+sessionInfo()
 ```
