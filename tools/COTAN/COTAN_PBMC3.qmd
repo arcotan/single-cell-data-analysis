@@ -1,5 +1,5 @@
 ---
-title: Clustering and differential expression analysis of PBMC1 using COTAN
+title: Clustering and differential expression analysis of PBMC3 using COTAN
 ---
 
 
@@ -13,9 +13,9 @@ options(parallelly.fork.enable = TRUE)
 source("../../libraries/utils.R")
 
 
-dataset_name = 'PBMC1'
+dataset_name = 'PBMC3'
 DATASET_PATH = "../../dataset/"
-inDataDir = paste(DATASET_PATH, dataset_name, '-Filtered/', sep='')
+inDataDir = paste(DATASET_PATH, dataset_name, '-Filtered', sep='')
 outDir = paste("../../results/", dataset_name, '/COTAN/', sep='')
 dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
 
@@ -26,14 +26,14 @@ setLoggingFile(file.path(outDir, paste(dataset_name, "_analysis.log", sep='')))
 Data loading
 
 ```{r}
-PBMC1 <- readRDS(file = file.path(inDataDir, paste0(dataset_name, ".cotan.RDS")))
+PBMC3 <- readRDS(file = file.path(inDataDir, paste0(dataset_name, ".cotan.RDS")))
 ```
 
 Calculate genes’ COEX
 
 ```{r}
-PBMC1 <- proceedToCoex(
-  PBMC1,
+PBMC3 <- proceedToCoex(
+  PBMC3,
   calcCoex = TRUE,
   cores = 10,
   saveObj = TRUE,
@@ -42,11 +42,11 @@ PBMC1 <- proceedToCoex(
 ```
 
 ```{r}
-saveRDS(PBMC1, file = file.path(outDir, paste0(dataset_name, ".cotan.RDS")))
+saveRDS(PBMC3, file = file.path(outDir, paste0(dataset_name, ".cotan.RDS")))
 ```
 
 ```{r}
-gdiData <- calculateGDI(PBMC1)
+gdiData <- calculateGDI(PBMC3)
 genesToLabel <- head(
   rownames(gdiData[order(gdiData[["GDI"]], decreasing = TRUE), ]),
   n = 50L
@@ -60,7 +60,7 @@ gdiData[genesToLabel[[50L]], "GDI"]
 
 ```{r}
 gdiPlot <- GDIPlot(
-  PBMC1,
+  PBMC3,
   GDIIn = gdiData,
   GDIThreshold = 1.4,
   genes = list("Top 10 GDI genes" = genesToLabel[1L:10L])
@@ -69,11 +69,11 @@ plot(gdiPlot)
 ```
 
 ```{r}
-saveRDS(PBMC1, file = file.path(outDir, paste0(dataset_name, ".cotan.RDS")))
+saveRDS(PBMC3, file = file.path(outDir, paste0(dataset_name, ".cotan.RDS")))
 ```
 
 ```{r}
-PBMC1 <- readRDS(file = file.path(outDir, paste0(dataset_name, ".cotan.RDS")))
+PBMC3 <- readRDS(file = file.path(outDir, paste0(dataset_name, ".cotan.RDS")))
 ```
 
 Clustering
@@ -81,35 +81,35 @@ Clustering
 ```{r}
 c(splitClusters, splitCoexDF) %<-%
   cellsUniformClustering(
-    PBMC1,
+    PBMC3,
     GDIThreshold = 1.4,
     cores = 13,
     saveObj = TRUE,
     outDir = outDir
   )
 
-PBMC1 <- addClusterization(
-  PBMC1,
+PBMC3 <- addClusterization(
+  PBMC3,
   clName = "split",
   clusters = splitClusters,
   coexDF = splitCoexDF,
   override = TRUE
 )
 
-splitClusters <- getClusterizationData(PBMC1, clName = "split")[[1]]
+splitClusters <- getClusterizationData(PBMC3, clName = "split")[[1]]
 table(splitClusters)
 ```
 
 
 ```{r}
-saveRDS(PBMC1, file = file.path(outDir, paste0(dataset_name, ".cotan.RDS")))
+saveRDS(PBMC3, file = file.path(outDir, paste0(dataset_name, ".cotan.RDS")))
 ```
 
 ```{r} 
 # if needed
 c(mergedClusters, mergedCoexDF) %<-%
   mergeUniformCellsClusters(
-    PBMC1,
+    PBMC3,
     clusters = splitClusters,
     GDIThreshold = 1.4,
     cores = 13,
@@ -117,15 +117,15 @@ c(mergedClusters, mergedCoexDF) %<-%
     outDir = outDir
   )
 
-PBMC1 <- addClusterization(
-  PBMC1,
+PBMC3 <- addClusterization(
+  PBMC3,
   clName = "merge",
   clusters = mergedClusters,
   coexDF = mergedCoexDF,
   override = TRUE
 )
 
-mergedClusters <- getClusterizationData(PBMC1, clName = "merge")[[1]]
+mergedClusters <- getClusterizationData(PBMC3, clName = "merge")[[1]]
 table(mergedClusters)
 ```
 
@@ -135,7 +135,7 @@ Save the clustering result
 final_clusters = splitClusters # or mergedClusters
 final_clusters_name = "split" # or merge
 
-saveRDS(PBMC1, file = file.path(outDir, paste0(dataset_name, ".cotan.RDS")))
+saveRDS(PBMC3, file = file.path(outDir, paste0(dataset_name, ".cotan.RDS")))
 cluster = as.data.frame(final_clusters)
 colnames(cluster)[colnames(cluster) == deparse(substitute(final_clusters))] <- "cluster"
 cluster$cluster = match(cluster$cluster, levels(final_clusters))
@@ -147,8 +147,8 @@ write_clustering(outDir, cluster, "cell", "cluster")
 Differential expression
 
 ```{r}
-coexDF %<-% DEAOnClusters(PBMC1, clusters = final_clusters)
-PBMC1 <- addClusterizationCoex(PBMC1, clName = final_clusters_name,
+coexDF <- DEAOnClusters(PBMC3, clusters = final_clusters)
+PBMC3 <- addClusterizationCoex(PBMC3, clName = final_clusters_name,
                              coexDF = coexDF)
 ```
 
@@ -176,7 +176,7 @@ write_markers = function(ourDir, clusters, coex, TOP_MARKER_NUM, decreasing) {
 
 TOP_MARKER_NUM = 500
 
-numCells <- getNumCells(PBMC1)
+numCells <- getNumCells(PBMC3)
 pvals <- pValueFromDEA(coexDF, numCells)
 
 write_markers(outDir, final_clusters, pvals, TOP_MARKER_NUM, FALSE)
