@@ -105,37 +105,11 @@ table(splitClusters)
 saveRDS(PBMC3, file = file.path(outDir, paste0(dataset_name, ".cotan.RDS")))
 ```
 
-```{r} 
-# if needed
-c(mergedClusters, mergedCoexDF) %<-%
-  mergeUniformCellsClusters(
-    PBMC3,
-    clusters = splitClusters,
-    GDIThreshold = 1.4,
-    cores = 13,
-    saveObj = TRUE,
-    outDir = outDir
-  )
-
-PBMC3 <- addClusterization(
-  PBMC3,
-  clName = "merge",
-  clusters = mergedClusters,
-  coexDF = mergedCoexDF,
-  override = TRUE
-)
-
-mergedClusters <- getClusterizationData(PBMC3, clName = "merge")[[1]]
-table(mergedClusters)
-```
-
 Save the clustering result
 
 ```{r}
-final_clusters = splitClusters # or mergedClusters
-final_clusters_name = "split" # or merge
-
-saveRDS(PBMC3, file = file.path(outDir, paste0(dataset_name, ".cotan.RDS")))
+final_clusters = splitClusters
+final_clusters_name = "split"
 cluster = as.data.frame(final_clusters)
 colnames(cluster)[colnames(cluster) == deparse(substitute(final_clusters))] <- "cluster"
 cluster$cluster = match(cluster$cluster, levels(final_clusters))
@@ -171,7 +145,7 @@ write_markers = function(ourDir, clusters, coex, TOP_MARKER_NUM, decreasing) {
     }
     colnames(markers) = c("gene","cluster","rank")
 
-    write.csv(markers, paste(outDir, "/decr", decreasing, "markers.csv", sep=""), row.names = FALSE)
+    write.csv(markers, "markers.csv", row.names = FALSE)
 }
 
 TOP_MARKER_NUM = 500
