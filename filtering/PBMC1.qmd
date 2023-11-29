@@ -17,13 +17,18 @@ DATASETS_FOLDER = '../dataset/'
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDir = paste(DATASETS_FOLDER, NAME, '-Filtered/', sep='')
-out_10x_dir = paste(outDir, '10x/', sep='')
+outDirRaw = paste(outDir, 'raw/', sep='')
+out10XDir = paste(outDir, '10x/', sep='')
+out10XRawDir = paste(outDirRaw, '10x/', sep='')
 if (!dir.exists(outDir)) {
   dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
 }
+if (!dir.exists(outDirRaw)) {
+  dir.create(outDirRaw, recursive = TRUE, showWarnings = FALSE)
+}
 
 setLoggingLevel(2)
-setLoggingFile(file.path(outDir, "PBMC1_analysis.log"))
+setLoggingFile(file.path(outDir, paste(NAME,"_analysis.log", sep="")))
 ```
 
 Data loading
@@ -31,11 +36,11 @@ Data loading
 ```{r}
 dataset = Read10X(data.dir = inDataDir, strip.suffix = TRUE)
 dataset = dataset[[1]]
-sampleCondition <- "PBMC1"
+sampleCondition <- NAME
 PBMC1 <- COTAN(raw = dataset)
 PBMC1 <- initializeMetaDataset(
   PBMC1,
-  GEO = "10X PBMC1",
+  GEO = paste("10X ", NAME, sep=""),
   sequencingMethod = "10X",
   sampleCondition = sampleCondition
 )
@@ -135,6 +140,12 @@ cellSizePlot(PBMC1, splitPattern = "-", numCol = 2)
 genesSizePlot(PBMC1, splitPattern = "-", numCol = 2)
 ```
 
+```{r}
+if (!dir.exists(out10XRawDir)) {
+  write10xCounts(out10XRawDir, getRawData(PBMC1))
+}
+```
+
 Cleaning, round 1
 
 ```{r}
@@ -215,11 +226,15 @@ plot(genesSizePlot(PBMC1, splitPattern = "-", numCol = 2))
 Save the filtered dataset
 
 ```{r}
-if (!dir.exists(out_10x_dir)) {
-  write10xCounts(out_10x_dir, getRawData(PBMC1))
+if (!dir.exists(out10XDir)) {
+  write10xCounts(out10XDir, getRawData(PBMC1))
 }
 ```
 
 ```{r}
 saveRDS(PBMC1, file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
+```
+
+```{r}
+sessionInfo()
 ```
