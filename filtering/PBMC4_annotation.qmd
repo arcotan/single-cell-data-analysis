@@ -1,0 +1,126 @@
+```{r, output=FALSE, warning=FALSE}
+library(dplyr)
+library(Rtsne)
+library(Seurat)
+library(patchwork)
+library(factoextra)
+library(DropletUtils)
+library(scater)
+library(scran)
+library(pheatmap)
+source("../libraries/utils.R")
+
+plotHeatMaps = FALSE
+DATASETS_FOLDER = '../dataset/'
+FILTERED_DATA = 'PBMC4-Filtered/10x/'
+ORIGINAL_DATA = 'PBMC4/'
+
+filteredDataDir  = paste(DATASETS_FOLDER, FILTERED_DATA, sep='')
+originalDataDir  = paste(DATASETS_FOLDER, ORIGINAL_DATA, sep='')
+outDataDir = filteredDataDir
+```
+
+Loading data
+
+```{r}
+exprData = Read10X(data.dir = filteredDataDir, strip.suffix = TRUE)
+antibodyData = Read10X(data.dir = originalDataDir, strip.suffix = TRUE)
+antibodyData = antibodyData[[2]]
+# remove `_TotalSeqB` from column names
+rownames(antibodyData) = gsub("_TotalSeqB", "", rownames(antibodyData))
+
+absr = CreateSeuratObject(counts = antibodyData, project = 'antibody', min.cells = 0, min.features = 0)
+pbmc = CreateSeuratObject(counts = exprData, project = 'pbmc', min.cells = 0, min.features = 0)
+```
+
+Visualizing isotype control antibodies total count distribution
+
+```{r}
+absr[['controlIg']] = PercentageFeatureSet(absr, pattern = '^Ig')
+VlnPlot(absr, features = "controlIg", ncol = 1)
+```
+
+Filtering out cells having 0 antibody counts or exhibiting antibody aggregates
+
+```{r}
+absr = subset(absr, subset = controlIg < 3)
+absr = subset(absr, subset = controlIg > 0)
+VlnPlot(absr, features = "controlIg", ncol = 1)
+```
+
+
+Clustering cells on log normalized antibody data
+
+```{r}
+# Intersect cells
+common_cells = intersect(colnames(absr), colnames(pbmc))
+absr = subset(absr, cells = common_cells)
+pbmc = subset(pbmc, cells = common_cells)
+
+print(paste("Number of cells that will be labelled:", absr@assays[[1]]$counts@Dim[2]))
+
+# Extract counts for Antibody data and SC-RNA data
+antibodyDataFiltered = t(data.frame(absr@assays[[1]]$counts))
+genesData = t(data.frame(pbmc@assays[[1]]$counts))
+
+# Log normalize antibody data and apply clustering
+absce = as.SingleCellExperiment(absr)
+ablnc = logNormCounts(absce)
+clusters = scran::clusterCells(ablnc, assay.type = "logcounts")
+table(clusters)
+```
+
+Visualizing clusters
+
+```{r}
+gdsce = as.SingleCellExperiment(pbmc)
+gdsce <- applySCE(gdsce, logNormCounts)
+gdumap = runUMAP(gdsce)
+colLabels(gdumap) <- factor(clusters)
+plotUMAP(gdumap, colour_by="label", text_by="label")
+```
+
+Displaying in a heatmap the average log-abundance of each antibody
+
+```{r}
+# (for each antibody and cluster, compute the difference between the overall antibody avg and antibody avg in the cluster)
+se.averaged = sumCountsAcrossCells(ablnc, clusters, exprs_values = "logcounts", average = TRUE)
+averaged = assay(se.averaged)
+# label heatmap cols with "cluster_id (cluster_size)"
+plot_labels = c()
+clusters_sizes = table(clusters)
+for (i in 1:nrow(clusters_sizes)) {
+  plot_labels = c(plot_labels, paste(i, ' (', clusters_sizes[[i]], ')', sep=''))
+}
+hmap = pheatmap((averaged - rowMeans(averaged)), kmeans_k = NA, cluster_cols = TRUE, cluster_rows = FALSE, labels_col=plot_labels)
+ggsave(paste(outDataDir, "heatmap.png", sep=""), hmap)
+
+plotHeatMaps=FALSE
+
+if (plotHeatMaps){
+  dir.create(paste(outDataDir, "heatmaps/", sep=""), recursive = TRUE, showWarnings = FALSE)
+  comb = combn(1:length(unique(clusters)), 2)
+  for(i in 1:ncol(comb)) {
+    ggsave(
+      paste(outDataDir, "heatmaps/hmap_", comb[1, i], "_", comb[2,i], ".png", sep=""),
+      pheatmap((averaged - rowMeans(averaged))[,comb[,i]], breaks = seq(-CLIP, CLIP, length.out = 101), kmeans_k = NA, cluster_cols = FALSE, cluster_rows = FALSE)
+    )
+  }
+  for(i in 1:length(unique(clusters))) {
+    ggsave(
+      paste(outDataDir, "heatmaps/hmap_", i, ".png", sep=""),
+      pheatmap((averaged - rowMeans(averaged))[,i], breaks = seq(-CLIP, CLIP, length.out = 101), kmeans_k = NA, cluster_cols = FALSE, cluster_rows = FALSE)
+    )
+  }
+}
+```
+
+Saving labels
+
+```{r}
+labels = data.frame("cell" = rownames(genesData), "cluster.ids" = clusters)
+write.csv(labels, paste(outDataDir, "labels.csv", sep=""), row.names = FALSE)
+uclust = sort(unique(clusters))
+mapping = data.frame("go" = paste("Cluster-", uclust, sep=""), "id" = uclust)
+write.csv(mapping, paste(outDataDir, "mapping_filtering.csv", sep=""), row.names = FALSE)
+```
