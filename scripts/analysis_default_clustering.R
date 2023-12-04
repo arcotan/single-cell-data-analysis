@@ -3,49 +3,7 @@ library(dplyr)
 library(enrichR)
 library(ggplot2)
 
-
 source("../libraries/utils.R")
-source("../libraries/venn.R")
-source("../libraries/enrichment_lists.R")
-
-TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi-tools', 'COTAN')
-DATASET_TAGS= c('PBMC1', 'PBMC2', 'PBMC3', 'PBMC4')
-MAPPING_DATASET_NAMES = list(
-  'PBMC1' = 'PBMC1',
-  'PBMC2' = 'PBMC2',
-  'PBMC3' = 'PBMC3',
-  'PBMC4' = 'PBMC4'
-)
-
-RESULT_DIR = "../results/"
-AGGREGATE_RESULT_DIR = paste(RESULT_DIR, "aggregate_new_pbmcs/", sep="")
-DATASET_DIR = "../dataset/"
-
-DATASET_TAG_TO_TRUE_LABEL_DIR = list()
-DATASET_TAG_TO_MAPPING_DIR = list()
-DATASET_TAG_TO_FILTERED_GE_DIR = list()
-for (tag in DATASET_TAGS) {
-  DATASET_TAG_TO_MAPPING_DIR[[tag]] = paste(DATASET_DIR, tag, "-Filtered/", sep="")
-  DATASET_TAG_TO_FILTERED_GE_DIR[[tag]] = paste(DATASET_DIR, tag, "-Filtered/10X/", sep="")
-}
-
-LABEL_FILENAME = "raw/celltypist_labels.csv"
-MAPPING_FILENAME = "raw/celltypist_mapping.csv"
-DATASET_TAG_TO_TRUE_LABEL_DIR = DATASET_TAG_TO_MAPPING_DIR
-
-DATASET_TAG_TO_ENRICHR_DB = list("PBMC1" = "Tabula_Sapiens",
-                                 "PBMC2" = "Tabula_Sapiens",
-                                 "PBMC3" = "Tabula_Sapiens",
-                                 "PBMC4" = "Tabula_Sapiens")
-
-DATASET_TAG_TO_GENES_TO_ENRICH_DIR = list()
-DATASET_TAG_TO_ENRICHER_DIR = list()
-for (tag in DATASET_TAGS) {
-  DATASET_TAG_TO_GENES_TO_ENRICH_DIR[[tag]] = paste(AGGREGATE_RESULT_DIR, "/", tag, "/genes_to_enrich/", sep="")
-  DATASET_TAG_TO_ENRICHER_DIR[[tag]] = paste(AGGREGATE_RESULT_DIR, "/", tag, "/enrichr_data/", sep="")
-}
-
-SCORES_FEATURES_ON_ROWS = FALSE
 
 read_single_data = function(tool_tag, dataset_tag) {
   label_file = paste(RESULT_DIR, dataset_tag, "/", tool_tag, "/clustering_labels", ".csv", sep="")
@@ -141,19 +99,19 @@ collect_dataset_data = function(tool_tag_list, dataset_tag, compute_missing_scor
     label_data = merge(label_data, true_ids)
     
     # align each clustering with true labels
-    # for (label in colnames(label_data)[-1]) {
-    #   tool = substr(label, 1, nchar(label)-6)
-    #   alignment = align_clusters(label_data, "true_labels", label)
-    #   label_data[[label]] <- alignment$label_dataframe[[label]]
-    #   marker_data[marker_data$tool == tool,]$cluster <- alignment$permutation_computed[marker_data[marker_data$tool == tool,]$cluster]
-    # }
+    for (label in colnames(label_data)[-1]) {
+      tool = substr(label, 1, nchar(label)-6)
+      alignment = align_clusters(label_data, "true_labels", label)
+      label_data[[label]] <- alignment$label_dataframe[[label]]
+      marker_data[marker_data$tool == tool,]$cluster <- alignment$permutation_computed[marker_data[marker_data$tool == tool,]$cluster]
+    }
     if (compute_missing_scores) {
       # compute missing clustering scores (for scanpy and scvi-tools only silhouette should not have NA at this point)
       for (i in 1:nrow(score_data)) {
         cur_info = score_data[i, ]
         if (is.na(cur_info$accuracy) || is.na(cur_info$entropy) || is.na(cur_info$purity) || is.na(cur_info$NMI) || is.na(cur_info$Adj_Rand_Index)) {
           scores_to_add = clustering_simple_scores(label_data, paste(cur_info$tool, "_label", sep=""), "true_labels")
-          #score_data[i, "accuracy"] <- scores_to_add$accuracy
+          score_data[i, "accuracy"] <- scores_to_add$accuracy
           score_data[i, "entropy"] <- scores_to_add$entropy
           score_data[i, "purity"] <- scores_to_add$purity
           score_data[i, "NMI"] <- scores_to_add$NMI
@@ -167,13 +125,13 @@ collect_dataset_data = function(tool_tag_list, dataset_tag, compute_missing_scor
           geSeurat <- FindVariableFeatures(geSeurat, selection.method = "vst")
           geSeurat <- ScaleData(geSeurat, features = rownames(geSeurat))
           geSeurat <- RunPCA(geSeurat, features = VariableFeatures(object = geSeurat))
-          PCAge <- Embeddings(object = geSeurat, reduction = "pca")#TODO verificare che funzioni
+          PCAge <- Embeddings(object = geSeurat, reduction = "pca")
           score_data[i, "silhouette"] <- clustering_complex_scores(label_data, "cell", paste(cur_info$tool, "_label", sep=""), PCAge, features_on_rows = SCORES_FEATURES_ON_ROWS)$silhouette
         }
       }
     }
   }
-  
+  # TODO: display score data
   return (list("labels" = label_data, "scores" = score_data, "markers" = marker_data))
 }
 
@@ -195,6 +153,31 @@ collect_data = function(dataset_tag_list, tool_tag_list, write_aggregate = TRUE,
   }
   return (datasets_aggregate_data_list)
 }
+
+
+TOOL_TAGS = c('monocle', 'scanpy', 'seurat', 'scvi-tools', 'COTAN')
+DATASET_TAGS= c('PBMC1', 'PBMC2', 'PBMC3', 'PBMC4')
+MAPPING_DATASET_NAMES = list(
+  'PBMC1' = 'PBMC1',
+  'PBMC2' = 'PBMC2',
+  'PBMC3' = 'PBMC3',
+  'PBMC4' = 'PBMC4'
+)
+DATASET_DIR = "../dataset/"
+DATASET_TAG_TO_TRUE_LABEL_DIR = list()
+DATASET_TAG_TO_MAPPING_DIR = list()
+DATASET_TAG_TO_FILTERED_GE_DIR = list()
+for (tag in DATASET_TAGS) {
+  DATASET_TAG_TO_MAPPING_DIR[[tag]] = paste(DATASET_DIR, tag, "-Filtered/", sep="")
+  DATASET_TAG_TO_FILTERED_GE_DIR[[tag]] = paste(DATASET_DIR, tag, "-Filtered/10X/", sep="")
+}
+
+RESULT_DIR = "../results/"
+AGGREGATE_RESULT_DIR = paste(RESULT_DIR, "aggregate_new_pbmcs/", sep="")
+LABEL_FILENAME = "raw/celltypist_labels.csv"
+MAPPING_FILENAME = "raw/celltypist_mapping.csv"
+DATASET_TAG_TO_TRUE_LABEL_DIR = DATASET_TAG_TO_MAPPING_DIR
+SCORES_FEATURES_ON_ROWS = FALSE
 
 # read data
 global_data = collect_data(DATASET_TAGS, TOOL_TAGS, filtered_datasets_dir_map = DATASET_TAG_TO_FILTERED_GE_DIR)
@@ -236,11 +219,13 @@ for (dataset in dataset_found) {
     
     # plot clustering
     cur_plot <- seurat_clustering_plot(pbmc, global_data[[dataset]]$labels$cell, pi[global_data[[dataset]]$labels[[label]]], paste(MAPPING_DATASET_NAMES[[dataset]], tool, sep=" "))
+    # TODO: display
     ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", label, ".png", sep=""), cur_plot)
     ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", label, ".eps", sep=""), cur_plot)
 
     # plot de 
     plot_de(pbmc.data, global_data[[dataset]]$markers[global_data[[dataset]]$markers$tool == tool,], "gene", "cluster", global_data[[dataset]]$labels, "cell", label, paste(RESULT_DIR, dataset, "/", tool, "/", sep=""))
+    # TODO: display
   }
   # plot ground truth
   print("True labels")
@@ -249,6 +234,7 @@ for (dataset in dataset_found) {
                                     pi[global_data[[dataset]]$labels$true_labels], 
                                     paste(MAPPING_DATASET_NAMES[[dataset]], "true_labels", sep=" ")
                                     )
+  # TODO: display
   ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", "true_labels", ".png", sep=""), cur_plot)
   ggsave(filename = paste(AGGREGATE_RESULT_DIR, dataset, "/", "true_labels", ".eps", sep=""), cur_plot)
   
