@@ -64,6 +64,9 @@ genesData = t(data.frame(pbmc@assays[[1]]$counts))
 absce = as.SingleCellExperiment(absr)
 ablnc = logNormCounts(absce)
 clusters = scran::clusterCells(ablnc, assay.type = "logcounts")
+
+json_str = toJSON(c(nclusters=nrow(table(clusters))))
+writeLines(json_str, paste(filteredDataDir, 'nclusters.json', sep=''))
 table(clusters)
 ```
 
