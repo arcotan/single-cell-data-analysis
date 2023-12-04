@@ -11,7 +11,7 @@ source("../../libraries/utils.R")
 Data loading and preparation
 
 ```{r}
-dataset_name = 'PBMC1'
+dataset_name = 'PBMC1'  # VARIABLE
 DATASET_PATH = "../../dataset/"
 DATA_DIR = paste(DATASET_PATH, dataset_name, '-Filtered/10X', sep='')
 LABEL_DIR = paste(DATASET_PATH, dataset_name, '-Filtered', sep='')
@@ -122,9 +122,29 @@ cds <- preprocess_cds(cds, num_dim = 10, method = "PCA") # normalization
 plot_pc_variance_explained(cds)
 ```
 
+
 ```{r}
-cds <- cluster_cells(cds, reduction_method = "PCA", resolution=0.012)
-print(paste("Number of clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
+
+range_upper = 3
+range_lower = 0
+
+repeat{
+  resolution = (range_upper + range_lower) / 2
+  cds <- cluster_cells(cds, reduction_method = "PCA", resolution=resolution)
+  num_clusters = length(levels(clusters(cds, reduction_method = "PCA")))
+
+  if (num_clusters == N_CLUSTERS_CELLTYPIST){
+    break
+  }
+  else if (num_clusters < N_CLUSTERS_CELLTYPIST){
+    # increase the resolution
+    range_lower = resolution
+  }
+  else{
+    # reduce the resolution
+    range_upper = resolution
+  }
+}
 ```
 
 Save the tuned clustering results
@@ -184,8 +204,25 @@ plot_pc_variance_explained(cds)
 
 
 ```{r}
-cds <- cluster_cells(cds, reduction_method = "PCA", resolution=0.011)
-print(paste("Number of clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
+range_upper = 3
+range_lower = 0
+
+repeat{
+  resolution = (range_upper + range_lower) / 2
+  cds <- cluster_cells(cds, reduction_method = "PCA", resolution=resolution)
+  num_clusters = length(levels(clusters(cds, reduction_method = "PCA")))
+
+  if (num_clusters == N_CLUSTERS_PROTEIN){
+    break
+  }
+  else if (num_clusters < N_CLUSTERS_PROTEIN){
+    # increase the resolution
+    range_lower = resolution
+  }
+  else{
+    range_upper = resolution
+  }
+}
 ```
 
 Save the tuned clustering results
