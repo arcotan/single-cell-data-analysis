@@ -4,6 +4,7 @@ title: Clustering and differential expression analysis of PBMC1 using Monocle
 
 ```{r}
 library(monocle3)
+library(rjson)
 source("../../libraries/utils.R")
 ```
 
@@ -14,10 +15,21 @@ dataset_name = 'PBMC1'
 DATASET_PATH = "../../dataset/"
 DATA_DIR = paste(DATASET_PATH, dataset_name, '-Filtered/10X', sep='')
 LABEL_DIR = paste(DATASET_PATH, dataset_name, '-Filtered', sep='')
-OUT_RES_DIR = paste("../../results/", dataset_name, '/monocle/', sep='')
-if (!dir.exists(OUT_RES_DIR)) {
-  dir.create(OUT_RES_DIR, recursive = TRUE)
+OUT_RES_DEFAULT_DIR = paste("../../results/", dataset_name, '/monocle/default/', sep='')
+OUT_RES_CELLTYPIST_DIR = paste("../../results/", dataset_name, '/monocle/celltypist/', sep='')
+OUT_RES_PROTEIN_DIR = paste("../../results/", dataset_name, '/monocle/protein/', sep='')
+if (!dir.exists(OUT_RES_DEFAULT_DIR)) {
+  dir.create(OUT_RES_DEFAULT_DIR, recursive = TRUE)
 }
+if (!dir.exists(OUT_RES_CELLTYPIST_DIR)) {
+  dir.create(OUT_RES_CELLTYPIST_DIR, recursive = TRUE)
+}
+if (!dir.exists(OUT_RES_PROTEIN_DIR)) {
+  dir.create(OUT_RES_PROTEIN_DIR, recursive = TRUE)
+}
+
+N_CLUSTERS_CELLTYPIST = fromJSON(file=paste('../../dataset/', dataset_name, '-Filtered/raw/nclusters.json', sep=''))$nclusters
+N_CLUSTERS_PROTEIN = fromJSON(file=paste('../../dataset/', dataset_name, '-Filtered/10x/nclusters.json', sep=''))$nclusters
 
 TOP_MARKER_NUM = 500
 ```
@@ -37,14 +49,14 @@ cds <- preprocess_cds(cds, num_dim = 10, method = "PCA") # normalization
 plot_pc_variance_explained(cds)
 ```
 
-Clustering
+Clustering with default parameters
 
 ```{r}
-cds <- cluster_cells(cds, resolution=0.013, reduction_method = "PCA")
+cds <- cluster_cells(cds, reduction_method = "PCA")
 print(paste("Number of clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
 ```
 
-Save the clustering results
+Save the default clustering results
 
 ```{r}
 label_df = data.frame(clusters(cds, reduction_method = "PCA"))
@@ -52,10 +64,11 @@ label_df$cell <- rownames(label_df)
 rownames(label_df) <- 1:nrow(label_df)
 colnames(label_df)[1] <- "computed_id"
 label_df$computed_id <- as.numeric(label_df$computed_id)
-write_clustering(OUT_RES_DIR, label_df, "cell", "computed_id", dist(t(exprs(cds))))
+write_clustering(OUT_RES_DEFAULT_DIR, label_df, "cell", "computed_id", dist(t(exprs(cds))))
 ```
 
-Differential expression
+
+Differential expression on default clustering results
 
 ```{r}
 marker_test_res <- top_markers(
@@ -70,5 +83,140 @@ marker_test_res <- top_markers(
 Save markers
 
 ```{r}
-write_markers(OUT_RES_DIR, marker_test_res, "gene_id", "cell_group", "marker_test_p_value", FALSE, TOP_MARKER_NUM)
+write_markers(OUT_RES_DEFAULT_DIR, marker_test_res, "gene_id", "cell_group", "marker_test_p_value", FALSE, TOP_MARKER_NUM)
+```
+
+Clustering tuning resolution according to celltypist
+
+```{r}
+print("Clusters to find:")
+N_CLUSTERS_CELLTYPIST
+```
+
+
+```{r}
+# get ids of clusters bigger than 40 cells
+mapping = read.csv(paste('../../dataset/', dataset_name, '-Filtered/raw/celltypist_mapping.csv', sep=''))
+counts = read.csv(paste('../../dataset/', dataset_name, '-Filtered/raw/celltypist_annotation_counts.csv', sep=''))
+
+mapping_counts = merge(mapping, counts, by.x = "go", by.y = "cluster.ids")
+mapping_counts = subset(mapping_counts, count > 40)
+clusters_ids_to_keep = mapping_counts$id
+
+# get barcodes of cells in clusters bigger than 40 cells
+celltypist_labels = read.csv(paste('../../dataset/', dataset_name, '-Filtered/raw/celltypist_labels.csv', sep=''))
+celltypist_labels = subset(celltypist_labels, cluster.ids %in% clusters_ids_to_keep)
+barcodes_to_keep = celltypist_labels$cell
+
+cds <- load_mm_data(
+  mat_path = paste(DATA_DIR, "matrix.mtx", sep = "/"), 
+  feature_anno_path = paste(DATA_DIR, "genes.tsv", sep = "/"),
+  cell_anno_path = paste(DATA_DIR, "barcodes.tsv", sep = "/")
+)
+# keep only cells in clusters bigger than 40 cells
+cds = cds[, colData(cds)$cell %in% barcodes_to_keep]
+```
+
+```{r}
+cds <- preprocess_cds(cds, num_dim = 10, method = "PCA") # normalization
+plot_pc_variance_explained(cds)
+```
+
+```{r}
+cds <- cluster_cells(cds, reduction_method = "PCA", resolution=0.012)
+print(paste("Number of clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
+```
+
+Save the tuned clustering results
+
+```{r}
+label_df = data.frame(clusters(cds, reduction_method = "PCA"))
+label_df$cell <- rownames(label_df)
+rownames(label_df) <- 1:nrow(label_df)
+colnames(label_df)[1] <- "computed_id"
+label_df$computed_id <- as.numeric(label_df$computed_id)
+write_clustering(OUT_RES_CELLTYPIST_DIR, label_df, "cell", "computed_id", dist(t(exprs(cds))))
+```
+
+Differential expression on tuned clustering results
+
+```{r}
+marker_test_res <- top_markers(
+  cds,
+  group_cells_by="cluster",
+  genes_to_test_per_group = 3000,
+  reduction_method='PCA',
+  cores=10
+)
+```
+
+Save markers
+
+```{r}
+write_markers(OUT_RES_CELLTYPIST_DIR, marker_test_res, "gene_id", "cell_group", "marker_test_p_value", FALSE, TOP_MARKER_NUM)
+```
+
+Clustering tuning resolution according to protein surface
+
+```{r}
+print("Clusters to find:")
+N_CLUSTERS_PROTEIN
+```
+
+```{r}
+# get barcodes of cells labelled using protein surface
+protein_labels = read.csv(paste('../../dataset/', dataset_name, '-Filtered/10x/labels.csv', sep=''))
+barcodes_to_keep = protein_labels$cell
+
+cds <- load_mm_data(
+  mat_path = paste(DATA_DIR, "matrix.mtx", sep = "/"), 
+  feature_anno_path = paste(DATA_DIR, "genes.tsv", sep = "/"),
+  cell_anno_path = paste(DATA_DIR, "barcodes.tsv", sep = "/")
+)
+# keep only cells in clusters bigger than 40 cells
+cds = cds[, colData(cds)$cell %in% barcodes_to_keep]
+```
+
+```{r}
+cds <- preprocess_cds(cds, num_dim = 10, method = "PCA") # normalization
+plot_pc_variance_explained(cds)
+```
+
+
+```{r}
+cds <- cluster_cells(cds, reduction_method = "PCA", resolution=0.011)
+print(paste("Number of clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
+```
+
+Save the tuned clustering results
+
+```{r}
+label_df = data.frame(clusters(cds, reduction_method = "PCA"))
+label_df$cell <- rownames(label_df)
+rownames(label_df) <- 1:nrow(label_df)
+colnames(label_df)[1] <- "computed_id"
+label_df$computed_id <- as.numeric(label_df$computed_id)
+write_clustering(OUT_RES_PROTEIN_DIR, label_df, "cell", "computed_id", dist(t(exprs(cds))))
+```
+
+Differential expression on tuned clustering results
+
+```{r}
+marker_test_res <- top_markers(
+  cds,
+  group_cells_by="cluster",
+  genes_to_test_per_group = 3000,
+  reduction_method='PCA',
+  cores=10
+)
+```
+
+Save markers
+
+```{r}
+write_markers(OUT_RES_PROTEIN_DIR, marker_test_res, "gene_id", "cell_group", "marker_test_p_value", FALSE, TOP_MARKER_NUM)
+```
+
+```{r}
+sessionInfo()
 ```

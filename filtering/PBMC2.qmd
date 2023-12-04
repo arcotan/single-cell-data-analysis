@@ -1,3 +1,7 @@
+---
+title: Filtering of PBMC2 using COTAN
+---
+
 ```{r}
 library(dplyr)
 library(COTAN)
@@ -13,30 +17,43 @@ DATASETS_FOLDER = '../dataset/'
 
 inDataDir  = paste(DATASETS_FOLDER, NAME, sep='')
 outDir = paste(DATASETS_FOLDER, NAME, '-Filtered/', sep='')
-out_10x_dir = paste(outDir, '10x/', sep='')
+outDirRaw = paste(outDir, 'raw/', sep='')
+out10XDir = paste(outDir, '10x/', sep='')
+out10XRawDir = paste(outDirRaw, '10x/', sep='')
 if (!dir.exists(outDir)) {
   dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
 }
+if (!dir.exists(outDirRaw)) {
+  dir.create(outDirRaw, recursive = TRUE, showWarnings = FALSE)
+}
 
 setLoggingLevel(2)
-setLoggingFile(file.path(outDir, "PBMC2_analysis.log"))
+setLoggingFile(file.path(outDir, paste(NAME, "_analysis.log", sep="")))
 ```
+
+Data loading
 
 ```{r}
 dataset = Read10X(data.dir = inDataDir, strip.suffix = TRUE)
 dataset = dataset[[1]]
 
-sampleCondition <- "PBMC2"
+sampleCondition <- NAME
 PBMC2 <- COTAN(raw = dataset)
 PBMC2 <- initializeMetaDataset(
   PBMC2,
-  GEO = "10X PBMC2",
+  GEO = paste("10X ", NAME, sep=""),
   sequencingMethod = "10X",
   sampleCondition = sampleCondition
 )
+```
 
+Inspect cells’ sizes
+
+```{r}
 cellSizePlot(PBMC2)
 ```
+
+Drop cells with too many ritz reads as they are probably doublets
 
 ```{r}
 cellsSizeThr <- 20000
@@ -48,9 +65,13 @@ PBMC2 <- dropGenesCells(PBMC2, cells = cells_to_rem)
 cellSizePlot(PBMC2, splitPattern = "-", numCol = 2)
 ```
 
+Inspect the number of expressed genes per cell
+
 ```{r}
 genesSizePlot(PBMC2, splitPattern = "-", numCol = 2)
 ```
+
+Drop cells with too high genes expession as they are probably doublets
 
 ```{r}
 genesSizeThr <- 3500
@@ -62,6 +83,8 @@ PBMC2 <- dropGenesCells(PBMC2, cells = cells_to_rem)
 
 genesSizePlot(PBMC2, splitPattern = "-", numCol = 2)
 ```
+
+Check number of mithocondrial genes expressed in each cell
 
 ```{r}
 mitGenesPattern <- "^[Mm][Tt]-"
@@ -75,6 +98,8 @@ c(mitPlot, mitSizes) %<-%
 
 plot(mitPlot)
 ```
+
+We drop cells with a too high percentage of mitocondrial genes (are likely dead)
 
 ```{r}
 mitPercThr <- 10
@@ -91,6 +116,8 @@ c(mitPlot, mitSizes) %<-%
 plot(mitPlot)
 ```
 
+Check number of ribosomial genes expressed in each cell
+
 ```{r}
 ribGenesPattern <- "^RP[SL]\\d+"
 getGenes(PBMC2)[grep(ribGenesPattern, getGenes(PBMC2))]
@@ -104,6 +131,8 @@ c(ribPlot, ribSizes) %<-%
 plot(ribPlot)
 ```
 
+Check no further outliers after all the culling
+
 ```{r}
 cellSizePlot(PBMC2, splitPattern = "-", numCol = 2)
 ```
@@ -111,6 +140,14 @@ cellSizePlot(PBMC2, splitPattern = "-", numCol = 2)
 ```{r}
 genesSizePlot(PBMC2, splitPattern = "-", numCol = 2)
 ```
+
+```{r}
+if (!dir.exists(out10XRawDir)) {
+  write10xCounts(out10XRawDir, getRawData(PBMC2))
+}
+```
+
+Cleaning, round 1
 
 ```{r}
 PBMC2 <- clean(PBMC2)
@@ -140,6 +177,7 @@ plot(nuPlot)
 plot(zoomedNuPlot)  
 ```
 
+Cleaning, round 2
 
 ```{r}
 PBMC2 <- clean(PBMC2)
@@ -178,12 +216,18 @@ plot(cellSizePlot(PBMC2, splitPattern = "-", numCol = 2))
 plot(genesSizePlot(PBMC2, splitPattern = "-", numCol = 2))
 ```
 
+Save the filtered dataset
+
 ```{r}
-if (!dir.exists(out_10x_dir)) {
-  write10xCounts(out_10x_dir, getRawData(PBMC2))
+if (!dir.exists(out10XDir)) {
+  write10xCounts(out10XDir, getRawData(PBMC2))
 }
 ```
 
 ```{r}
 saveRDS(PBMC2, file = file.path(outDir, paste0(sampleCondition, ".cotan.RDS")))
+```
+
+```{r}
+sessionInfo()
 ```
