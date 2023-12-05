@@ -169,7 +169,6 @@ write_markers = function(ourDir, clusters, coex, TOP_MARKER_NUM, decreasing) {
         cluster_markers = data.frame(gene = names(sorted_pv)[1:TOP_MARKER_NUM],
                                     cluster = match(cluster_id, levels(clusters)),
                                     rank = 1:TOP_MARKER_NUM)
-
         markers = rbind(markers, cluster_markers)
     }
     colnames(markers) = c("gene","cluster","rank")
@@ -205,16 +204,36 @@ barcodes_to_keep = celltypist_labels$cell
 barcodes_to_drop = getCells(PBMC1)[!getCells(PBMC1) %in% barcodes_to_keep]
 PBMC1_celltypist <- dropGenesCells(PBMC1, cells = barcodes_to_drop)
 
-c(mergedClusters, mergedCoexDF) %<-%
+range_upper = 3
+range_lower = 0
+
+repeat{
+  resolution = (range_upper + range_lower) / 2
+  cat(paste("Trying resolution ", resolution, sep=''))
+  c(mergedClusters, mergedCoexDF) %<-%
   mergeUniformCellsClusters(PBMC1_celltypist, clusters = splitClusters,
-                            GDIThreshold = 1.4, # to tune (binary search is probably not feasible...)
+                            GDIThreshold = resolution,
                             cores = 13,
                             saveObj = TRUE, outDir = OUT_DEFAULT_DIR)
-
-PBMC1_celltypist <- addClusterization(PBMC1_celltypist, clName = "merged",
-                             clusters = mergedClusters,
-                             coexDF = mergedCoexDF,
-                             override = TRUE)
+  PBMC1_celltypist <- addClusterization(PBMC1_celltypist, clName = "merged_celltypist",
+                               clusters = mergedClusters,
+                               coexDF = mergedCoexDF,
+                               override = TRUE)
+  mergedClusters <- getClusterizationData(PBMC1_celltypist, clName = "merged_celltypist")[[1]]
+  num_clusters = nrows(table(mergedClusters))
+  cat(paste("Got ", num_clusters, ' clusters', sep=''))
+  if (num_clusters == N_CLUSTERS_CELLTYPIST){
+    break
+  }
+  else if (num_clusters < N_CLUSTERS_CELLTYPIST){
+    # increase the resolution
+    range_lower = resolution
+  }
+  else{
+    # reduce the resolution
+    range_upper = resolution
+  }
+}
 ```
 
 Save the clustering result
@@ -282,16 +301,36 @@ barcodes_to_keep = protein_labels$cell
 barcodes_to_drop = getCells(PBMC1)[!getCells(PBMC1) %in% barcodes_to_keep]
 PBMC1_protein <- dropGenesCells(PBMC1, cells = barcodes_to_drop)
 
-c(mergedClusters, mergedCoexDF) %<-%
+range_upper = 3
+range_lower = 0
+
+repeat{
+  resolution = (range_upper + range_lower) / 2
+  cat(paste("Trying resolution ", resolution, sep=''))
+  c(mergedClusters, mergedCoexDF) %<-%
   mergeUniformCellsClusters(PBMC1_protein, clusters = splitClusters,
-                            GDIThreshold = 1.4, # to tune (binary search is probably not feasible...)
+                            GDIThreshold = resolution,
                             cores = 13,
                             saveObj = TRUE, outDir = OUT_DEFAULT_DIR)
-
-PBMC1_protein <- addClusterization(PBMC1_protein, clName = "merged",
-                             clusters = mergedClusters,
-                             coexDF = mergedCoexDF,
-                             override = TRUE)
+  PBMC1_protein <- addClusterization(PBMC1_protein, clName = "merged_protein",
+                               clusters = mergedClusters,
+                               coexDF = mergedCoexDF,
+                               override = TRUE)
+  mergedClusters <- getClusterizationData(PBMC1_protein, clName = "merged_protein")[[1]]
+  num_clusters = nrows(table(mergedClusters))
+  cat(paste("Got ", num_clusters, ' clusters', sep=''))
+  if (num_clusters == N_CLUSTERS_PROTEIN){
+    break
+  }
+  else if (num_clusters < N_CLUSTERS_PROTEIN){
+    # increase the resolution
+    range_lower = resolution
+  }
+  else{
+    # reduce the resolution
+    range_upper = resolution
+  }
+}
 ```
 
 Save the clustering result
