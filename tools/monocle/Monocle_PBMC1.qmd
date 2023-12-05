@@ -1,5 +1,5 @@
 ---
-title: Clustering and differential expression analysis of PBMC1 using Monocle
+title: Clustering and differential expression analysis using Monocle
 ---
 
 ```{r}
@@ -15,17 +15,17 @@ dataset_name = 'PBMC1'
 DATASET_PATH = "../../dataset/"
 DATA_DIR = paste(DATASET_PATH, dataset_name, '-Filtered/10X', sep='')
 LABEL_DIR = paste(DATASET_PATH, dataset_name, '-Filtered', sep='')
-OUT_RES_DEFAULT_DIR = paste("../../results/", dataset_name, '/monocle/default/', sep='')
-OUT_RES_CELLTYPIST_DIR = paste("../../results/", dataset_name, '/monocle/celltypist/', sep='')
-OUT_RES_PROTEIN_DIR = paste("../../results/", dataset_name, '/monocle/protein/', sep='')
-if (!dir.exists(OUT_RES_DEFAULT_DIR)) {
-  dir.create(OUT_RES_DEFAULT_DIR, recursive = TRUE)
+OUT_DEFAULT_DIR = paste("../../results/", dataset_name, '/monocle/default/', sep='')
+OUT_CELLTYPIST_DIR = paste("../../results/", dataset_name, '/monocle/celltypist/', sep='')
+OUT_PROTEIN_DIR = paste("../../results/", dataset_name, '/monocle/protein/', sep='')
+if (!dir.exists(OUT_DEFAULT_DIR)) {
+  dir.create(OUT_DEFAULT_DIR, recursive = TRUE)
 }
-if (!dir.exists(OUT_RES_CELLTYPIST_DIR)) {
-  dir.create(OUT_RES_CELLTYPIST_DIR, recursive = TRUE)
+if (!dir.exists(OUT_CELLTYPIST_DIR)) {
+  dir.create(OUT_CELLTYPIST_DIR, recursive = TRUE)
 }
-if (!dir.exists(OUT_RES_PROTEIN_DIR)) {
-  dir.create(OUT_RES_PROTEIN_DIR, recursive = TRUE)
+if (!dir.exists(OUT_PROTEIN_DIR)) {
+  dir.create(OUT_PROTEIN_DIR, recursive = TRUE)
 }
 
 N_CLUSTERS_CELLTYPIST = fromJSON(file=paste('../../dataset/', dataset_name, '-Filtered/raw/nclusters.json', sep=''))$nclusters
@@ -53,7 +53,7 @@ Clustering with default parameters
 
 ```{r}
 cds <- cluster_cells(cds, reduction_method = "PCA")
-print(paste("Number of clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
+cat(paste("Number of clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
 ```
 
 Save the default clustering results
@@ -64,7 +64,7 @@ label_df$cell <- rownames(label_df)
 rownames(label_df) <- 1:nrow(label_df)
 colnames(label_df)[1] <- "computed_id"
 label_df$computed_id <- as.numeric(label_df$computed_id)
-write_clustering(OUT_RES_DEFAULT_DIR, label_df, "cell", "computed_id", dist(t(exprs(cds))))
+write_clustering(OUT_DEFAULT_DIR, label_df, "cell", "computed_id", dist(t(exprs(cds))))
 ```
 
 
@@ -83,13 +83,13 @@ marker_test_res <- top_markers(
 Save markers
 
 ```{r}
-write_markers(OUT_RES_DEFAULT_DIR, marker_test_res, "gene_id", "cell_group", "marker_test_p_value", FALSE, TOP_MARKER_NUM)
+write_markers(OUT_DEFAULT_DIR, marker_test_res, "gene_id", "cell_group", "marker_test_p_value", FALSE, TOP_MARKER_NUM)
 ```
 
 Clustering tuning resolution according to celltypist
 
 ```{r}
-print("Clusters to find:")
+cat("Clusters to find:")
 N_CLUSTERS_CELLTYPIST
 ```
 
@@ -123,9 +123,29 @@ plot_pc_variance_explained(cds)
 ```
 
 ```{r}
-cds <- cluster_cells(cds, reduction_method = "PCA", resolution=0.012)
-print(paste("Number of clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
+range_upper = 3
+range_lower = 0
+
+repeat{
+  resolution = (range_upper + range_lower) / 2
+  cat(paste("Trying resolution ", resolution, sep=''))
+  cds <- cluster_cells(cds, reduction_method = "PCA", resolution=resolution)
+  num_clusters = length(levels(clusters(cds, reduction_method = "PCA")))
+  cat(paste("Got ", num_clusters, ' clusters', sep=''))
+  if (num_clusters == N_CLUSTERS_CELLTYPIST){
+    break
+  }
+  else if (num_clusters < N_CLUSTERS_CELLTYPIST){
+    # increase the resolution
+    range_lower = resolution
+  }
+  else{
+    # reduce the resolution
+    range_upper = resolution
+  }
+}
 ```
+
 
 Save the tuned clustering results
 
@@ -135,7 +155,7 @@ label_df$cell <- rownames(label_df)
 rownames(label_df) <- 1:nrow(label_df)
 colnames(label_df)[1] <- "computed_id"
 label_df$computed_id <- as.numeric(label_df$computed_id)
-write_clustering(OUT_RES_CELLTYPIST_DIR, label_df, "cell", "computed_id", dist(t(exprs(cds))))
+write_clustering(OUT_CELLTYPIST_DIR, label_df, "cell", "computed_id", dist(t(exprs(cds))))
 ```
 
 Differential expression on tuned clustering results
@@ -153,13 +173,13 @@ marker_test_res <- top_markers(
 Save markers
 
 ```{r}
-write_markers(OUT_RES_CELLTYPIST_DIR, marker_test_res, "gene_id", "cell_group", "marker_test_p_value", FALSE, TOP_MARKER_NUM)
+write_markers(OUT_CELLTYPIST_DIR, marker_test_res, "gene_id", "cell_group", "marker_test_p_value", FALSE, TOP_MARKER_NUM)
 ```
 
 Clustering tuning resolution according to protein surface
 
 ```{r}
-print("Clusters to find:")
+cat("Clusters to find:")
 N_CLUSTERS_PROTEIN
 ```
 
@@ -173,7 +193,6 @@ cds <- load_mm_data(
   feature_anno_path = paste(DATA_DIR, "genes.tsv", sep = "/"),
   cell_anno_path = paste(DATA_DIR, "barcodes.tsv", sep = "/")
 )
-# keep only cells in clusters bigger than 40 cells
 cds = cds[, colData(cds)$cell %in% barcodes_to_keep]
 ```
 
@@ -185,7 +204,7 @@ plot_pc_variance_explained(cds)
 
 ```{r}
 cds <- cluster_cells(cds, reduction_method = "PCA", resolution=0.011)
-print(paste("Number of clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
+cat(paste("Number of clusters:", length(levels(clusters(cds, reduction_method = "PCA")))))
 ```
 
 Save the tuned clustering results
@@ -196,7 +215,7 @@ label_df$cell <- rownames(label_df)
 rownames(label_df) <- 1:nrow(label_df)
 colnames(label_df)[1] <- "computed_id"
 label_df$computed_id <- as.numeric(label_df$computed_id)
-write_clustering(OUT_RES_PROTEIN_DIR, label_df, "cell", "computed_id", dist(t(exprs(cds))))
+write_clustering(OUT_PROTEIN_DIR, label_df, "cell", "computed_id", dist(t(exprs(cds))))
 ```
 
 Differential expression on tuned clustering results
@@ -214,7 +233,7 @@ marker_test_res <- top_markers(
 Save markers
 
 ```{r}
-write_markers(OUT_RES_PROTEIN_DIR, marker_test_res, "gene_id", "cell_group", "marker_test_p_value", FALSE, TOP_MARKER_NUM)
+write_markers(OUT_PROTEIN_DIR, marker_test_res, "gene_id", "cell_group", "marker_test_p_value", FALSE, TOP_MARKER_NUM)
 ```
 
 ```{r}

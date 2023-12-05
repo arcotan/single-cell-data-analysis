@@ -15,13 +15,28 @@ source("../../libraries/utils.R")
 dataset_name = 'PBMC1'
 DATASET_PATH = "../../dataset/"
 inDataDir = paste(DATASET_PATH, dataset_name, '-Filtered/', sep='')
-outDir = paste("../../results/", dataset_name, '/COTAN/', sep='')
-if (!dir.exists(outDir)) {
-  dir.create(outDir, recursive = TRUE, showWarnings = FALSE)
+OUT_LOGGING_DIR = paste("../../results/", dataset_name, '/COTAN/', sep='')
+OUT_DEFAULT_DIR = paste("../../results/", dataset_name, '/COTAN/default/', sep='')
+OUT_CELLTYPIST_DIR = paste("../../results/", dataset_name, '/COTAN/celltypist/', sep='')
+OUT_PROTEIN_DIR = paste("../../results/", dataset_name, '/COTAN/protein/', sep='')
+if (!dir.exists(OUT_DEFAULT_DIR)) {
+  dir.create(OUT_DEFAULT_DIR, recursive = TRUE)
+}
+if (!dir.exists(OUT_CELLTYPIST_DIR)) {
+  dir.create(OUT_CELLTYPIST_DIR, recursive = TRUE)
+}
+if (!dir.exists(OUT_PROTEIN_DIR)) {
+  dir.create(OUT_PROTEIN_DIR, recursive = TRUE)
+}
+if (!dir.exists(OUT_LOGGING_DIR)) {
+  dir.create(OUT_LOGGING_DIR, recursive = TRUE)
 }
 
+N_CLUSTERS_CELLTYPIST = fromJSON(file=paste('../../dataset/', dataset_name, '-Filtered/raw/nclusters.json', sep=''))$nclusters
+N_CLUSTERS_PROTEIN = fromJSON(file=paste('../../dataset/', dataset_name, '-Filtered/10x/nclusters.json', sep=''))$nclusters
+
 setLoggingLevel(2)
-setLoggingFile(file.path(outDir, paste(dataset_name, "_analysis.log", sep='')))
+setLoggingFile(file.path(OUT_LOGGING_DIR, paste(dataset_name, "_analysis.log", sep='')))
 ```
 
 Data loading
@@ -31,7 +46,7 @@ PBMC1 <- readRDS(file = file.path(inDataDir, paste0(dataset_name, ".cotan.RDS"))
 ```
 
 ```{r, echo=FALSE, EVAL=TRUE}
-PBMC2 <- readRDS(file = file.path(outDir, paste0(dataset_name, ".cotan.RDS")))
+PBMC2 <- readRDS(file = file.path(OUT_DEFAULT_DIR, paste0(dataset_name, ".cotan.RDS")))
 ```
 
 Calculate genes’ COEX
@@ -42,7 +57,7 @@ PBMC1 <- proceedToCoex(
   calcCoex = TRUE,
   cores = 10,
   saveObj = TRUE,
-  outDir = outDir
+  outDir = OUT_DEFAULT_DIR
 )
 ```
 
@@ -78,7 +93,7 @@ c(splitClusters, splitCoexDF) %<-%
     GDIThreshold = 1.4,
     cores = 13,
     saveObj = TRUE,
-    outDir = outDir
+    outDir = OUT_DEFAULT_DIR
   )
 
 PBMC1 <- addClusterization(
@@ -101,7 +116,7 @@ Merge uniform clusters
 c(mergedClusters, mergedCoexDF) %<-%
   mergeUniformCellsClusters(PBMC1, clusters = splitClusters,
                             GDIThreshold = 1.4, cores = 13,
-                            saveObj = TRUE, outDir = outDir)
+                            saveObj = TRUE, outDir = OUT_DEFAULT_DIR)
 
 PBMC1 <- addClusterization(PBMC1, clName = "merged",
                              clusters = mergedClusters,
@@ -111,7 +126,8 @@ PBMC1 <- addClusterization(PBMC1, clName = "merged",
 
 ```{r, echo=TRUE, eval=TRUE}
 mergedClusters <- getClusterizationData(PBMC1, clName = "merged")[[1]]
-table(mergedClusters)
+clusters_sizes = table(mergedClusters)
+cat(paste('Number of clusters found: ', nrows(clusters_sizes), sep=''))
 ```
 
 Save the clustering result
@@ -124,7 +140,7 @@ colnames(cluster)[colnames(cluster) == deparse(substitute(final_clusters))] <- "
 cluster$cluster = match(cluster$cluster, levels(final_clusters))
 cluster$cell = rownames(cluster)
 rownames(cluster) = c(1:nrow(cluster))
-write_clustering(outDir, cluster, "cell", "cluster")
+write_clustering(OUT_DEFAULT_DIR, cluster, "cell", "cluster")
 ```
 
 Differential expression
@@ -136,7 +152,7 @@ PBMC1 <- addClusterizationCoex(PBMC1, clName = final_clusters_name,
 ```
 
 ```{r, echo=TRUE, eval=FALSE}
-saveRDS(PBMC1, file = file.path(outDir, paste0(dataset_name, ".cotan.RDS")))
+saveRDS(PBMC1, file = file.path(OUT_DEFAULT_DIR, paste0(dataset_name, ".cotan.RDS")))
 ```
 
 Save markers
@@ -166,7 +182,171 @@ TOP_MARKER_NUM = 500
 numCells <- getNumCells(PBMC1)
 pvals <- pValueFromDEA(coexDF, numCells)
 
-write_markers(outDir, final_clusters, pvals, TOP_MARKER_NUM, FALSE)
+write_markers(OUT_DEFAULT_DIR, final_clusters, pvals, TOP_MARKER_NUM, FALSE)
+```
+
+Merge clusters according to celltypist
+
+```{r, echo=TRUE, eval=FALSE}
+# get ids of clusters bigger than 40 cells
+mapping = read.csv(paste('../../dataset/', dataset_name, '-Filtered/raw/celltypist_mapping.csv', sep=''))
+counts = read.csv(paste('../../dataset/', dataset_name, '-Filtered/raw/celltypist_annotation_counts.csv', sep=''))
+
+mapping_counts = merge(mapping, counts, by.x = "go", by.y = "cluster.ids")
+mapping_counts = subset(mapping_counts, count > 40)
+clusters_ids_to_keep = mapping_counts$id
+
+# get barcodes of cells in clusters bigger than 40 cells
+celltypist_labels = read.csv(paste('../../dataset/', dataset_name, '-Filtered/raw/celltypist_labels.csv', sep=''))
+celltypist_labels = subset(celltypist_labels, cluster.ids %in% clusters_ids_to_keep)
+barcodes_to_keep = celltypist_labels$cell
+
+# keep only cells in clusters bigger than 40 cells
+barcodes_to_drop = getCells(PBMC1)[!getCells(PBMC1) %in% barcodes_to_keep]
+PBMC1_celltypist <- dropGenesCells(PBMC1, cells = barcodes_to_drop)
+
+c(mergedClusters, mergedCoexDF) %<-%
+  mergeUniformCellsClusters(PBMC1_celltypist, clusters = splitClusters,
+                            GDIThreshold = 1.4, # to tune (binary search is probably not feasible...)
+                            cores = 13,
+                            saveObj = TRUE, outDir = OUT_DEFAULT_DIR)
+
+PBMC1_celltypist <- addClusterization(PBMC1_celltypist, clName = "merged",
+                             clusters = mergedClusters,
+                             coexDF = mergedCoexDF,
+                             override = TRUE)
+```
+
+Save the clustering result
+
+```{r, echo=TRUE, eval=FALSE}
+final_clusters = mergedClusters
+final_clusters_name = "merged"
+cluster = as.data.frame(final_clusters)
+colnames(cluster)[colnames(cluster) == deparse(substitute(final_clusters))] <- "cluster"
+cluster$cluster = match(cluster$cluster, levels(final_clusters))
+cluster$cell = rownames(cluster)
+rownames(cluster) = c(1:nrow(cluster))
+write_clustering(OUT_CELLTYPIST_DIR, cluster, "cell", "cluster")
+```
+
+Differential expression
+
+```{r, echo=TRUE, eval=FALSE}
+coexDF <- DEAOnClusters(PBMC1_celltypist, clusters = final_clusters)
+PBMC1_celltypist <- addClusterizationCoex(PBMC1_celltypist, clName = final_clusters_name,
+                             coexDF = coexDF)
+```
+
+```{r, echo=TRUE, eval=FALSE}
+saveRDS(PBMC1, file = file.path(OUT_CELLTYPIST_DIR, paste0(dataset_name, ".cotan.RDS")))
+```
+
+Save markers
+
+```{r, echo=TRUE, eval=FALSE}
+write_markers = function(ourDir, clusters, coex, TOP_MARKER_NUM, decreasing) {
+    markers = data.frame()
+
+    for (cluster_id in (levels(clusters))) {
+        cluster_markers = data.frame()
+        pv = coex[, cluster_id]
+        names(pv) = rownames(coex)
+        sorted_pv = sort(pv, decreasing = decreasing)
+        cluster_markers = data.frame(gene = names(sorted_pv)[1:TOP_MARKER_NUM],
+                                    cluster = match(cluster_id, levels(clusters)),
+                                    rank = 1:TOP_MARKER_NUM)
+
+        markers = rbind(markers, cluster_markers)
+    }
+    colnames(markers) = c("gene","cluster","rank")
+
+    write.csv(markers, "markers.csv", row.names = FALSE)
+}
+
+TOP_MARKER_NUM = 500
+
+numCells <- getNumCells(PBMC1_celltypist)
+pvals <- pValueFromDEA(coexDF, numCells)
+
+write_markers(OUT_CELLTYPIST_DIR, final_clusters, pvals, TOP_MARKER_NUM, FALSE)
+```
+
+Merge clusters according to protein surface
+
+```{r, echo=TRUE, eval=FALSE}
+# get barcodes of cells labelled using protein surface
+protein_labels = read.csv(paste('../../dataset/', dataset_name, '-Filtered/10x/labels.csv', sep=''))
+barcodes_to_keep = protein_labels$cell
+
+barcodes_to_drop = getCells(PBMC1)[!getCells(PBMC1) %in% barcodes_to_keep]
+PBMC1_protein <- dropGenesCells(PBMC1, cells = barcodes_to_drop)
+
+c(mergedClusters, mergedCoexDF) %<-%
+  mergeUniformCellsClusters(PBMC1_protein, clusters = splitClusters,
+                            GDIThreshold = 1.4, # to tune (binary search is probably not feasible...)
+                            cores = 13,
+                            saveObj = TRUE, outDir = OUT_DEFAULT_DIR)
+
+PBMC1_protein <- addClusterization(PBMC1_protein, clName = "merged",
+                             clusters = mergedClusters,
+                             coexDF = mergedCoexDF,
+                             override = TRUE)
+```
+
+Save the clustering result
+
+```{r, echo=TRUE, eval=FALSE}
+final_clusters = mergedClusters
+final_clusters_name = "merged"
+cluster = as.data.frame(final_clusters)
+colnames(cluster)[colnames(cluster) == deparse(substitute(final_clusters))] <- "cluster"
+cluster$cluster = match(cluster$cluster, levels(final_clusters))
+cluster$cell = rownames(cluster)
+rownames(cluster) = c(1:nrow(cluster))
+write_clustering(OUT_PROTEIN_DIR, cluster, "cell", "cluster")
+```
+
+Differential expression
+
+```{r, echo=TRUE, eval=FALSE}
+coexDF <- DEAOnClusters(PBMC1_protein, clusters = final_clusters)
+PBMC1_protein <- addClusterizationCoex(PBMC1_protein, clName = final_clusters_name,
+                             coexDF = coexDF)
+```
+
+```{r, echo=TRUE, eval=FALSE}
+saveRDS(PBMC1, file = file.path(OUT_PROTEIN_DIR, paste0(dataset_name, ".cotan.RDS")))
+```
+
+Save markers
+
+```{r, echo=TRUE, eval=FALSE}
+write_markers = function(ourDir, clusters, coex, TOP_MARKER_NUM, decreasing) {
+    markers = data.frame()
+
+    for (cluster_id in (levels(clusters))) {
+        cluster_markers = data.frame()
+        pv = coex[, cluster_id]
+        names(pv) = rownames(coex)
+        sorted_pv = sort(pv, decreasing = decreasing)
+        cluster_markers = data.frame(gene = names(sorted_pv)[1:TOP_MARKER_NUM],
+                                    cluster = match(cluster_id, levels(clusters)),
+                                    rank = 1:TOP_MARKER_NUM)
+
+        markers = rbind(markers, cluster_markers)
+    }
+    colnames(markers) = c("gene","cluster","rank")
+
+    write.csv(markers, "markers.csv", row.names = FALSE)
+}
+
+TOP_MARKER_NUM = 500
+
+numCells <- getNumCells(PBMC1_protein)
+pvals <- pValueFromDEA(coexDF, numCells)
+
+write_markers(OUT_PROTEIN_DIR, final_clusters, pvals, TOP_MARKER_NUM, FALSE)
 ```
 
 ```{r, echo=TRUE, eval=TRUE}
