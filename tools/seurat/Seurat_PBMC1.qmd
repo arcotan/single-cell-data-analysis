@@ -177,7 +177,7 @@ Save the clustering tuned according to celltypist
 label_df = data.frame(Idents(pbmc_celltypist))
 label_df$cell <- rownames(label_df)
 rownames(label_df) <- 1:nrow(label_df)
-colnames(label_df)[colnames(label_df) == "Idents.pbmc."] <- "computed_id"
+colnames(label_df)[colnames(label_df) == "Idents.pbmc_celltypist."] <- "computed_id"
 label_df$computed_id <- as.numeric(label_df$computed_id)
 write_clustering(OUT_CELLTYPIST_DIR, label_df, "cell", "computed_id")
 ```
@@ -228,7 +228,7 @@ repeat{
   resolution = (range_upper + range_lower) / 2
   cat(paste("Trying resolution ", resolution, sep=''))
   pbmc_protein <- FindClusters(pbmc_protein, resolution=resolution)
-  num_clusters = nlevels(Idents(pbmc_celltypist))
+  num_clusters = nlevels(Idents(pbmc_protein))
   cat(paste("Got ", num_clusters, ' clusters', sep=''))
   if (num_clusters == N_CLUSTERS_PROTEIN){
     break
@@ -250,7 +250,7 @@ Save the clustering tuned according to protein surface
 label_df = data.frame(Idents(pbmc_protein))
 label_df$cell <- rownames(label_df)
 rownames(label_df) <- 1:nrow(label_df)
-colnames(label_df)[colnames(label_df) == "Idents.pbmc."] <- "computed_id"
+colnames(label_df)[colnames(label_df) == "Idents.pbmc_protein."] <- "computed_id"
 label_df$computed_id <- as.numeric(label_df$computed_id)
 write_clustering(OUT_PROTEIN_DIR, label_df, "cell", "computed_id")
 ```
